@@ -8,30 +8,29 @@
 
 ## Features
 
-- framework TypeScript starter repository([Nest](https://github.com/nestjs/nest))
+- Nest framework with TypeScript([Nest](https://github.com/nestjs/nest))
 - ES2017 latest features like Async/Await
-<!-- - CORS enabled -->
+- CORS enabled
 - Uses [npm](https://www.npmjs.com/)
 - Express + MongoDB ([Mongoose](http://mongoosejs.com/))
 - Consistent coding styles with [editorconfig](http://editorconfig.org)
 - [Docker](https://www.docker.com/) support
-<!-- - Uses [helmet](https://github.com/helmetjs/helmet) to set some HTTP headers for security
+- Uses [helmet](https://docs.nestjs.com/security/helmet) to set some HTTP headers for security
 - Load environment variables from .env files with [dotenv](https://github.com/rolodato/dotenv-safe)
 - Request validation with [joi](https://github.com/hapijs/joi)
-- Gzip compression with [compression](https://github.com/expressjs/compression)
 - Linting with [eslint](http://eslint.org)
-- Tests with [mocha](https://mochajs.org), [chai](http://chaijs.com) and [sinon](http://sinonjs.org)
-- Code coverage with [istanbul](https://istanbul.js.org) and [coveralls](https://coveralls.io) -->
+- Tests with [Jest](https://jestjs.io/docs/getting-started), [Supertest](https://github.com/ladjs/supertest)
+<!-- - Code coverage with [istanbul](https://istanbul.js.org) and [coveralls](https://coveralls.io) -->
 - Git hooks with [husky](https://github.com/typicode/husky)
-<!-- - Logging with [morgan](https://github.com/expressjs/morgan) -->
+- Logging with [Logger](https://docs.nestjs.com/techniques/logger)
 - Authentication and Authorization with [passport](http://passportjs.org)
-<!-- - API documentation generation with [apidoc](http://apidocjs.com) -->
+- Automatic OpenAPI documentation generation with [Swagger](https://docs.nestjs.com/openapi/introduction)
 - Continuous integration support with Github Actions
 <!-- - Monitoring with [pm2](https://github.com/Unitech/pm2) -->
 
 ## Requirements
 
-- [Node v16.6+](https://nodejs.org/en/download/current/) or [Docker](https://www.docker.com/)
+- [Node 16.13.1](https://nodejs.org/en/download/current/)
 - [npm](https://www.npmjs.com/)
 
 ## Getting Started
@@ -48,17 +47,29 @@ $ npm install
 $ cp .env.example .env
 ```
 
+## Docker
+
+#### Comfortable development with docker suppor:
+
+```bash
+# run containers locally
+$ npm run docker:dev
+
+# run container in production
+npm run docker:prod
+
+# run tests
+npm run docker:test
+```
+
 ## Running Locally
 
 ```bash
-# development
+# development - Watch mode
 $ npm run start
 
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+# Debug mode
+$ npm run start:debug
 ```
 
 ## Running in Production
@@ -86,23 +97,3 @@ $ npm run test:e2e
 # test coverage
 $ npm run test:cov
 ```
-
-## Validate
-
-```bash
-# run lint and tests
-$ npm run lint
-```
-
-<!-- ## Docker
-
-```bash
-# run container locally
-npm run docker:dev
-
-# run container in production
-npm run docker:prod
-
-# run tests
-npm run docker:test
-``` -->
