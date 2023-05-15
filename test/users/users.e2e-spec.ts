@@ -17,7 +17,7 @@ describe('Users API', () => {
     lastName: 'Po',
   };
   let adminAccessToken: string;
-  let userAccessToken: string;
+  // let userAccessToken: string;
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
