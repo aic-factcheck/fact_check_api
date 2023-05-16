@@ -13,7 +13,7 @@
 - CORS enabled
 - Uses [npm](https://www.npmjs.com/)
 - Express + MongoDB ([Mongoose](http://mongoosejs.com/))
-- Consistent coding styles with [editorconfig](http://editorconfig.org)
+- Consistent coding styles with [Prettier](https://prettier.io/)
 - [Docker](https://www.docker.com/) support
 - Uses [helmet](https://docs.nestjs.com/security/helmet) to set some HTTP headers for security
 - Load environment variables from .env files with [dotenv](https://github.com/rolodato/dotenv-safe)

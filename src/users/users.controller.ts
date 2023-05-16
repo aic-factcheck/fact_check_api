@@ -120,7 +120,7 @@ export class UsersController {
   @ApiParam({ name: 'id', type: String, example: '645cacbfa6693d8100b2d60a' })
   @UseGuards(RolesGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
-  async deleteStudent(
+  async delete(
     @Param('id', new ParseObjectIdPipe()) _id: Types.ObjectId,
     @Res() res: Response,
   ) {

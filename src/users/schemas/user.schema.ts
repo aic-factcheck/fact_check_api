@@ -51,7 +51,7 @@ export class User {
   @Prop({ default: 0 })
   nBeenVoted: number;
 
-  // @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Article' }] })
+  // @Prop({ type: [ type: mongoose.Schema.Types.ObjectId], ref: 'Article' } })
   // savedArticles: SavedArticle[];
 
   @Prop({ default: 1 })

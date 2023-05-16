@@ -71,7 +71,7 @@ describe('Users API', () => {
         .collection('users')
         .updateMany({}, { $set: { roles: ['admin', 'user'] } });
 
-      res = await request(httpServer).post('/auth/login').expect(200).send({
+      res = await request(httpServer).post('/auth/login').expect(201).send({
         email: 'admin@test.com',
         password: 'secret',
       });
@@ -99,7 +99,7 @@ describe('Users API', () => {
 
       // const res = await request(httpServer)
       //   .post('/auth/login')
-      //   .expect(200)
+      //   .expect(201)
       //   .send({
       //     email: user.email,
       //     password: user.password,

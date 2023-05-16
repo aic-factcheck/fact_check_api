@@ -79,7 +79,8 @@ entity "Article" as article {
   *sourceUrl: text
   *sourceType : enum
   *lang : text
-  *nBeenVoted: Number
+  *nNegativeVotes: Number
+  *nPositiveVotes: Number
   *nSaved: Number
 }
 

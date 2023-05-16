@@ -60,7 +60,7 @@ describe('Auth API', () => {
     it('should login a user', async () => {
       const res = await request(httpServer).post('/auth/login').send(user);
 
-      expect(res.status).toBe(200);
+      expect(res.status).toBe(201);
       expect(res.body).toHaveProperty('token');
       expect(res.body.token).toHaveProperty('tokenType');
       expect(res.body.token).toHaveProperty('accessToken');
