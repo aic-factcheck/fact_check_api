@@ -7,7 +7,6 @@ import {
   Query,
   Param,
   UseInterceptors,
-  UseGuards,
   SerializeOptions,
   Patch,
   Put,
@@ -30,27 +29,25 @@ import { NullableType } from '../utils/types/nullable.type';
 import MongooseClassSerializerInterceptor from '../utils/interceptors/mongoose-class-serializer.interceptor';
 import { PaginationParams } from '../utils/types/pagination-params';
 import { Roles } from '../auth/decorators/roles.decorator';
-import { RolesGuard } from '../auth/guards/roles.guard';
 import { ParseObjectIdPipe } from '../utils/pipes/parse-object-id.pipe';
 import { Types } from 'mongoose';
 import { ReplaceUserDto } from './dto/replace-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Response } from 'express';
 import { LoggedUser } from './decorators/logged-user.decorator';
+import { Public } from '../auth/decorators/public-route.decorator';
 
 @ApiTags('Users')
 @Controller({
   path: 'users',
   version: '1',
 })
-// @UseGuards(RolesGuard)
 @UseInterceptors(MongooseClassSerializerInterceptor(User))
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
   @SerializeOptions({ groups: ['admin'] })
-  @UseGuards(RolesGuard)
   @Roles('admin')
   @ApiBearerAuth()
   @HttpCode(HttpStatus.CREATED)
@@ -59,8 +56,8 @@ export class UsersController {
   }
 
   @Get()
+  @Public()
   @SerializeOptions({ groups: ['admin'] })
-  @UseGuards(RolesGuard)
   @Roles('admin')
   @ApiBearerAuth()
   @HttpCode(HttpStatus.OK)
@@ -74,6 +71,7 @@ export class UsersController {
   }
 
   @Get(':id')
+  @Public()
   @SerializeOptions({ groups: ['admin'] })
   @ApiParam({ name: 'id', type: String, example: '645cacbfa6693d8100b2d60a' })
   @HttpCode(HttpStatus.OK)
@@ -89,7 +87,6 @@ export class UsersController {
   @ApiBody({ type: ReplaceUserDto })
   @ApiParam({ name: 'id', type: String, example: '645cacbfa6693d8100b2d60a' })
   @SerializeOptions({ groups: ['admin'] })
-  @UseGuards(RolesGuard)
   @HttpCode(HttpStatus.CREATED)
   update(
     @Param('id', new ParseObjectIdPipe()) _id: Types.ObjectId,
@@ -104,7 +101,6 @@ export class UsersController {
   @ApiBearerAuth()
   @ApiParam({ name: 'id', type: String, example: '645cacbfa6693d8100b2d60a' })
   @SerializeOptions({ groups: ['admin'] })
-  @UseGuards(RolesGuard)
   @Roles('admin')
   @HttpCode(HttpStatus.CREATED)
   replace(
@@ -118,7 +114,6 @@ export class UsersController {
   @Delete(':id')
   @ApiBearerAuth()
   @ApiParam({ name: 'id', type: String, example: '645cacbfa6693d8100b2d60a' })
-  @UseGuards(RolesGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   async delete(
     @Param('id', new ParseObjectIdPipe()) _id: Types.ObjectId,

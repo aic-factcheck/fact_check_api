@@ -7,7 +7,6 @@ import {
   Query,
   Param,
   // UseInterceptors,
-  UseGuards,
   Patch,
   Put,
   Delete,
@@ -25,7 +24,6 @@ import {
 import { NullableType } from '../utils/types/nullable.type';
 // import MongooseClassSerializerInterceptor from '../utils/interceptors/mongoose-class-serializer.interceptor';
 import { PaginationParams } from '../utils/types/pagination-params';
-import { RolesGuard } from '../auth/guards/roles.guard';
 import { ParseObjectIdPipe } from '../utils/pipes/parse-object-id.pipe';
 import { Types } from 'mongoose';
 import { Article } from './schemas/article.schema';
@@ -36,6 +34,7 @@ import { User } from '../users/schemas/user.schema';
 import { ReplaceArticleDto } from './dto/replace-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
 import { Response } from 'express';
+import { Public } from 'src/auth/decorators/public-route.decorator';
 // import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('Articles')
@@ -48,18 +47,17 @@ export class ArticlesController {
   constructor(private readonly articlesService: ArticlesService) {}
 
   @Post()
-  @UseGuards(RolesGuard)
   @ApiBearerAuth()
   @HttpCode(HttpStatus.CREATED)
   create(
     @Body() createArticleDto: CreateArticleDto,
     @LoggedUser() user: User,
   ): Promise<Article> {
-    console.log(user);
     return this.articlesService.create(user, createArticleDto);
   }
 
   @Get()
+  @Public()
   @HttpCode(HttpStatus.OK)
   @ApiQuery({ name: 'page', required: false, type: Number, example: 0 })
   @ApiQuery({ name: 'limit', required: false, type: Number, example: 10 })
@@ -71,6 +69,7 @@ export class ArticlesController {
   }
 
   @Get(':id')
+  @Public()
   @ApiParam({ name: 'id', type: String, example: '645cacbfa6693d8100b2d60a' })
   @HttpCode(HttpStatus.OK)
   findOne(
@@ -84,7 +83,6 @@ export class ArticlesController {
   @ApiOperation({ summary: 'Updates specified fields of existing Article' })
   @ApiBody({ type: ReplaceArticleDto })
   @ApiParam({ name: 'id', type: String, example: '645cacbfa6693d8100b2d60a' })
-  @UseGuards(RolesGuard)
   @HttpCode(HttpStatus.CREATED)
   update(
     @Param('id', new ParseObjectIdPipe()) _id: Types.ObjectId,
@@ -97,7 +95,6 @@ export class ArticlesController {
   @ApiOperation({ summary: 'Replaces the whole Article document by a new one' })
   @ApiBearerAuth()
   @ApiParam({ name: 'id', type: String, example: '645cacbfa6693d8100b2d60a' })
-  @UseGuards(RolesGuard)
   @HttpCode(HttpStatus.CREATED)
   replace(
     @Param('id', new ParseObjectIdPipe()) _id: Types.ObjectId,
@@ -110,7 +107,6 @@ export class ArticlesController {
   @Delete(':id')
   @ApiBearerAuth()
   @ApiParam({ name: 'id', type: String, example: '645cacbfa6693d8100b2d60a' })
-  @UseGuards(RolesGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   async delete(
     @Param('id', new ParseObjectIdPipe()) _id: Types.ObjectId,

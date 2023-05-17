@@ -23,7 +23,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   public validate(payload: JwtPayloadType): Promise<OrNeverType<User>> {
-    console.log(payload, '------------------');
     if (!payload._id) {
       throw new UnauthorizedException();
     }
