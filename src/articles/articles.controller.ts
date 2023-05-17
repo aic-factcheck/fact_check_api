@@ -36,7 +36,7 @@ import { User } from '../users/schemas/user.schema';
 import { ReplaceArticleDto } from './dto/replace-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
 import { Response } from 'express';
-import { AuthGuard } from '@nestjs/passport';
+// import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('Articles')
 @Controller({
