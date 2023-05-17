@@ -13,7 +13,12 @@ export class RolesGuard extends AuthGuard('jwt') {
     super();
   }
 
-  handleRequest(err, user, info: Error, context: ExecutionContext) {
+  canActivate(context: ExecutionContext) {
+    // Custom authentication logic here, establish session, etc
+    return super.canActivate(context);
+  }
+
+  handleRequest(err, user, info, context: ExecutionContext) {
     const roles = this.reflector.get<string[]>('roles', context.getHandler());
     if (!roles) {
       return user;

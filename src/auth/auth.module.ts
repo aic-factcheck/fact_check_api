@@ -3,7 +3,7 @@ import { AuthService } from './auth.service';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtStrategy } from './strategies/jwt.strategy';
-import { AnonymousStrategy } from './strategies/anonymous.strategy';
+// import { AnonymousStrategy } from './strategies/anonymous.strategy';
 import { UsersModule } from '../users/users.module';
 import { PassportModule } from '@nestjs/passport';
 import { AuthController } from './auth.controller';
@@ -38,7 +38,7 @@ const jwtFactory = {
     AuthService,
     UsersService,
     JwtStrategy,
-    AnonymousStrategy,
+    // AnonymousStrategy,
     ConfigService,
   ],
   exports: [

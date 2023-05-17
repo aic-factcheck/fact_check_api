@@ -4,35 +4,37 @@ import {
   MaxLength,
   IsString,
   IsUrl,
+  IsOptional,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class CreateArticleDto {
+export class UpdateArticleDto {
   @ApiProperty({ example: 'Article title is about..' })
   @IsNotEmpty()
   @MinLength(6)
   @MaxLength(512)
   @IsString()
-  title: string;
+  @IsOptional()
+  title?: string;
 
   @ApiProperty({ example: 'This is any text of the article up to 16448 char.' })
   @IsNotEmpty()
   @MinLength(6)
   @MaxLength(16448)
   @IsString()
-  text: string;
-
-  // @Prop({ type: [Types.ObjectId], default: [] })
-  // claims: Types.ObjectId[];
+  @IsOptional()
+  text?: string;
 
   @ApiProperty({ example: 'www.google.com' })
   @IsNotEmpty()
   @MaxLength(512)
   @IsUrl()
-  sourceUrl: string;
+  @IsOptional()
+  sourceUrl?: string;
 
   @ApiProperty({ example: 'article' })
   @IsNotEmpty()
   @MaxLength(64)
-  sourceType: string;
+  @IsOptional()
+  sourceType?: string;
 }

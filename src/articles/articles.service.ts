@@ -1,10 +1,13 @@
-// import { _, omit } from 'lodash';
+import { _ } from 'lodash';
 import { Model, Types } from 'mongoose';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { NullableType } from '../utils/types/nullable.type';
 import { Article, ArticleDocument } from './schemas/article.schema';
 import { CreateArticleDto } from './dto/create-article.dto';
+import { UpdateArticleDto } from './dto/update-article.dto';
+import { ReplaceArticleDto } from './dto/replace-article.dto';
+import { User } from '../users/schemas/user.schema';
 
 @Injectable()
 export class ArticlesService {
@@ -12,9 +15,12 @@ export class ArticlesService {
     @InjectModel(Article.name) private articleModel: Model<Article>,
   ) {}
 
-  async create(createArticleDto: CreateArticleDto): Promise<Article> {
+  async create(
+    loggedUser: User,
+    createArticleDto: CreateArticleDto,
+  ): Promise<Article> {
     const createdArticle: ArticleDocument = new this.articleModel(
-      createArticleDto,
+      _.assign(createArticleDto, { addedBy: loggedUser._id }),
     );
     return createdArticle.save();
   }
@@ -31,43 +37,38 @@ export class ArticlesService {
       .exec();
   }
 
-  // async update(
-  //   _id: Types.ObjectId,
-  //   article: Article,
-  //   updateArticleDto: UpdateArticleDto,
-  // ): Promise<Article> {
-  //   const ommitRoles: string = _.includes(article.roles, 'admin')
-  //     ? 'roles'
-  //     : '';
-  //   updateArticleDto = omit(updateArticleDto, ommitRoles);
+  async update(
+    _id: Types.ObjectId,
+    updateArticleDto: UpdateArticleDto,
+  ): Promise<Article> {
+    const updatedArticle: Article = await this.articleModel.findByIdAndUpdate(
+      _id,
+      updateArticleDto,
+      {
+        returnOriginal: false,
+      },
+    );
+    if (!updatedArticle) {
+      throw new NotFoundException(`Article #${updatedArticle._id} not found`);
+    }
+    return updatedArticle;
+  }
 
-  //   const updatedArticle: Article = await this.articleModel.findByIdAndUpdate(
-  //     _id,
-  //     updateArticleDto,
-  //     {
-  //       returnOriginal: false,
-  //     },
-  //   );
-  //   if (!updatedArticle) {
-  //     throw new NotFoundException(`Article #${article._id} not found`);
-  //   }
-  //   return updatedArticle;
-  // }
-
-  // async replace(
-  //   _id: Types.ObjectId,
-  //   article: Article,
-  //   articleDto: ReplaceArticleDto,
-  // ): Promise<Article> {
-  //   if (!_.includes(article.roles, 'admin'))
-  //     articleDto = omit(articleDto, 'roles');
-
-  //   return await this.articleModel.findByIdAndUpdate(_id, articleDto, {
-  //     override: true,
-  //     upsert: true,
-  //     returnOriginal: false,
-  //   });
-  // }
+  async replace(
+    _id: Types.ObjectId,
+    loggedUser: User,
+    articleDto: ReplaceArticleDto,
+  ): Promise<Article> {
+    return await this.articleModel.findByIdAndUpdate(
+      _id,
+      _.assign(articleDto, { addedBy: loggedUser._id }),
+      {
+        override: true,
+        upsert: true,
+        returnOriginal: false,
+      },
+    );
+  }
 
   async delete(articleId: Types.ObjectId): Promise<Article> {
     const deletedArticle = await this.articleModel.findByIdAndDelete(articleId);

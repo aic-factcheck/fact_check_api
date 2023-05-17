@@ -7,7 +7,7 @@ import {
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class CreateArticleDto {
+export class ReplaceArticleDto {
   @ApiProperty({ example: 'Article title is about..' })
   @IsNotEmpty()
   @MinLength(6)
@@ -21,9 +21,6 @@ export class CreateArticleDto {
   @MaxLength(16448)
   @IsString()
   text: string;
-
-  // @Prop({ type: [Types.ObjectId], default: [] })
-  // claims: Types.ObjectId[];
 
   @ApiProperty({ example: 'www.google.com' })
   @IsNotEmpty()

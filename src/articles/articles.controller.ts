@@ -6,11 +6,10 @@ import {
   Get,
   Query,
   Param,
-  UseInterceptors,
+  // UseInterceptors,
   UseGuards,
-  // SerializeOptions,
-  // Patch,
-  // Put,
+  Patch,
+  Put,
   Delete,
   Res,
 } from '@nestjs/common';
@@ -20,28 +19,31 @@ import {
   ApiQuery,
   ApiBearerAuth,
   ApiParam,
-  // ApiOperation,
-  // ApiBody,
+  ApiOperation,
+  ApiBody,
 } from '@nestjs/swagger';
 import { NullableType } from '../utils/types/nullable.type';
-import MongooseClassSerializerInterceptor from '../utils/interceptors/mongoose-class-serializer.interceptor';
+// import MongooseClassSerializerInterceptor from '../utils/interceptors/mongoose-class-serializer.interceptor';
 import { PaginationParams } from '../utils/types/pagination-params';
-// import { Roles } from '../auth/decorators/roles.decorator';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { ParseObjectIdPipe } from '../utils/pipes/parse-object-id.pipe';
 import { Types } from 'mongoose';
-import { Response } from 'express';
 import { Article } from './schemas/article.schema';
 import { ArticlesService } from './articles.service';
 import { CreateArticleDto } from './dto/create-article.dto';
-// import { LoggedUser } from 'src/users/decorators/logged-user.decorator';
+import { LoggedUser } from '../users/decorators/logged-user.decorator';
+import { User } from '../users/schemas/user.schema';
+import { ReplaceArticleDto } from './dto/replace-article.dto';
+import { UpdateArticleDto } from './dto/update-article.dto';
+import { Response } from 'express';
+import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('Articles')
 @Controller({
   path: 'articles',
   version: '1',
 })
-@UseInterceptors(MongooseClassSerializerInterceptor(Article))
+// @UseInterceptors(MongooseClassSerializerInterceptor(Article))
 export class ArticlesController {
   constructor(private readonly articlesService: ArticlesService) {}
 
@@ -49,8 +51,12 @@ export class ArticlesController {
   @UseGuards(RolesGuard)
   @ApiBearerAuth()
   @HttpCode(HttpStatus.CREATED)
-  create(@Body() createArticleDto: CreateArticleDto): Promise<Article> {
-    return this.articlesService.create(createArticleDto);
+  create(
+    @Body() createArticleDto: CreateArticleDto,
+    @LoggedUser() user: User,
+  ): Promise<Article> {
+    console.log(user);
+    return this.articlesService.create(user, createArticleDto);
   }
 
   @Get()
@@ -73,35 +79,33 @@ export class ArticlesController {
     return this.articlesService.findOne({ _id });
   }
 
-  // @Patch(':id')
-  // @ApiBearerAuth()
-  // @ApiOperation({ summary: 'Updates specified fields of existing Article' })
-  // @ApiBody({ type: ReplaceArticleDto })
-  // @ApiParam({ name: 'id', type: String, example: '645cacbfa6693d8100b2d60a' })
-  // @SerializeOptions({ groups: ['admin'] })
-  // @UseGuards(RolesGuard)
-  // @HttpCode(HttpStatus.CREATED)
-  // update(
-  //   @Param('id', new ParseObjectIdPipe()) _id: Types.ObjectId,
-  //   @Body() ArticleDto: UpdateArticleDto,
-  //   @LoggedUser() Article: Article,
-  // ): Promise<NullableType<Article>> {
-  //   return this.articlesService.update(_id, Article, ArticleDto);
-  // }
+  @Patch(':id')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Updates specified fields of existing Article' })
+  @ApiBody({ type: ReplaceArticleDto })
+  @ApiParam({ name: 'id', type: String, example: '645cacbfa6693d8100b2d60a' })
+  @UseGuards(RolesGuard)
+  @HttpCode(HttpStatus.CREATED)
+  update(
+    @Param('id', new ParseObjectIdPipe()) _id: Types.ObjectId,
+    @Body() articleDto: UpdateArticleDto,
+  ): Promise<NullableType<Article>> {
+    return this.articlesService.update(_id, articleDto);
+  }
 
-  // @Put(':id')
-  // @ApiOperation({ summary: 'Replaces the whole Article document by a new one' })
-  // @ApiBearerAuth()
-  // @ApiParam({ name: 'id', type: String, example: '645cacbfa6693d8100b2d60a' })
-  // @UseGuards(RolesGuard)
-  // @HttpCode(HttpStatus.CREATED)
-  // replace(
-  //   @Param('id', new ParseObjectIdPipe()) _id: Types.ObjectId,
-  //   @Body() ArticleDto: ReplaceArticleDto,
-  //   @LoggedUser() Article: Article,
-  // ): Promise<NullableType<Article>> {
-  //   return this.articlesService.replace(_id, Article, ArticleDto);
-  // }
+  @Put(':id')
+  @ApiOperation({ summary: 'Replaces the whole Article document by a new one' })
+  @ApiBearerAuth()
+  @ApiParam({ name: 'id', type: String, example: '645cacbfa6693d8100b2d60a' })
+  @UseGuards(RolesGuard)
+  @HttpCode(HttpStatus.CREATED)
+  replace(
+    @Param('id', new ParseObjectIdPipe()) _id: Types.ObjectId,
+    @Body() articleDto: ReplaceArticleDto,
+    @LoggedUser() user: User,
+  ): Promise<NullableType<Article>> {
+    return this.articlesService.replace(_id, user, articleDto);
+  }
 
   @Delete(':id')
   @ApiBearerAuth()
