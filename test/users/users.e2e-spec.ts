@@ -1,14 +1,7 @@
-import { Test } from '@nestjs/testing';
-import { Connection } from 'mongoose';
-import { AppModule } from '../../src/app.module';
-import { DatabaseService } from '../../src/database/database.service';
 import * as request from 'supertest';
+import { dbConnection, httpServer } from '../setup';
 
 describe('Users API', () => {
-  let dbConnection: Connection;
-  let httpServer: any;
-  let app: any;
-
   let adminUser;
   const user = {
     email: 'user@test.com',
@@ -20,31 +13,9 @@ describe('Users API', () => {
   // let userAccessToken: string;
 
   beforeAll(async () => {
-    const moduleRef = await Test.createTestingModule({
-      imports: [AppModule],
-    }).compile();
-
-    app = moduleRef.createNestApplication();
-    await app.init();
-    dbConnection = moduleRef
-      .get<DatabaseService>(DatabaseService)
-      .getDbHandle();
-    httpServer = app.getHttpServer();
-
     await dbConnection.collection('refreshtokens').deleteMany({});
     await dbConnection.collection('users').deleteMany({});
   });
-
-  afterAll(async () => {
-    await dbConnection.collection('refreshtokens').deleteMany({});
-    await dbConnection.collection('users').deleteMany({});
-    await dbConnection.close();
-    await app.close();
-  });
-
-  // beforeEach(async () => {
-  //   await dbConnection.collection('users').deleteMany({});
-  // });
 
   describe('Setup user', () => {
     it('preregister user', async () => {

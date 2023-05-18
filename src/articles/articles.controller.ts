@@ -6,7 +6,7 @@ import {
   Get,
   Query,
   Param,
-  // UseInterceptors,
+  UseInterceptors,
   Patch,
   Put,
   Delete,
@@ -22,7 +22,7 @@ import {
   ApiBody,
 } from '@nestjs/swagger';
 import { NullableType } from '../utils/types/nullable.type';
-// import MongooseClassSerializerInterceptor from '../utils/interceptors/mongoose-class-serializer.interceptor';
+import MongooseClassSerializerInterceptor from '../utils/interceptors/mongoose-class-serializer.interceptor';
 import { PaginationParams } from '../utils/types/pagination-params';
 import { ParseObjectIdPipe } from '../utils/pipes/parse-object-id.pipe';
 import { Types } from 'mongoose';
@@ -34,7 +34,7 @@ import { User } from '../users/schemas/user.schema';
 import { ReplaceArticleDto } from './dto/replace-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
 import { Response } from 'express';
-import { Public } from 'src/auth/decorators/public-route.decorator';
+import { Public } from '../auth/decorators/public-route.decorator';
 // import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('Articles')
@@ -42,7 +42,7 @@ import { Public } from 'src/auth/decorators/public-route.decorator';
   path: 'articles',
   version: '1',
 })
-// @UseInterceptors(MongooseClassSerializerInterceptor(Article))
+@UseInterceptors(MongooseClassSerializerInterceptor(Article))
 export class ArticlesController {
   constructor(private readonly articlesService: ArticlesService) {}
 

@@ -38,7 +38,7 @@ export class AuthController {
   @Post('login')
   @HttpCode(HttpStatus.CREATED)
   public login(@Body() loginDto: AuthEmailLoginDto): Promise<AuthResponseType> {
-    return this.authService.login(loginDto, false);
+    return this.authService.login(loginDto);
   }
 
   @Public()

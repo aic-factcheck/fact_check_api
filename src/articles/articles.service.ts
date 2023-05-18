@@ -26,7 +26,11 @@ export class ArticlesService {
   }
 
   async findOne(query: object): Promise<NullableType<Article>> {
-    return this.articleModel.findOne(query);
+    const article = await this.articleModel.findOne(query);
+    if (!article) {
+      throw new NotFoundException(`Article not found`);
+    }
+    return article;
   }
 
   async findManyWithPagination(page = 1, limit?: number): Promise<Article[]> {

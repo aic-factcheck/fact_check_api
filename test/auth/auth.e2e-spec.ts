@@ -1,14 +1,7 @@
-import { Test } from '@nestjs/testing';
-import { Connection } from 'mongoose';
-import { AppModule } from '../../src/app.module';
-import { DatabaseService } from '../../src/database/database.service';
 import * as request from 'supertest';
+import { dbConnection, httpServer } from '../setup';
 
 describe('Auth API', () => {
-  let dbConnection: Connection;
-  let httpServer: any;
-  let app: any;
-
   const user = {
     email: 'johnny.po@test.com',
     password: 'secret',
@@ -19,26 +12,8 @@ describe('Auth API', () => {
   let userRefreshToken: string;
 
   beforeAll(async () => {
-    const moduleRef = await Test.createTestingModule({
-      imports: [AppModule],
-    }).compile();
-
-    app = moduleRef.createNestApplication();
-    await app.init();
-    dbConnection = moduleRef
-      .get<DatabaseService>(DatabaseService)
-      .getDbHandle();
-    httpServer = app.getHttpServer();
-
     await dbConnection.collection('users').deleteMany({});
     await dbConnection.collection('refreshtokens').deleteMany({});
-  });
-
-  afterAll(async () => {
-    await dbConnection.collection('users').deleteMany({});
-    await dbConnection.collection('refreshtokens').deleteMany({});
-    await dbConnection.close();
-    await app.close();
   });
 
   describe('POST /auth/register', () => {

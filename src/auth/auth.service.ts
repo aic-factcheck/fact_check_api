@@ -79,18 +79,11 @@ export class AuthService {
     return tokenRes;
   }
 
-  async login(
-    loginDto: AuthEmailLoginDto,
-    onlyAdmin: boolean,
-  ): Promise<AuthResponseType> {
+  async login(loginDto: AuthEmailLoginDto): Promise<AuthResponseType> {
     const user: User = await this.usersService.findByEmail(loginDto.email);
 
     if (!user) {
       throw new NotFoundException('Email not found');
-    }
-
-    if (onlyAdmin && !user.roles.includes('admin')) {
-      throw new UnauthorizedException('Not enough permissions');
     }
 
     const isValidPassword: boolean = await bcrypt.compare(
