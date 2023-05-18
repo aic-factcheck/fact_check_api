@@ -28,7 +28,7 @@ export class SavedArticleService {
       .countDocuments();
 
     if (alreadySaved !== 0 || articleCnt < 1) {
-      throw new BadRequestException('Could not save article');
+      throw new BadRequestException('Saving article failed');
     }
 
     await this.articleModel.findOneAndUpdate(

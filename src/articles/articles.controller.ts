@@ -6,7 +6,6 @@ import {
   Get,
   Query,
   Param,
-  UseInterceptors,
   Patch,
   Put,
   Delete,
@@ -21,7 +20,6 @@ import {
   ApiBody,
 } from '@nestjs/swagger';
 import { NullableType } from '../utils/types/nullable.type';
-import MongooseClassSerializerInterceptor from '../utils/interceptors/mongoose-class-serializer.interceptor';
 import { PaginationParams } from '../utils/types/pagination-params';
 import { ParseObjectIdPipe } from '../utils/pipes/parse-object-id.pipe';
 import { Types } from 'mongoose';
@@ -33,13 +31,13 @@ import { User } from '../users/schemas/user.schema';
 import { ReplaceArticleDto } from './dto/replace-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
 import { Public } from '../auth/decorators/public-route.decorator';
+import { ArticleResponseType } from './interfaces/article-response.interface';
 
 @ApiTags('Articles')
 @Controller({
   path: 'articles',
   version: '1',
 })
-@UseInterceptors(MongooseClassSerializerInterceptor(Article))
 export class ArticlesController {
   constructor(private readonly articlesService: ArticlesService) {}
 
@@ -55,24 +53,30 @@ export class ArticlesController {
 
   @Get()
   @Public()
+  @ApiBearerAuth()
   @HttpCode(HttpStatus.OK)
   @ApiQuery({ name: 'page', required: false, type: Number, example: 1 })
   @ApiQuery({ name: 'perPage', required: false, type: Number, example: 20 })
-  async list(@Query() { page, perPage }: PaginationParams): Promise<Article[]> {
+  async list(
+    @Query() { page, perPage }: PaginationParams,
+    @LoggedUser() user: User,
+  ): Promise<Article[]> {
     if (perPage > 50) {
       perPage = 50;
     }
-    return await this.articlesService.findManyWithPagination(page, perPage);
+    return this.articlesService.findManyWithPagination(user, page, perPage);
   }
 
   @Get(':id')
+  @ApiBearerAuth()
   @Public()
   @ApiParam({ name: 'id', type: String, example: '645cacbfa6693d8100b2d60a' })
   @HttpCode(HttpStatus.OK)
-  findOne(
+  async findOne(
     @Param('id', new ParseObjectIdPipe()) _id: Types.ObjectId,
-  ): Promise<NullableType<Article>> {
-    return this.articlesService.findOne({ _id });
+    @LoggedUser() user: User,
+  ): Promise<NullableType<ArticleResponseType>> {
+    return this.articlesService.findOne(user, _id);
   }
 
   @Patch(':id')

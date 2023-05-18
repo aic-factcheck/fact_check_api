@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { now, HydratedDocument, ObjectId, Types } from 'mongoose';
+import { now, HydratedDocument, Types } from 'mongoose';
 import { Expose, Transform } from 'class-transformer';
 import { User } from '../../users/schemas/user.schema';
 
@@ -19,7 +19,7 @@ export type ArticleDocument = HydratedDocument<Article>;
 export class Article {
   @Expose()
   @Transform((params) => params.obj._id.toString())
-  _id: ObjectId;
+  _id: Types.ObjectId;
 
   @Prop({
     type: Types.ObjectId,

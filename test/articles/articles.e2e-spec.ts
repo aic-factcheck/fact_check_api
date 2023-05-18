@@ -203,7 +203,8 @@ describe('Articles API', () => {
           expect(res.body).toHaveProperty('sourceUrl');
           expect(res.body).toHaveProperty('sourceType');
           expect(res.body).toHaveProperty('lang');
-          // expect(res.body).toHaveProperty('isSavedByUser'); // TODO
+          expect(res.body).toHaveProperty('isSavedByUser');
+          expect(res.body.isSavedByUser).toEqual(false);
 
           expect(res.body.addedBy).toHaveProperty('firstName');
           expect(res.body.addedBy).toHaveProperty('lastName');
@@ -404,6 +405,138 @@ describe('Articles API', () => {
     // });
   });
 
+  // describe('GET /users/:userId/articles', () => {
+  //   it('should list articles of user', () => {
+  //     return request(httpServer)
+  //       .get(`/users/${user2._id}/articles`)
+  //       .auth(userAccessToken, { type: 'bearer' })
+  //       .expect(HttpStatus.OK)
+  //       .then(async (res) => {
+  //         const includesArticle2 = some(res.body, article2);
+
+  //         expect(res.body).to.be.an('array');
+  //         expect(res.body).to.have.lengthOf(1);
+  //         expect(includesArticle2).to.be.true;
+
+  //         expect(res.body[0].addedBy._id).toEqual(user2._id);
+  //       });
+  //   });
+
+  //   it('should return forbidden for listing other users article', () => {
+  //     return request(httpServer)
+  //       .get(`/users/${user._id}/articles`)
+  //       .auth(userAccessToken, { type: 'bearer' })
+  //       .expect(HttpStatus.FORBIDDEN);
+  //   });
+  // });
+
+  describe('POST /save?articleId=', () => {
+    it('Should save a selected article', async () => {
+      return request(httpServer)
+        .post(`/save?articleId=${article1Id}`)
+        .auth(userAccessToken, { type: 'bearer' })
+        .send({})
+        .expect(HttpStatus.CREATED)
+        .then((res) => {
+          expect(res.body).toHaveProperty('_id');
+          expect(res.body).toHaveProperty('createdAt');
+          // expect(res.body.addedBy).toEqual(userId);
+          // expect(res.body.articleId).toEqual(article1Id);
+        })
+        .then(async () => {
+          await request(httpServer)
+            .get(`/articles/${article1Id}`)
+            .auth(userAccessToken, { type: 'bearer' })
+            .expect(200)
+            .then((res) => {
+              expect(res.body.nSaved).toEqual(1);
+            });
+        });
+    });
+
+    it('Should not save already saved article', async () => {
+      return request(httpServer)
+        .post(`/save?articleId=${article1Id}`)
+        .auth(userAccessToken, { type: 'bearer' })
+        .send({})
+        .expect(HttpStatus.BAD_REQUEST)
+        .then((res) => {
+          expect(res.body.message).toEqual('Saving article failed');
+        })
+        .then(async () => {
+          await request(httpServer)
+            .get(`/articles/${article1Id}`)
+            .auth(userAccessToken, { type: 'bearer' })
+            .expect(200)
+            .then((res) => {
+              expect(res.body.nSaved).toEqual(1);
+            });
+        });
+    });
+
+    it('Should return error if article is already saved', async () => {
+      return request(httpServer)
+        .post(`/save?articleId=${article1Id}`)
+        .auth(userAccessToken, { type: 'bearer' })
+        .send({})
+        .expect(HttpStatus.BAD_REQUEST)
+        .then((res) => {
+          expect(res.body.message).toEqual('Saving article failed');
+        })
+        .then(async () => {
+          await request(httpServer)
+            .get(`/articles/${article1Id}`)
+            .auth(userAccessToken, { type: 'bearer' })
+            .expect(200)
+            .then((res) => {
+              expect(res.body.nSaved).toEqual(1);
+            });
+        });
+    });
+  });
+
+  describe('GET /save list', () => {
+    it('should list articles saved by current user', () => {
+      return request(httpServer)
+        .get('/save')
+        .auth(userAccessToken, { type: 'bearer' })
+        .expect(HttpStatus.OK)
+        .then(async (res) => {
+          expect(res.body).toBeInstanceOf(Array);
+          expect(res.body.length).toEqual(1);
+          expect(res.body[0].addedBy).toHaveProperty('firstName');
+          expect(res.body[0].addedBy).toHaveProperty('lastName');
+          expect(res.body[0].addedBy).toHaveProperty('email');
+          expect(res.body[0].addedBy).toHaveProperty('_id');
+        });
+    });
+  });
+
+  describe('DELETE /save?articleId=', () => {
+    // it('Should return error if article does not exists', async () => {
+    //   return request(httpServer)
+    //     .delete(`/save?articleId=${article1Id}`)
+    //     .auth(userAccessToken, { type: 'bearer' })
+    //     .expect(HttpStatus.BAD_REQUEST);
+    // });
+
+    it('Should unsave selected article', async () => {
+      return request(httpServer)
+        .delete(`/save?articleId=${article1Id}`)
+        .auth(userAccessToken, { type: 'bearer' })
+        .expect(HttpStatus.NO_CONTENT)
+        .then(async () => {
+          await request(httpServer)
+            .get(`/articles/${article1Id}`)
+            .auth(userAccessToken, { type: 'bearer' })
+            .expect(200)
+            .then((res) => {
+              expect(res.body.nSaved).toEqual(0);
+            });
+        });
+    });
+  });
+
   describe('DELETE /articles', () => {
     it('should delete article when user is admin', async () => {
       await request(httpServer)
@@ -448,29 +581,4 @@ describe('Articles API', () => {
     //     });
     // });
   });
-
-  // describe('GET /users/:userId/articles', () => {
-  //   it('should list articles of user', () => {
-  //     return request(httpServer)
-  //       .get(`/users/${user2._id}/articles`)
-  //       .auth(userAccessToken, { type: 'bearer' })
-  //       .expect(HttpStatus.OK)
-  //       .then(async (res) => {
-  //         const includesArticle2 = some(res.body, article2);
-
-  //         expect(res.body).to.be.an('array');
-  //         expect(res.body).to.have.lengthOf(1);
-  //         expect(includesArticle2).to.be.true;
-
-  //         expect(res.body[0].addedBy._id).toEqual(user2._id);
-  //       });
-  //   });
-
-  //   it('should return forbidden for listing other users article', () => {
-  //     return request(httpServer)
-  //       .get(`/users/${user._id}/articles`)
-  //       .auth(userAccessToken, { type: 'bearer' })
-  //       .expect(HttpStatus.FORBIDDEN);
-  //   });
-  // });
 });

@@ -13,7 +13,7 @@ export class ArticleByIdPipe
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async transform(value: string, metadata: ArgumentMetadata): Promise<Article> {
-    const article = await this.articlesService.findOne({ _id: value });
+    const article = await this.articlesService.findByQuery({ _id: value });
     if (!article) {
       throw new NotFoundException(`Article #${value} not found`);
     }
