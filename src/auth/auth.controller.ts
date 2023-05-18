@@ -23,7 +23,6 @@ import { Public } from './decorators/public-route.decorator';
   path: 'auth',
   version: '1',
 })
-@UseInterceptors(MongooseClassSerializerInterceptor(User))
 export class AuthController {
   constructor(private authService: AuthService) {}
 
@@ -54,6 +53,7 @@ export class AuthController {
 
   @ApiBearerAuth()
   @Get('profile')
+  @UseInterceptors(MongooseClassSerializerInterceptor(User))
   getProfile(@Request() req): User {
     return req.user;
   }

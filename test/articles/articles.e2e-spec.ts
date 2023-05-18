@@ -118,8 +118,8 @@ describe('Articles API', () => {
       .send(_.omit(article2, ['text']))
       .expect(HttpStatus.UNPROCESSABLE_ENTITY)
       .then((res) => {
-        const { status, errors } = res.body;
-        expect(status).toEqual(HttpStatus.UNPROCESSABLE_ENTITY);
+        const { statusCode, errors } = res.body;
+        expect(statusCode).toEqual(HttpStatus.UNPROCESSABLE_ENTITY);
         expect(errors).toHaveProperty('text');
         // expect(errors.text).toEqual('"text" is required');
       });
@@ -132,8 +132,8 @@ describe('Articles API', () => {
       .send(_.omit(article2, ['lang']))
       .expect(HttpStatus.UNPROCESSABLE_ENTITY)
       .then((res) => {
-        const { status, errors } = res.body;
-        expect(status).toEqual(HttpStatus.UNPROCESSABLE_ENTITY);
+        const { statusCode, errors } = res.body;
+        expect(statusCode).toEqual(HttpStatus.UNPROCESSABLE_ENTITY);
         expect(errors).toHaveProperty('lang');
         // expect(messages).to.include('"lang" is required');
       });
@@ -146,8 +146,8 @@ describe('Articles API', () => {
       .send(_.omit(article2, ['sourceType']))
       .expect(HttpStatus.UNPROCESSABLE_ENTITY)
       .then((res) => {
-        const { status, errors } = res.body;
-        expect(status).toEqual(HttpStatus.UNPROCESSABLE_ENTITY);
+        const { statusCode, errors } = res.body;
+        expect(statusCode).toEqual(HttpStatus.UNPROCESSABLE_ENTITY);
         expect(errors).toHaveProperty('sourceType');
         // expect(messages).to.include('"sourceType" is required');
       });
@@ -251,8 +251,8 @@ describe('Articles API', () => {
         .send(updatedArticle)
         .expect(HttpStatus.UNPROCESSABLE_ENTITY)
         .then((res) => {
-          const { status, errors } = res.body;
-          expect(status).toEqual(HttpStatus.UNPROCESSABLE_ENTITY);
+          const { statusCode, errors } = res.body;
+          expect(statusCode).toEqual(HttpStatus.UNPROCESSABLE_ENTITY);
           expect(errors).toHaveProperty('text');
         });
     });
@@ -273,8 +273,8 @@ describe('Articles API', () => {
         .send(updatedArticle)
         .expect(HttpStatus.UNPROCESSABLE_ENTITY)
         .then((res) => {
-          const { status, errors } = res.body;
-          expect(status).toEqual(HttpStatus.UNPROCESSABLE_ENTITY);
+          const { statusCode, errors } = res.body;
+          expect(statusCode).toEqual(HttpStatus.UNPROCESSABLE_ENTITY);
           expect(errors).toHaveProperty('sourceUrl');
         });
     });
