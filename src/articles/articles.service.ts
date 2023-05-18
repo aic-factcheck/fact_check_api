@@ -39,11 +39,11 @@ export class ArticlesService {
     return article;
   }
 
-  async findManyWithPagination(page = 1, limit?: number): Promise<Article[]> {
+  async findManyWithPagination(page = 1, perPage?: number): Promise<Article[]> {
     return this.articleModel
       .find()
-      .skip(page * limit)
-      .limit(limit)
+      .limit(perPage)
+      .skip(perPage * (page - 1))
       .populate('addedBy', {
         firstName: 1,
         lastName: 1,

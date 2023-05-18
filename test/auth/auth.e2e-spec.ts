@@ -168,6 +168,13 @@ describe('Auth API', () => {
       expect(res.body.token).toHaveProperty('accessToken');
       expect(res.body.token).toHaveProperty('refreshToken');
       expect(res.body.token).toHaveProperty('expiresIn');
+
+      expect(res.body).toHaveProperty('user');
+      expect(res.body.user).toHaveProperty('_id');
+      expect(res.body.user).toHaveProperty('firstName');
+      expect(res.body.user).toHaveProperty('lastName');
+      expect(res.body.user).toHaveProperty('email');
+      expect(res.body.user).not.toHaveProperty('password');
     });
 
     it("should report error when email and refreshToken don't match", async () => {

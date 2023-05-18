@@ -61,13 +61,13 @@ export class UsersController {
   @Roles('admin')
   @ApiBearerAuth()
   @HttpCode(HttpStatus.OK)
-  @ApiQuery({ name: 'page', required: false, type: Number, example: 0 })
-  @ApiQuery({ name: 'limit', required: false, type: Number, example: 10 })
-  async list(@Query() { page, limit }: PaginationParams): Promise<User[]> {
-    if (limit > 50) {
-      limit = 50;
+  @ApiQuery({ name: 'page', required: false, type: Number, example: 1 })
+  @ApiQuery({ name: 'perPage', required: false, type: Number, example: 20 })
+  async list(@Query() { page, perPage }: PaginationParams): Promise<User[]> {
+    if (perPage > 50) {
+      perPage = 50;
     }
-    return await this.usersService.findManyWithPagination(page, limit);
+    return await this.usersService.findManyWithPagination(page, perPage);
   }
 
   @Get(':id')

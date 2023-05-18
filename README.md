@@ -8,7 +8,7 @@
 
 ## Features
 
-- Nest framework with TypeScript([Nest](https://github.com/nestjs/nest))
+- Nest.js framework with TypeScript([Nest](https://github.com/nestjs/nest))
 - ES2017 latest features like Async/Await
 - CORS enabled
 - Uses [npm](https://www.npmjs.com/)
@@ -49,7 +49,7 @@ $ cp .env.example .env
 
 ## Docker
 
-#### Comfortable development with docker suppor:
+#### Comfortable development with docker support:
 
 ```bash
 # run containers locally
