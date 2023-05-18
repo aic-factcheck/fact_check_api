@@ -26,7 +26,13 @@ export class ArticlesService {
   }
 
   async findOne(query: object): Promise<NullableType<Article>> {
-    const article = await this.articleModel.findOne(query);
+    const article = await this.articleModel.findOne(query).populate('addedBy', {
+      firstName: 1,
+      lastName: 1,
+      email: 1,
+      _id: 1,
+      createdAt: 1,
+    });
     if (!article) {
       throw new NotFoundException(`Article not found`);
     }
@@ -38,6 +44,13 @@ export class ArticlesService {
       .find()
       .skip(page * limit)
       .limit(limit)
+      .populate('addedBy', {
+        firstName: 1,
+        lastName: 1,
+        email: 1,
+        _id: 1,
+        createdAt: 1,
+      })
       .exec();
   }
 

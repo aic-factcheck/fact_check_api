@@ -32,4 +32,9 @@ export class ReplaceArticleDto {
   @IsNotEmpty()
   @MaxLength(64)
   sourceType: string;
+
+  @ApiProperty({ example: 'en' })
+  @IsNotEmpty()
+  @MaxLength(32)
+  lang: string;
 }

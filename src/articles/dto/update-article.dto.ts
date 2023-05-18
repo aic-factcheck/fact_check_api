@@ -37,4 +37,10 @@ export class UpdateArticleDto {
   @MaxLength(64)
   @IsOptional()
   sourceType?: string;
+
+  @ApiProperty({ example: 'en' })
+  @IsNotEmpty()
+  @MaxLength(32)
+  @IsOptional()
+  lang?: string;
 }
