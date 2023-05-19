@@ -33,15 +33,7 @@ export class ArticlesService {
   }
 
   async findByQuery(query: object): Promise<NullableType<Article>> {
-    const article = await this.articleModel
-      .findById(query)
-      .populate('addedBy', {
-        firstName: 1,
-        lastName: 1,
-        email: 1,
-        _id: 1,
-        createdAt: 1,
-      });
+    const article = await this.articleModel.findById(query);
     if (!article) {
       throw new NotFoundException(`Article not found`);
     }
@@ -61,15 +53,9 @@ export class ArticlesService {
       .countDocuments();
     const isSavedByUser: boolean = savedArticleCnt >= 1;
 
-    const article: ArticleDocument = await this.articleModel
-      .findById(articleId)
-      .populate('addedBy', {
-        firstName: 1,
-        lastName: 1,
-        email: 1,
-        _id: 1,
-        createdAt: 1,
-      });
+    const article: ArticleDocument = await this.articleModel.findById(
+      articleId,
+    );
     if (!article) {
       throw new NotFoundException(`Article not found`);
     }
@@ -85,14 +71,7 @@ export class ArticlesService {
     const articles: Article[] = await this.articleModel
       .find()
       .limit(perPage)
-      .skip(perPage * (page - 1))
-      .populate('addedBy', {
-        firstName: 1,
-        lastName: 1,
-        email: 1,
-        _id: 1,
-        createdAt: 1,
-      });
+      .skip(perPage * (page - 1));
 
     let savedArticles: Types.ObjectId[] = [];
 

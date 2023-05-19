@@ -54,13 +54,6 @@ export class SavedArticleService {
     return this.articleModel
       .where('_id')
       .in(savedArticles)
-      .populate('addedBy', {
-        firstName: 1,
-        lastName: 1,
-        email: 1,
-        _id: 1,
-        createdAt: 1,
-      })
       .limit(perPage)
       .skip(perPage * (page - 1));
   }

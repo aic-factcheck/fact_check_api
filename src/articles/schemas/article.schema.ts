@@ -25,6 +25,7 @@ export class Article {
     type: Types.ObjectId,
     ref: 'User',
     required: true,
+    autopopulate: { select: '-password' },
   })
   addedBy: User;
 
