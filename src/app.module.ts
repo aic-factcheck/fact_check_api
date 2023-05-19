@@ -10,6 +10,7 @@ import authConfig from './config/auth.config';
 import appConfig from './config/app.config';
 import { RouterModule } from '@nestjs/core';
 import { SavedArticlesModule } from './saved-articles/saved-articles.module';
+import { ClaimsModule } from './claims/claims.module';
 
 @Module({
   imports: [
@@ -17,6 +18,12 @@ import { SavedArticlesModule } from './saved-articles/saved-articles.module';
       {
         path: 'articles',
         module: ArticlesModule,
+        children: [
+          {
+            path: '/:articleId/claims',
+            module: ClaimsModule,
+          },
+        ],
       },
     ]),
     ConfigModule.forRoot({
@@ -29,6 +36,7 @@ import { SavedArticlesModule } from './saved-articles/saved-articles.module';
     DatabaseModule,
     ArticlesModule,
     SavedArticlesModule,
+    ClaimsModule,
   ],
   controllers: [],
   providers: [UniqueValidator],

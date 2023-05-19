@@ -2,21 +2,12 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { now, HydratedDocument, Types } from 'mongoose';
 import { Expose, Transform } from 'class-transformer';
 import { User } from '../../users/schemas/user.schema';
+import { Article } from '../../articles/schemas/article.schema';
 
-/**
- * Article types
- */
-const articleTypes = ['article', 'tv', 'radio', 'other'];
-
-/**
- * Languages
- */
-const languages = ['cz', 'sk', 'en'];
-
-export type ArticleDocument = HydratedDocument<Article>;
+export type ClaimDocument = HydratedDocument<Claim>;
 
 @Schema({ timestamps: true })
-export class Article {
+export class Claim {
   @Expose()
   @Transform((params) => params.obj._id.toString())
   _id: Types.ObjectId;
@@ -29,22 +20,25 @@ export class Article {
   })
   addedBy: User;
 
-  @Prop({ required: true, maxlength: 512, index: true })
-  title: string;
+  @Prop({
+    type: Types.ObjectId,
+    ref: 'Article',
+    required: true,
+    autopopulate: true,
+  })
+  article: Article;
 
-  @Prop({ required: true, maxlength: 16448, index: true })
+  @Prop({
+    type: [Types.ObjectId],
+    ref: 'Article',
+    required: true,
+  })
+  articles: Article[];
+
+  @Prop({ required: true, maxlength: 512, index: true })
   text: string;
 
-  @Prop({ type: [Types.ObjectId], default: [] }) // TODO ref claim
-  claims: Types.ObjectId[];
-
-  @Prop({ required: true, maxlength: 512, index: true })
-  sourceUrl: string;
-
-  @Prop({ default: 'article', enum: articleTypes })
-  sourceType: string;
-
-  @Prop({ required: true, default: 'en', index: true, enum: languages })
+  @Prop({ required: true, default: 'en', index: true })
   lang: string;
 
   @Prop({ default: 0 })
@@ -59,7 +53,7 @@ export class Article {
   }
 
   @Prop({ default: 0 })
-  nSaved: number;
+  nReviews: number;
 
   @Prop({ default: now() })
   createdAt: Date;
@@ -68,4 +62,4 @@ export class Article {
   updatedAt: Date;
 }
 
-export const ArticleSchema = SchemaFactory.createForClass(Article);
+export const ClaimSchema = SchemaFactory.createForClass(Claim);

@@ -6,7 +6,7 @@ import { Article, ArticleSchema } from './schemas/article.schema';
 import {
   SavedArticle,
   SavedArticleSchema,
-} from './schemas/saved-article.schema';
+} from '../saved-articles/schemas/saved-article.schema';
 
 @Module({
   imports: [
