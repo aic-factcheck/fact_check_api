@@ -8,9 +8,17 @@ import { ArticlesModule } from './articles/articles.module';
 import mongoConfig from './config/mongo.config';
 import authConfig from './config/auth.config';
 import appConfig from './config/app.config';
+import { RouterModule } from '@nestjs/core';
+import { SavedArticlesModule } from './saved-articles/saved-articles.module';
 
 @Module({
   imports: [
+    RouterModule.register([
+      {
+        path: 'articles',
+        module: ArticlesModule,
+      },
+    ]),
     ConfigModule.forRoot({
       isGlobal: true,
       load: [appConfig, authConfig, mongoConfig],
@@ -20,6 +28,7 @@ import appConfig from './config/app.config';
     UsersModule,
     DatabaseModule,
     ArticlesModule,
+    SavedArticlesModule,
   ],
   controllers: [],
   providers: [UniqueValidator],

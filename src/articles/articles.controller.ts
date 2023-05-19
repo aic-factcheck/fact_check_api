@@ -35,7 +35,6 @@ import { ArticleResponseType } from './interfaces/article-response.interface';
 
 @ApiTags('Articles')
 @Controller({
-  path: 'articles',
   version: '1',
 })
 export class ArticlesController {

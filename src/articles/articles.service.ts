@@ -9,10 +9,7 @@ import { UpdateArticleDto } from './dto/update-article.dto';
 import { ReplaceArticleDto } from './dto/replace-article.dto';
 import { User } from '../users/schemas/user.schema';
 import { ArticleResponseType } from './interfaces/article-response.interface';
-import {
-  SavedArticle,
-  // SavedArticleDocument,
-} from './schemas/saved-article.schema';
+import { SavedArticle } from './schemas/saved-article.schema';
 
 @Injectable()
 export class ArticlesService {

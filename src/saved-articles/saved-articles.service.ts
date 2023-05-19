@@ -1,7 +1,7 @@
 import { Model, Types } from 'mongoose';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Article } from './schemas/article.schema';
+import { Article } from '../articles/schemas/article.schema';
 import { User } from '../users/schemas/user.schema';
 import {
   SavedArticle,
@@ -9,7 +9,7 @@ import {
 } from './schemas/saved-article.schema';
 
 @Injectable()
-export class SavedArticleService {
+export class SavedArticlesService {
   constructor(
     @InjectModel(Article.name) private articleModel: Model<Article>,
     @InjectModel(SavedArticle.name)

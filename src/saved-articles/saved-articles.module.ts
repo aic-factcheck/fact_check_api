@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
-import { ArticlesService } from './articles.service';
-import { ArticlesController } from './articles.controller';
+import { SavedArticlesController } from './saved-articles.controller';
+import { SavedArticlesService } from './saved-articles.service';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Article, ArticleSchema } from './schemas/article.schema';
 import {
   SavedArticle,
   SavedArticleSchema,
 } from './schemas/saved-article.schema';
+import { Article, ArticleSchema } from '../articles/schemas/article.schema';
 
 @Module({
   imports: [
@@ -15,8 +15,8 @@ import {
       { name: SavedArticle.name, schema: SavedArticleSchema },
     ]),
   ],
-  providers: [ArticlesService],
-  controllers: [ArticlesController],
+  controllers: [SavedArticlesController],
+  providers: [SavedArticlesService],
   exports: [
     MongooseModule.forFeature([{ name: Article.name, schema: ArticleSchema }]),
     MongooseModule.forFeature([
@@ -24,4 +24,4 @@ import {
     ]),
   ],
 })
-export class ArticlesModule {}
+export class SavedArticlesModule {}

@@ -13,11 +13,11 @@ import MongooseClassSerializerInterceptor from '../utils/interceptors/mongoose-c
 import { PaginationParams } from '../utils/types/pagination-params';
 import { ParseObjectIdPipe } from '../utils/pipes/parse-object-id.pipe';
 import { Types } from 'mongoose';
-import { Article } from './schemas/article.schema';
+import { Article } from '../articles/schemas/article.schema';
 import { LoggedUser } from '../users/decorators/logged-user.decorator';
 import { User } from '../users/schemas/user.schema';
 import { SavedArticle } from './schemas/saved-article.schema';
-import { SavedArticleService } from './saved-articles.service';
+import { SavedArticlesService } from './saved-articles.service';
 
 @ApiTags('Save')
 @Controller({
@@ -27,7 +27,7 @@ import { SavedArticleService } from './saved-articles.service';
 @ApiBearerAuth()
 @UseInterceptors(MongooseClassSerializerInterceptor(SavedArticle))
 export class SavedArticlesController {
-  constructor(private readonly service: SavedArticleService) {}
+  constructor(private readonly service: SavedArticlesService) {}
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
