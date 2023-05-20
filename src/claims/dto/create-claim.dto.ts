@@ -15,8 +15,8 @@ export class CreateClaimDto {
   @IsString()
   text: string;
 
-  // @ApiProperty({ example: 'en' })
-  // @IsNotEmpty()
-  // @MaxLength(32)
-  // lang: string;
+  @ApiProperty({ example: 'en' })
+  @IsNotEmpty()
+  @MaxLength(32)
+  lang: string;
 }

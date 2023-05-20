@@ -4,7 +4,7 @@ import { _, some } from 'lodash';
 
 import { dbConnection, httpServer } from '../setup';
 
-describe('Articles API', () => {
+describe('Claims API', () => {
   const password = 'secret';
   let article1Id: string;
   // let adminId: string;
@@ -12,9 +12,11 @@ describe('Articles API', () => {
   // let user2Id: string;
   const claim1 = {
     text: 'Prvy claim hh nejaky nahodny text. Nema to ziadny zmysel, ale vsak to nie je podsatatne..',
+    lang: 'en',
   };
   const claim2 = {
     text: 'Second claim with random text.',
+    lang: 'en',
   };
   // const claim1Updated = {
   //   text: 'updated text of claim',
