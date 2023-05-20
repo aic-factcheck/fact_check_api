@@ -27,7 +27,7 @@ export class ArticlesService {
   async checkResourceAccess(user: User, _id: Types.ObjectId): Promise<boolean> {
     if (_.includes(user.roles, 'admin')) return true;
 
-    const article: Article = await this.articleModel.findOne({ _id });
+    const article: Article | null = await this.articleModel.findOne({ _id });
 
     if (!article) {
       throw new NotFoundException('Article not found');
@@ -77,7 +77,7 @@ export class ArticlesService {
       .countDocuments();
     const isSavedByUser: boolean = savedArticleCnt >= 1;
 
-    const article: ArticleDocument = await this.articleModel.findById(
+    const article: ArticleDocument | null = await this.articleModel.findById(
       articleId,
     );
     if (!article) {
@@ -90,9 +90,9 @@ export class ArticlesService {
   async findManyWithPagination(
     user: User,
     page = 1,
-    perPage?: number,
+    perPage = 20,
   ): Promise<ArticleResponseType[]> {
-    const articles: Article[] = await this.articleModel
+    const articles: Article[] | null = await this.articleModel
       .find()
       .limit(perPage)
       .skip(perPage * (page - 1));
@@ -121,15 +121,12 @@ export class ArticlesService {
     updateArticleDto: UpdateArticleDto,
   ): Promise<Article> {
     await this.checkResourceAccess(loggedUser, _id);
-    const updatedArticle: Article = await this.articleModel.findByIdAndUpdate(
-      _id,
-      updateArticleDto,
-      {
+    const updatedArticle: Article | null =
+      await this.articleModel.findByIdAndUpdate(_id, updateArticleDto, {
         returnOriginal: false,
-      },
-    );
+      });
     if (!updatedArticle) {
-      throw new NotFoundException(`Article #${updatedArticle._id} not found`);
+      throw new NotFoundException(`Article not found`);
     }
     return updatedArticle;
   }

@@ -7,6 +7,7 @@ import {
   SavedArticle,
   SavedArticleDocument,
 } from './schemas/saved-article.schema';
+import { NullableType } from 'src/utils/types/nullable.type';
 
 @Injectable()
 export class SavedArticlesService {
@@ -45,7 +46,7 @@ export class SavedArticlesService {
   async findManyWithPagination(
     user: User,
     page = 1,
-    perPage?: number,
+    perPage = 20,
   ): Promise<Article[]> {
     const savedArticles = await this.savedArticleModel
       .find({ addedBy: user._id })
@@ -58,7 +59,10 @@ export class SavedArticlesService {
       .skip(perPage * (page - 1));
   }
 
-  async unsave(user: User, articleId: Types.ObjectId): Promise<SavedArticle> {
+  async unsave(
+    user: User,
+    articleId: Types.ObjectId,
+  ): Promise<NullableType<SavedArticle>> {
     await this.articleModel.findOneAndUpdate(
       { _id: articleId },
       { $inc: { nSaved: -1 } },

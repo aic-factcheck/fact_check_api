@@ -19,7 +19,7 @@ export class ClaimsService {
   async checkResourceAccess(user: User, _id: Types.ObjectId): Promise<boolean> {
     if (_.includes(user.roles, 'admin')) return true;
 
-    const claim: Claim = await this.claimModel.findOne({ _id });
+    const claim: Claim | null = await this.claimModel.findOne({ _id });
 
     if (!claim) {
       throw new NotFoundException('Claim not found');
@@ -66,7 +66,7 @@ export class ClaimsService {
   async findManyWithPagination(
     articleId: Types.ObjectId,
     page = 1,
-    perPage?: number,
+    perPage = 20,
   ): Promise<Claim[]> {
     // TODO add current user's reviews
     return this.claimModel

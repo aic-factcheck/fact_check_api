@@ -33,7 +33,9 @@ export const IsArticleOwnerGuard = (paramId: string) => {
 
       if (_.includes(request.user.roles, 'admin')) return true;
 
-      const article: Article = await this.service.findByQuery({ _id });
+      const article: Article | null = await this.service.findByQuery({ _id });
+
+      if (!article) return false;
 
       if (article.addedBy._id !== request.user._id) return false;
 

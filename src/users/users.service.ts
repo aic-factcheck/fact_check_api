@@ -29,7 +29,7 @@ export class UsersService {
     return this.userModel.findById(_id).exec();
   }
 
-  async findManyWithPagination(page = 1, perPage?: number): Promise<User[]> {
+  async findManyWithPagination(page = 1, perPage = 20): Promise<User[]> {
     return this.userModel
       .find()
       .limit(perPage)
@@ -45,7 +45,7 @@ export class UsersService {
     const ommitRoles: string = _.includes(user.roles, 'admin') ? 'roles' : '';
     updateUserDto = omit(updateUserDto, ommitRoles);
 
-    const updatedUser: User = await this.userModel.findByIdAndUpdate(
+    const updatedUser: User | null = await this.userModel.findByIdAndUpdate(
       _id,
       updateUserDto,
       {

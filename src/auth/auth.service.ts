@@ -32,7 +32,7 @@ export class AuthService {
     private configService: ConfigService,
     @InjectModel(RefreshToken.name) private tokenModel: Model<RefreshToken>,
   ) {
-    this.jwtExpires = this.configService.get<number>('auth.expires');
+    this.jwtExpires = this.configService.getOrThrow<number>('auth.expires');
   }
 
   async createAccessToken(user: User): Promise<string> {
@@ -55,7 +55,7 @@ export class AuthService {
   }
 
   async findRefreshToken(user: User): Promise<string> {
-    const refreshToken: RefreshToken = await this.tokenModel.findOne({
+    const refreshToken: RefreshToken | null = await this.tokenModel.findOne({
       userId: user._id,
       email: user.email,
     });
@@ -90,7 +90,9 @@ export class AuthService {
   }
 
   async login(loginDto: AuthEmailLoginDto): Promise<AuthResponseType> {
-    const user: User = await this.usersService.findByEmail(loginDto.email);
+    const user: User | null = await this.usersService.findByEmail(
+      loginDto.email,
+    );
 
     if (!user) {
       throw new NotFoundException('Email not found');
@@ -123,7 +125,7 @@ export class AuthService {
   async refreshAccessToken(
     refreshTokenDto: RefreshTokenDto,
   ): Promise<AuthResponseType> {
-    const refreshToken: RefreshToken = await this.tokenModel.findOne({
+    const refreshToken: RefreshToken | null = await this.tokenModel.findOne({
       email: refreshTokenDto.email,
       refreshToken: refreshTokenDto.refreshToken,
     });
@@ -136,7 +138,7 @@ export class AuthService {
         HttpStatus.UNAUTHORIZED,
       );
     }
-    const user: User = await this.usersService.findOne({
+    const user: User | null = await this.usersService.findOne({
       _id: refreshToken.userId,
     });
     if (!user) {
