@@ -5,10 +5,10 @@ import { AppModule } from './app.module';
 import { NestFactory } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 import { useContainer } from 'class-validator';
-import { AllConfigType } from './config/config.type';
+import { AllConfigType } from './common/config/config.type';
 import validationOptions from './utils/validation-options';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { Logger } from 'nestjs-pino';
+// import { Logger } from 'nestjs-pino';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { bufferLogs: true });
@@ -36,7 +36,7 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document);
 
-  app.useLogger(app.get(Logger));
+  // app.useLogger(app.get(Logger));
   mongoose.set(
     // setup mongoose logger for dev mode only
     'debug',

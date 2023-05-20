@@ -2,8 +2,8 @@ import { Module } from '@nestjs/common';
 import { DatabaseService } from './database.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigService } from '@nestjs/config';
-import { Article, ArticleSchema } from '../articles/schemas/article.schema';
-import { Claim, ClaimSchema } from '../claims/schemas/claim.schema';
+import { Article, ArticleSchema } from '../../articles/schemas/article.schema';
+import { Claim, ClaimSchema } from '../../claims/schemas/claim.schema';
 
 @Module({
   imports: [

@@ -7,10 +7,11 @@ import { Test } from '@nestjs/testing';
 import { ValidationPipe } from '@nestjs/common';
 import { useContainer } from 'class-validator';
 import { Connection } from 'mongoose';
-import { DatabaseService } from '../src/database/database.service';
+import { DatabaseService } from '../src/common/database/database.service';
 import validationOptions from '../src/utils/validation-options';
 import { ConfigModule } from '@nestjs/config';
-import { DatabaseModule } from '../src/database/database.module';
+import { DatabaseModule } from '../src/common/database/database.module';
+// import { Logger } from 'nestjs-pino';
 
 export let app: NestExpressApplication;
 export let dbConnection: Connection;
@@ -35,6 +36,7 @@ async function initServer() {
   //added for custom validator
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
   app.useGlobalPipes(new ValidationPipe(validationOptions));
+  // app.useLogger(app.get(Logger));
 
   await app.init();
   dbConnection = moduleRef.get<DatabaseService>(DatabaseService).getDbHandle();

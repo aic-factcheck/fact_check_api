@@ -22,7 +22,7 @@ import { LoggerModule } from 'nestjs-pino';
                       // messageFormat:
                       //   '{req.headers.x-correlation-id} [{context}] {msg}',
                       // ignore: 'pid,hostname,context,req,res,responseTime',
-                      ignore: 'res.headers,req.headers',
+                      ignore: 'res,req,pid',
                       // errorLikeObjectKeys: ['err', 'error'],
                     },
                   }
