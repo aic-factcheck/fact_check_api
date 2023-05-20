@@ -1,0 +1,10 @@
+/**
+ * Vote types
+ */
+export enum VoteTypes {
+  TRUE = 'TRUE',
+  PARTIALLY_TRUE = 'PARTIALLY_TRUE',
+  INCONCLUSIVE = 'INCONCLUSIVE',
+  NON_VERIFIABLE = 'NON_VERIFIABLE',
+  FALSE = 'FALSE',
+}

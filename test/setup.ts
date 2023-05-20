@@ -33,7 +33,7 @@ async function initServer() {
 
   // const configService = app.get(ConfigService<AllConfigType>);
   app.enableShutdownHooks();
-  //added for custom validator
+  // added for custom validator
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
   app.useGlobalPipes(new ValidationPipe(validationOptions));
   // app.useLogger(app.get(Logger));

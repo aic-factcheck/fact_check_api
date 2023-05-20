@@ -12,6 +12,7 @@ import { RouterModule } from '@nestjs/core';
 import { SavedArticlesModule } from './saved-articles/saved-articles.module';
 import { ClaimsModule } from './claims/claims.module';
 // import { PinoLoggerModule } from './common/logger/logger.module';
+import { ReviewsModule } from './reviews/reviews.module';
 
 @Module({
   imports: [
@@ -23,6 +24,12 @@ import { ClaimsModule } from './claims/claims.module';
           {
             path: '/:articleId/claims',
             module: ClaimsModule,
+            children: [
+              {
+                path: '/:claimId/reviews',
+                module: ReviewsModule,
+              },
+            ],
           },
         ],
       },
@@ -38,6 +45,7 @@ import { ClaimsModule } from './claims/claims.module';
     ArticlesModule,
     SavedArticlesModule,
     ClaimsModule,
+    ReviewsModule,
     // PinoLoggerModule,
   ],
   controllers: [],

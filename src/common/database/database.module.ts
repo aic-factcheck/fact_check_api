@@ -4,6 +4,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigService } from '@nestjs/config';
 import { Article, ArticleSchema } from '../../articles/schemas/article.schema';
 import { Claim, ClaimSchema } from '../../claims/schemas/claim.schema';
+import { Review, ReviewSchema } from '../../reviews/schemas/review.schema';
 
 @Module({
   imports: [
@@ -30,6 +31,15 @@ import { Claim, ClaimSchema } from '../../claims/schemas/claim.schema';
         name: Claim.name,
         useFactory: () => {
           const schema = ClaimSchema;
+          // eslint-disable-next-line @typescript-eslint/no-var-requires
+          schema.plugin(require('mongoose-autopopulate'));
+          return schema;
+        },
+      },
+      {
+        name: Review.name,
+        useFactory: () => {
+          const schema = ReviewSchema;
           // eslint-disable-next-line @typescript-eslint/no-var-requires
           schema.plugin(require('mongoose-autopopulate'));
           return schema;
