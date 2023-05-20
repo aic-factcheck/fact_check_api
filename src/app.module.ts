@@ -1,4 +1,4 @@
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { UsersModule } from './users/users.module';
 import { UniqueValidator } from './utils/validators/unique-validator';
 import { ConfigModule } from '@nestjs/config';
@@ -11,7 +11,7 @@ import appConfig from './config/app.config';
 import { RouterModule } from '@nestjs/core';
 import { SavedArticlesModule } from './saved-articles/saved-articles.module';
 import { ClaimsModule } from './claims/claims.module';
-import { LoggerMiddleware } from './utils/middlewares/logger.middleware';
+import { PinoLoggerModule } from './logger/logger.module';
 
 @Module({
   imports: [
@@ -38,12 +38,9 @@ import { LoggerMiddleware } from './utils/middlewares/logger.middleware';
     ArticlesModule,
     SavedArticlesModule,
     ClaimsModule,
+    PinoLoggerModule,
   ],
   controllers: [],
   providers: [UniqueValidator],
 })
-export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer.apply(LoggerMiddleware).forRoutes('*');
-  }
-}
+export class AppModule {}
