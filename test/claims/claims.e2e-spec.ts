@@ -7,19 +7,20 @@ import { dbConnection, httpServer } from '../setup';
 describe('Articles API', () => {
   const password = 'secret';
   let article1Id: string;
-  let adminId: string;
-  let user1Id: string;
-  let user2Id: string;
+  // let adminId: string;
+  // let user1Id: string;
+  // let user2Id: string;
   const claim1 = {
     text: 'Prvy claim hh nejaky nahodny text. Nema to ziadny zmysel, ale vsak to nie je podsatatne..',
   };
   const claim2 = {
     text: 'Second claim with random text.',
   };
-  const claim1Updated = {
-    text: 'updated text of claim',
-  };
+  // const claim1Updated = {
+  //   text: 'updated text of claim',
+  // };
   let claim1Id;
+  // let claim2Id;
 
   const admin = {
     email: 'peter.parker@admin.com',
@@ -43,7 +44,7 @@ describe('Articles API', () => {
     roles: ['user'],
   };
 
-  let adminAccessToken: string;
+  // let adminAccessToken: string;
   let user1AccessToken: string;
   let user2AccessToken: string;
 
@@ -69,14 +70,14 @@ describe('Articles API', () => {
         .send(user1)
         .expect(201);
       user1AccessToken = userRes.body.token.accessToken;
-      user1Id = userRes.body.user._id;
+      // user1Id = userRes.body.user._id;
 
       userRes = await request(httpServer)
         .post('/auth/register')
         .send(user2)
         .expect(201);
       user2AccessToken = userRes.body.token.accessToken;
-      user2Id = userRes.body.user._id;
+      // user2Id = userRes.body.user._id;
 
       await request(httpServer).post('/auth/register').send(admin).expect(201);
       await dbConnection
@@ -90,8 +91,8 @@ describe('Articles API', () => {
         .post('/auth/login')
         .send(admin)
         .expect(201);
-      adminId = userRes.body.user._id;
-      adminAccessToken = userRes.body.token.accessToken;
+      // adminId = userRes.body.user._id;
+      // adminAccessToken = userRes.body.token.accessToken;
     });
 
     it('Should create articles for testing claims', async () => {
@@ -126,10 +127,11 @@ describe('Articles API', () => {
     it('should create a new article', () => {
       return request(httpServer)
         .post(`/articles/${article1Id}/claims`)
-        .set('Authorization', `Bearer ${user2AccessToken}`)
+        .auth(user2AccessToken, { type: 'bearer' })
         .send(claim2)
         .expect(HttpStatus.CREATED)
         .then((res) => {
+          // claim2Id = res.body._id;
           expect(res.body).toHaveProperty('_id');
           expect(res.body).toHaveProperty('createdAt');
           // expect(res.body.addedBy._id).toEqual(user2Id);
@@ -162,67 +164,61 @@ describe('Articles API', () => {
     });
   });
 
-  // describe('GET /articles/:articleId/claims', async () => {
-  //   it('should list claims for article', async () => {
-  //     const xArticles = await Article.find({});
+  describe('GET /articles/:articleId/claims', () => {
+    it('should list claims for article', async () => {
+      return request(httpServer)
+        .get(`/articles/${article1Id}/claims`)
+        .auth(user1AccessToken, { type: 'bearer' })
+        .expect(HttpStatus.OK)
+        .then(async (res) => {
+          const includesClaim1 = some(res.body, claim1);
+          const includesClaim2 = some(res.body, claim2);
 
-  //     return request(httpServer)
-  //       .get(`/articles/${xArticles[0]._id}/claims`)
-  //       .auth(user1AccessToken, { type: 'bearer' })
-  //       .expect(HttpStatus.OK)
-  //       .then(async (res) => {
-  //         const includesClaim1 = some(res.body, claim1);
-  //         const includesClaim2 = some(res.body, claim2);
+          expect(res.body).toBeInstanceOf(Array);
+          expect(res.body.length).toEqual(2);
+          expect(includesClaim1).toEqual(true);
+          expect(includesClaim2).toEqual(true);
 
-  //         expect(res.body).to.be.an('array');
-  //         expect(res.body).to.have.lengthOf(2);
-  //         expect(includesClaim1).to.be.true;
-  //         expect(includesClaim2).to.be.true;
+          expect(res.body[0]).toHaveProperty('_id');
+          expect(res.body[0]).toHaveProperty('text');
+          expect(res.body[0]).toHaveProperty('addedBy');
+          expect(res.body[0].nBeenVoted).toEqual(0);
 
-  //         expect(res.body[0]).toHaveProperty('_id');
-  //         expect(res.body[0]).toHaveProperty('text');
-  //         expect(res.body[0]).toHaveProperty('addedBy');
-  //         expect(res.body[0].nBeenVoted).toEqual(0);
+          expect(res.body[0].addedBy).toHaveProperty('firstName');
+          expect(res.body[0].addedBy).toHaveProperty('lastName');
+          expect(res.body[0].addedBy).toHaveProperty('email');
+          expect(res.body[0].addedBy).toHaveProperty('_id');
+        });
+    });
+  });
 
-  //         expect(res.body[0].addedBy).toHaveProperty('firstName');
-  //         expect(res.body[0].addedBy).toHaveProperty('lastName');
-  //         expect(res.body[0].addedBy).toHaveProperty('email');
-  //         expect(res.body[0].addedBy).toHaveProperty('_id');
-  //       });
-  //   });
-  // });
+  describe('GET /articles/:articleId/claims/:claimId', () => {
+    it('should get selected claim for article', () => {
+      return request(httpServer)
+        .get(`/articles/${article1Id}/claims/${claim1Id}`)
+        .auth(user1AccessToken, { type: 'bearer' })
+        .expect(HttpStatus.OK)
+        .then(async (res) => {
+          expect(res.body).toBeInstanceOf(Object);
 
-  // describe('GET /articles/:articleId/claims/:claimId', async () => {
-  //   const xArticles = await Article.find({});
-  //   const xClaims = await Claim.find({});
+          expect(res.body.addedBy).toHaveProperty('firstName');
+          expect(res.body.addedBy).toHaveProperty('lastName');
+          expect(res.body.addedBy).toHaveProperty('email');
+          expect(res.body.addedBy).toHaveProperty('_id');
+          expect(res.body.nBeenVoted).toEqual(0);
 
-  //   it('should get selected claim for article', () => {
-  //     return request(httpServer)
-  //       .get(`/articles/${xArticles[0]._id}/claims/${xClaims[0]._id}`)
-  //       .auth(user1AccessToken, { type: 'bearer' })
-  //       .expect(HttpStatus.OK)
-  //       .then(async (res) => {
-  //         expect(res.body).to.be.an('object');
-
-  //         expect(res.body.addedBy).toHaveProperty('firstName');
-  //         expect(res.body.addedBy).toHaveProperty('lastName');
-  //         expect(res.body.addedBy).toHaveProperty('email');
-  //         expect(res.body.addedBy).toHaveProperty('_id');
-  //         expect(res.body.nBeenVoted).toEqual(0);
-
-  //         expect(res.body).to.not.have.a.property('articleId');
-  //         expect(res.body.article).toHaveProperty('_id');
-  //         expect(res.body.article1Id).toEqual(xArticles[0]._id);
-  //       });
-  //   });
-  // });
+          expect(res.body.article).toHaveProperty('_id');
+          // expect(res.body.article._id).toEqual(article1Id);
+        });
+    });
+  });
 
   // describe('PUT /articles/:articleId/claims/:claimId', () => {
   //   it('should replace claim', async () => {
   //     const xArticles = await Article.find({});
 
   //     return request(httpServer)
-  //       .put(`/articles/${xArticles[0]._id}/claims/${claim1Id}`)
+  //       .put(`/articles/${article1Id}/claims/${claim1Id}`)
   //       .auth(user1AccessToken, { type: 'bearer' })
   //       .send(claim1Updated)
   //       .expect(HttpStatus.OK)
@@ -231,8 +227,8 @@ describe('Articles API', () => {
 
   //         expect(res.body._id).toEqual(claim1Id);
   //         expect(res.body.text).toEqual(claim1Updated.text);
-  //         expect(res.body.article1Id).toEqual(xArticles[0]._id.toString());
-  //         expect(res.body.articles).to.include(xArticles[0]._id.toString());
+  //         expect(res.body.article1Id).toEqual(article1Id.toString());
+  //         expect(res.body.articles).to.include(article1Id.toString());
 
   //         expect(res.body.addedBy._id).toEqual(user._id);
   //         expect(res.body.addedBy).toHaveProperty('firstName');
@@ -245,7 +241,7 @@ describe('Articles API', () => {
   //     const xArticles = await Article.find({});
 
   //     return request(httpServer)
-  //       .put(`/articles/${xArticles[0]._id}/claims/${claim1Id}`)
+  //       .put(`/articles/${article1Id}/claims/${claim1Id}`)
   //       .auth(user1AccessToken, { type: 'bearer' })
   //       .send(_.omit(claim1Updated, ['text']))
   //       .expect(HttpStatus.BAD_REQUEST)
@@ -265,7 +261,7 @@ describe('Articles API', () => {
   //     };
 
   //     return request(httpServer)
-  //       .put(`/articles/${xArticles[0]._id}/claims/${claim1Id}`)
+  //       .put(`/articles/${article1Id}/claims/${claim1Id}`)
   //       .auth(user1AccessToken, { type: 'bearer' })
   //       .send(newClaimToUpdate)
   //       .expect(HttpStatus.BAD_REQUEST)
@@ -284,7 +280,7 @@ describe('Articles API', () => {
   //     const xArticles = await Article.find({});
 
   //     return request(httpServer)
-  //       .put(`/articles/${xArticles[0]._id}/claims/tenerife`)
+  //       .put(`/articles/${article1Id}/claims/tenerife`)
   //       .auth(user1AccessToken, { type: 'bearer' })
   //       .expect(HttpStatus.NOT_FOUND)
   //       .then((res) => {
@@ -297,8 +293,8 @@ describe('Articles API', () => {
   //     const xArticles = await Article.find({});
 
   //     return request(httpServer)
-  //       .put(`/articles/${xArticles[0]._id}/claims/${claim1Id}`)
-  //       .set('Authorization', `Bearer ${user2AccessToken}`)
+  //       .put(`/articles/${article1Id}/claims/${claim1Id}`)
+  //       .auth(user2AccessToken, { type: 'bearer' })
   //       .send(claim1Updated)
   //       .expect(HttpStatus.FORBIDDEN)
   //       .then((res) => {
@@ -316,7 +312,7 @@ describe('Articles API', () => {
   //     const text = 'new text field';
 
   //     return request(httpServer)
-  //       .patch(`/articles/${xArticles[0]._id}/claims/${claim1Id}`)
+  //       .patch(`/articles/${article1Id}/claims/${claim1Id}`)
   //       .auth(user1AccessToken, { type: 'bearer' })
   //       .send({ text })
   //       .expect(HttpStatus.OK)
@@ -327,8 +323,8 @@ describe('Articles API', () => {
   //         expect(res.body.nReviews).toEqual(0);
 
   //         expect(res.body.text).toEqual(text);
-  //         expect(res.body.article1Id).toEqual(xArticles[0]._id.toString());
-  //         expect(res.body.articles).to.include(xArticles[0]._id.toString());
+  //         expect(res.body.article1Id).toEqual(article1Id.toString());
+  //         expect(res.body.articles).to.include(article1Id.toString());
 
   //         expect(res.body.addedBy._id).toEqual(user._id);
   //         expect(res.body.addedBy).toHaveProperty('firstName');
@@ -341,7 +337,7 @@ describe('Articles API', () => {
   //     const xArticles = await Article.find({});
 
   //     return request(httpServer)
-  //       .patch(`/articles/${xArticles[0]._id}/claims/${claim1Id}`)
+  //       .patch(`/articles/${article1Id}/claims/${claim1Id}`)
   //       .auth(user1AccessToken, { type: 'bearer' })
   //       .send()
   //       .expect(HttpStatus.OK)
@@ -354,7 +350,7 @@ describe('Articles API', () => {
   //     const xArticles = await Article.find({});
 
   //     return request(httpServer)
-  //       .patch(`/articles/${xArticles[0]._id}/claims/arrecife`)
+  //       .patch(`/articles/${article1Id}/claims/arrecife`)
   //       .auth(user1AccessToken, { type: 'bearer' })
   //       .expect(HttpStatus.NOT_FOUND)
   //       .then((res) => {
@@ -367,8 +363,8 @@ describe('Articles API', () => {
   //     const xArticles = await Article.find({});
 
   //     return request(httpServer)
-  //       .patch(`/articles/${xArticles[0]._id}/claims/${claim1Id}`)
-  //       .set('Authorization', `Bearer ${user2AccessToken}`)
+  //       .patch(`/articles/${article1Id}/claims/${claim1Id}`)
+  //       .auth(user2AccessToken, { type: 'bearer' })
   //       .expect(HttpStatus.FORBIDDEN)
   //       .then((res) => {
   //         expect(res.body.code).toEqual(HttpStatus.FORBIDDEN);
@@ -379,62 +375,47 @@ describe('Articles API', () => {
   //   });
   // });
 
-  // describe('DELETE /articles/:articleId/claims/:claimId', () => {
-  //   it('should report error when logged user is not the same as the owner', async () => {
-  //     const xArticles = await Article.find({});
+  describe('DELETE /articles/:articleId/claims/:claimId', () => {
+    it('should report error when logged user is not the same as the owner', async () => {
+      return request(httpServer)
+        .delete(`/articles/${article1Id}/claims/${claim1Id}`)
+        .auth(user2AccessToken, { type: 'bearer' })
+        .expect(HttpStatus.FORBIDDEN);
+    });
 
-  //     return request(httpServer)
-  //       .delete(`/articles/${xArticles[0]._id}/claims/${claim1Id}`)
-  //       .set('Authorization', `Bearer ${user2AccessToken}`)
-  //       .expect(HttpStatus.FORBIDDEN)
-  //       .then((res) => {
-  //         expect(res.body.code).toEqual(HttpStatus.FORBIDDEN);
-  //         expect(res.body.message).toEqual(
-  //           'Forbidden to perform this action over selected resource.',
-  //         );
-  //       });
-  //   });
+    it('should delete claim', async () => {
+      return request(httpServer)
+        .delete(`/articles/${article1Id}/claims/${claim1Id}`)
+        .auth(user1AccessToken, { type: 'bearer' })
+        .expect(HttpStatus.NO_CONTENT)
+        .then(() => request(httpServer).get('/articles'))
+        .then(async () => {
+          expect(
+            (await dbConnection.collection('claims').find().toArray()).length,
+          ).toEqual(1);
+        });
+    });
 
-  //   it('should delete claim', async () => {
-  //     const xArticles = await Article.find({});
-
-  //     return request(httpServer)
-  //       .delete(`/articles/${xArticles[0]._id}/claims/${claim1Id}`)
-  //       .auth(user1AccessToken, { type: 'bearer' })
-  //       .expect(HttpStatus.NO_CONTENT)
-  //       .then(() => request(httpServer).get('/articles'))
-  //       .then(async () => {
-  //         const articles = await Article.find({});
-  //         expect(articles).to.have.lengthOf(1);
-  //       });
-  //   });
-
-  //   it('should report error "Claim does not exist" when claim does not exists', async () => {
-  //     const xArticles = await Article.find({});
-
-  //     return request(httpServer)
-  //       .delete(`/articles/${xArticles[0]._id}/claims/maspalomas`)
-  //       .auth(user1AccessToken, { type: 'bearer' })
-  //       .expect(HttpStatus.NOT_FOUND)
-  //       .then((res) => {
-  //         expect(res.body.code).toEqual(404);
-  //         expect(res.body.message).toEqual('Claim does not exist');
-  //       });
-  //   });
-  // });
+    it('should report error "Claim does not exist" when claim does not exists', async () => {
+      return request(httpServer)
+        .delete(`/articles/${article1Id}/claims/6464f39798e10e49d6bead2a`)
+        .auth(user1AccessToken, { type: 'bearer' })
+        .expect(HttpStatus.NOT_FOUND);
+    });
+  });
 
   // describe('GET /users/:userId/claims', () => {
   //   it('should list claims of user', () => {
   //     return request(httpServer)
   //       .get(`/users/${user2._id}/claims`)
-  //       .set('Authorization', `Bearer ${user2AccessToken}`)
+  //       .auth(user2AccessToken, { type: 'bearer' })
   //       .expect(HttpStatus.OK)
   //       .then(async (res) => {
   //         const includesArticle2 = some(res.body, claim2);
 
-  //         expect(res.body).to.be.an('array');
-  //         expect(res.body).to.have.lengthOf(1);
-  //         expect(includesArticle2).to.be.true;
+  //         expect(res.body).toEqual(an)('array');
+  //         expect(res.body).toEqual(1);
+  //         expect(includesArticle2).toEqual(true);
 
   //         expect(res.body[0].addedBy._id).toEqual(user2._id);
   //         expect(res.body[0].addedBy).not.toHaveProperty('password');
@@ -444,7 +425,7 @@ describe('Articles API', () => {
   //   // it('should return forbidden for listing other users claims', () => {
   //   //   return request(httpServer)
   //   //     .get(`/users/${user._id}/claims`)
-  //   //     .set('Authorization', `Bearer ${user2AccessToken}`)
+  //   //     .auth(user2AccessToken, { type: 'bearer' })
   //   //     .expect(HttpStatus.FORBIDDEN);
   //   // });
   // });

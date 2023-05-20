@@ -42,11 +42,7 @@ export class ClaimsController {
 
   @Post()
   @ApiBearerAuth()
-  @ApiParam({
-    name: 'articleId',
-    type: String,
-    example: '645cacbfa6693d8100b2d60a',
-  })
+  @ApiParam({ name: 'articleId', type: String })
   @HttpCode(HttpStatus.CREATED)
   create(
     @Body() createArticleDto: CreateClaimDto,
@@ -59,11 +55,7 @@ export class ClaimsController {
   @Get()
   @Public()
   @ApiBearerAuth()
-  @ApiParam({
-    name: 'articleId',
-    type: String,
-    example: '645cacbfa6693d8100b2d60a',
-  })
+  @ApiParam({ name: 'articleId', type: String })
   @HttpCode(HttpStatus.OK)
   @ApiQuery({ name: 'page', required: false, type: Number, example: 1 })
   @ApiQuery({ name: 'perPage', required: false, type: Number, example: 20 })
@@ -81,16 +73,8 @@ export class ClaimsController {
   @Get(':claimId')
   @Public()
   @ApiBearerAuth()
-  @ApiParam({
-    name: 'articleId',
-    type: String,
-    example: '645cacbfa6693d8100b2d60a',
-  })
-  @ApiParam({
-    name: 'claimId',
-    type: String,
-    example: '645cacbfa6693d8100b2d60a',
-  })
+  @ApiParam({ name: 'articleId', type: String })
+  @ApiParam({ name: 'claimId', type: String })
   @HttpCode(HttpStatus.OK)
   async findOne(
     @Param('claimId', new ParseObjectIdPipe()) claimId: Types.ObjectId,
@@ -105,7 +89,6 @@ export class ClaimsController {
   // @ApiParam({
   //   name: 'articleId',
   //   type: String,
-  //   example: '645cacbfa6693d8100b2d60a',
   // })
   // @ApiOperation({ summary: 'Updates specified fields of existing Article' })
   // @ApiBody({ type: ReplaceClaimDto })
@@ -124,7 +107,6 @@ export class ClaimsController {
   // @ApiParam({
   //   name: 'articleId',
   //   type: String,
-  //   example: '645cacbfa6693d8100b2d60a',
   // })
   // @ApiParam({ name: 'id', type: String, example: '645cacbfa6693d8100b2d60a' })
   // @HttpCode(HttpStatus.OK)
@@ -138,21 +120,14 @@ export class ClaimsController {
 
   @Delete(':claimId')
   @ApiBearerAuth()
-  @ApiParam({
-    name: 'articleId',
-    type: String,
-    example: '645cacbfa6693d8100b2d60a',
-  })
-  @ApiParam({
-    name: 'claimId',
-    type: String,
-    example: '645cacbfa6693d8100b2d60a',
-  })
+  @ApiParam({ name: 'articleId', type: String })
+  @ApiParam({ name: 'claimId', type: String })
   @HttpCode(HttpStatus.NO_CONTENT)
   async delete(
     @Param('claimId', new ParseObjectIdPipe()) claimId: Types.ObjectId,
     @Param('articleId', new ParseObjectIdPipe()) articleId: Types.ObjectId,
+    @LoggedUser() user: User,
   ) {
-    return this.claimService.delete(articleId, claimId);
+    return this.claimService.delete(user, articleId, claimId);
   }
 }

@@ -55,7 +55,7 @@ export class SavedArticlesController {
     if (perPage > 50) {
       perPage = 50;
     }
-    return await this.service.findManyWithPagination(user, page, perPage);
+    return this.service.findManyWithPagination(user, page, perPage);
   }
 
   @Delete()

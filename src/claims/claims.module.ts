@@ -12,6 +12,7 @@ import { MongooseModule } from '@nestjs/mongoose';
   providers: [ClaimsService],
   exports: [
     MongooseModule.forFeature([{ name: Claim.name, schema: ClaimSchema }]),
+    ClaimsService,
   ],
 })
 export class ClaimsModule {}

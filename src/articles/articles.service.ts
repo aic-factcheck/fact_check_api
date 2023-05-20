@@ -1,6 +1,11 @@
 import { _ } from 'lodash';
 import { Model, Types } from 'mongoose';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { NullableType } from '../utils/types/nullable.type';
 import { Article, ArticleDocument } from './schemas/article.schema';
@@ -18,6 +23,28 @@ export class ArticlesService {
     @InjectModel(SavedArticle.name)
     private savedArticleModel: Model<SavedArticle>,
   ) {}
+
+  async checkResourceAccess(user: User, _id: Types.ObjectId): Promise<boolean> {
+    if (_.includes(user.roles, 'admin')) return true;
+
+    const article: Article = await this.articleModel.findOne({ _id });
+
+    if (!article) {
+      throw new NotFoundException('Article not found');
+    }
+
+    if (!_.isEqual(article.addedBy._id, user._id)) {
+      throw new HttpException(
+        {
+          statusCode: HttpStatus.FORBIDDEN,
+          message: 'Forbidden',
+        },
+        HttpStatus.FORBIDDEN,
+      );
+    }
+
+    return true;
+  }
 
   async create(
     loggedUser: User,
@@ -90,8 +117,10 @@ export class ArticlesService {
 
   async update(
     _id: Types.ObjectId,
+    loggedUser: User,
     updateArticleDto: UpdateArticleDto,
   ): Promise<Article> {
+    await this.checkResourceAccess(loggedUser, _id);
     const updatedArticle: Article = await this.articleModel.findByIdAndUpdate(
       _id,
       updateArticleDto,
@@ -110,21 +139,20 @@ export class ArticlesService {
     loggedUser: User,
     articleDto: ReplaceArticleDto,
   ): Promise<Article> {
-    return await this.articleModel.findByIdAndUpdate(
-      _id,
-      _.assign(articleDto, { addedBy: loggedUser._id }),
-      {
-        override: true,
-        upsert: true,
-        returnOriginal: false,
-      },
-    );
+    await this.checkResourceAccess(loggedUser, _id);
+    return this.articleModel.findByIdAndUpdate(_id, articleDto, {
+      override: true,
+      upsert: true,
+      returnOriginal: false,
+    });
   }
 
-  async delete(articleId: Types.ObjectId): Promise<Article> {
-    const deletedArticle = await this.articleModel.findByIdAndDelete(articleId);
+  async delete(_id: Types.ObjectId, loggedUser: User): Promise<Article> {
+    await this.checkResourceAccess(loggedUser, _id);
+
+    const deletedArticle = await this.articleModel.findByIdAndDelete(_id);
     if (!deletedArticle) {
-      throw new NotFoundException(`Article #${articleId} not found`);
+      throw new NotFoundException(`Article #${_id} not found`);
     }
     return deletedArticle;
   }

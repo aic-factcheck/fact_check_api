@@ -26,8 +26,16 @@ describe('Articles API', () => {
     lastName: 'Since',
     roles: ['user'],
   };
+  const user2 = {
+    email: 'user2@user.com',
+    password,
+    firstName: 'Secret',
+    lastName: 'Since',
+    roles: ['user'],
+  };
   let adminAccessToken: string;
   let userAccessToken: string;
+  let user2AccessToken: string;
 
   const article1 = {
     title: 'first title',
@@ -75,6 +83,12 @@ describe('Articles API', () => {
         .expect(201);
       // userId = res.body.addedBy._id;
       userAccessToken = res.body.token.accessToken;
+
+      res = await request(httpServer)
+        .post('/auth/register')
+        .send(user2)
+        .expect(201);
+      user2AccessToken = res.body.token.accessToken;
     });
   });
 
@@ -126,7 +140,6 @@ describe('Articles API', () => {
         const { statusCode, errors } = res.body;
         expect(statusCode).toEqual(HttpStatus.UNPROCESSABLE_ENTITY);
         expect(errors).toHaveProperty('text');
-        // expect(errors.text).toEqual('"text" is required');
       });
   });
 
@@ -140,7 +153,6 @@ describe('Articles API', () => {
         const { statusCode, errors } = res.body;
         expect(statusCode).toEqual(HttpStatus.UNPROCESSABLE_ENTITY);
         expect(errors).toHaveProperty('lang');
-        // expect(messages).to.include('"lang" is required');
       });
   });
 
@@ -154,7 +166,6 @@ describe('Articles API', () => {
         const { statusCode, errors } = res.body;
         expect(statusCode).toEqual(HttpStatus.UNPROCESSABLE_ENTITY);
         expect(errors).toHaveProperty('sourceType');
-        // expect(messages).to.include('"sourceType" is required');
       });
   });
 
@@ -232,8 +243,6 @@ describe('Articles API', () => {
         .send(updatedArticle)
         .expect(HttpStatus.OK)
         .then((res) => {
-          // expect(res.body).toMatchObject(updatedArticle);
-
           expect(res.body._id).toEqual(article1Id);
           expect(res.body.text).toEqual(updatedArticle.text);
           expect(res.body.sourceUrl).toEqual(updatedArticle.sourceUrl);
@@ -298,39 +307,53 @@ describe('Articles API', () => {
         });
     });
 
-    // it('should report error "Article does not exist" when article does not exists', () => {
-    //   return request(httpServer)
-    //     .put('/articles/6464f39798e10e49d6bead2a')
-    //     .auth(userAccessToken, { type: 'bearer' })
-    //     .send(article1)
-    //     .expect(HttpStatus.NOT_FOUND)
-    //     .then((res) => {
-    //       expect(res.body.statusCode).toEqual(404);
-    //       expect(res.body.message).toEqual('Article does not exist');
-    //     });
-    // });
+    it('should report error "Article does not exist" when article does not exists', () => {
+      return request(httpServer)
+        .put('/articles/6464f39798e10e49d6bead2a')
+        .auth(userAccessToken, { type: 'bearer' })
+        .send(article1)
+        .expect(HttpStatus.NOT_FOUND)
+        .then((res) => {
+          expect(res.body.statusCode).toEqual(404);
+          expect(res.body.message).toEqual('Article not found');
+        });
+    });
 
-    // it('should report error when logged user is not the owner of article', async () => {
-    //   const updatedArticle = {
-    //     text: 'This is an updated article',
-    //     sourceUrl: 'https://www.update.com/',
-    //     sourceType: 'article',
-    //     lang: 'cz',
-    //     title: 'Updated Article',
-    //   };
+    it('should report error when logged user is not the owner of article', async () => {
+      const updatedArticle = {
+        text: 'This is an updated article',
+        sourceUrl: 'https://www.update.com/',
+        sourceType: 'article',
+        lang: 'cz',
+        title: 'Updated Article',
+      };
 
-    //   return request(httpServer)
-    //     .put(`/articles/${article1Id}`)
-    //     .auth(userAccessToken, { type: 'bearer' })
-    //     .send(updatedArticle)
-    //     .expect(HttpStatus.FORBIDDEN)
-    //     .then((res) => {
-    //       expect(res.body.code).toEqual(HttpStatus.FORBIDDEN);
-    //       expect(res.body.message).toEqual(
-    //         'Forbidden to perform this action over selected resource.',
-    //       );
-    //     });
-    // });
+      return request(httpServer)
+        .put(`/articles/${article1Id}`)
+        .auth(user2AccessToken, { type: 'bearer' })
+        .send(updatedArticle)
+        .expect(HttpStatus.FORBIDDEN)
+        .then((res) => {
+          expect(res.body.statusCode).toEqual(HttpStatus.FORBIDDEN);
+          expect(res.body.message).toEqual('Forbidden');
+        });
+    });
+
+    it('admin can access users resource', async () => {
+      const updatedArticle = {
+        text: 'This is an updated article',
+        sourceUrl: 'https://www.update.com/',
+        sourceType: 'article',
+        lang: 'cz',
+        title: 'New updated title',
+      };
+
+      return request(httpServer)
+        .put(`/articles/${article1Id}`)
+        .auth(adminAccessToken, { type: 'bearer' })
+        .send(updatedArticle)
+        .expect(HttpStatus.OK);
+    });
   });
 
   describe('PATCH /articles/:articleId', () => {
@@ -380,29 +403,39 @@ describe('Articles API', () => {
         });
     });
 
-    // it('should report error "Article does not exist" when article does not exists', () => {
-    //   return request(httpServer)
-    //     .patch('/articles/laspalmas')
-    //     .auth(userAccessToken, { type: 'bearer' })
-    //     .expect(HttpStatus.NOT_FOUND)
-    //     .then((res) => {
-    //       expect(res.body.code).toEqual(404);
-    //       expect(res.body.message).toEqual('Article does not exist');
-    //     });
-    // });
+    it('should report error "Article does not exist" when article does not exists', () => {
+      return request(httpServer)
+        .patch('/articles/6464f39798e10e49d6bead2a')
+        .auth(userAccessToken, { type: 'bearer' })
+        .send()
+        .expect(HttpStatus.NOT_FOUND);
+    });
 
-    // it('should report error when logged user is not the same as the owner', async () => {
-    //   return request(httpServer)
-    //     .patch(`/articles/${article1Id}`)
-    //     .auth(userAccessToken, { type: 'bearer' })
-    //     .expect(HttpStatus.FORBIDDEN)
-    //     .then((res) => {
-    //       expect(res.body.code).toEqual(HttpStatus.FORBIDDEN);
-    //       expect(res.body.message).toEqual(
-    //         'Forbidden to perform this action over selected resource.',
-    //       );
-    //     });
-    // });
+    it('should report error when logged user is not the same as the owner', async () => {
+      return request(httpServer)
+        .patch(`/articles/${article1Id}`)
+        .auth(user2AccessToken, { type: 'bearer' })
+        .expect(HttpStatus.FORBIDDEN)
+        .then((res) => {
+          expect(res.body.statusCode).toEqual(HttpStatus.FORBIDDEN);
+          expect(res.body.message).toEqual('Forbidden');
+        });
+    });
+
+    it('admin can access users resource', async () => {
+      const updatedArticle = {
+        text: 'new text field',
+        sourceUrl: 'https://www.update.com/',
+        sourceType: 'article',
+        lang: 'cz',
+      };
+
+      return request(httpServer)
+        .patch(`/articles/${article1Id}`)
+        .auth(adminAccessToken, { type: 'bearer' })
+        .send(updatedArticle)
+        .expect(HttpStatus.OK);
+    });
   });
 
   // describe('GET /users/:userId/articles', () => {

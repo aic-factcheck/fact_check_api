@@ -65,7 +65,7 @@ export class UsersService {
   ): Promise<User> {
     if (!_.includes(user.roles, 'admin')) userDto = omit(userDto, 'roles');
 
-    return await this.userModel.findByIdAndUpdate(_id, userDto, {
+    return this.userModel.findByIdAndUpdate(_id, userDto, {
       override: true,
       upsert: true,
       returnOriginal: false,

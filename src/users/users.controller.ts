@@ -67,7 +67,7 @@ export class UsersController {
     if (perPage > 50) {
       perPage = 50;
     }
-    return await this.usersService.findManyWithPagination(page, perPage);
+    return this.usersService.findManyWithPagination(page, perPage);
   }
 
   @Get(':id')

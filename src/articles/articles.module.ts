@@ -22,6 +22,7 @@ import {
     MongooseModule.forFeature([
       { name: SavedArticle.name, schema: SavedArticleSchema },
     ]),
+    ArticlesService,
   ],
 })
 export class ArticlesModule {}

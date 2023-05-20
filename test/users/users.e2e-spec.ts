@@ -81,7 +81,7 @@ describe('Users API', () => {
 
   describe('GET /users/{:id}', () => {
     it('should return an array of users', async () => {
-      return await request(httpServer)
+      return request(httpServer)
         .get(`/users/${adminUser._id}`)
         .auth(adminAccessToken, { type: 'bearer' })
         .expect(200)
@@ -100,7 +100,7 @@ describe('Users API', () => {
 
   describe('GET /users', () => {
     it('should return an array of users', async () => {
-      return await request(httpServer)
+      return request(httpServer)
         .get(`/users`)
         .auth(adminAccessToken, { type: 'bearer' })
         .expect(200)

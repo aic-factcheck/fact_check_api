@@ -66,49 +66,53 @@ export class ArticlesController {
     return this.articlesService.findManyWithPagination(user, page, perPage);
   }
 
-  @Get(':id')
+  @Get(':articleId')
   @ApiBearerAuth()
   @Public()
-  @ApiParam({ name: 'id', type: String, example: '645cacbfa6693d8100b2d60a' })
+  @ApiParam({ name: 'articleId', type: String })
   @HttpCode(HttpStatus.OK)
   async findOne(
-    @Param('id', new ParseObjectIdPipe()) _id: Types.ObjectId,
+    @Param('articleId', new ParseObjectIdPipe()) _id: Types.ObjectId,
     @LoggedUser() user: User,
   ): Promise<NullableType<ArticleResponseType>> {
     return this.articlesService.findOne(user, _id);
   }
 
-  @Patch(':id')
+  @Patch(':articleId')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Updates specified fields of existing Article' })
   @ApiBody({ type: ReplaceArticleDto })
-  @ApiParam({ name: 'id', type: String, example: '645cacbfa6693d8100b2d60a' })
+  @ApiParam({ name: 'articleId', type: String })
   @HttpCode(HttpStatus.OK)
   update(
-    @Param('id', new ParseObjectIdPipe()) _id: Types.ObjectId,
+    @Param('articleId', new ParseObjectIdPipe()) _id: Types.ObjectId,
     @Body() articleDto: UpdateArticleDto,
+    @LoggedUser() user: User,
   ): Promise<NullableType<Article>> {
-    return this.articlesService.update(_id, articleDto);
+    return this.articlesService.update(_id, user, articleDto);
   }
 
-  @Put(':id')
-  @ApiOperation({ summary: 'Replaces the whole Article document by a new one' })
+  @Put(':articleId')
   @ApiBearerAuth()
-  @ApiParam({ name: 'id', type: String, example: '645cacbfa6693d8100b2d60a' })
+  @ApiOperation({ summary: 'Replaces the whole Article document by a new one' })
+  @ApiParam({ name: 'articleId', type: String })
   @HttpCode(HttpStatus.OK)
   replace(
-    @Param('id', new ParseObjectIdPipe()) _id: Types.ObjectId,
+    @Param('articleId', new ParseObjectIdPipe()) _id: Types.ObjectId,
     @Body() articleDto: ReplaceArticleDto,
     @LoggedUser() user: User,
   ): Promise<NullableType<Article>> {
     return this.articlesService.replace(_id, user, articleDto);
   }
 
-  @Delete(':id')
+  @Delete(':articleId')
   @ApiBearerAuth()
-  @ApiParam({ name: 'id', type: String, example: '645cacbfa6693d8100b2d60a' })
+  @ApiParam({ name: 'articleId', type: String })
   @HttpCode(HttpStatus.NO_CONTENT)
-  async delete(@Param('id', new ParseObjectIdPipe()) _id: Types.ObjectId) {
-    return this.articlesService.delete(_id);
+  async delete(
+    @Param('articleId', new ParseObjectIdPipe()) _id: Types.ObjectId,
+    @LoggedUser() user: User,
+  ) {
+    return this.articlesService.delete(_id, user);
   }
 }
