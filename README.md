@@ -9,6 +9,7 @@
 ## Features
 
 - Nest.js framework with TypeScript([Nest](https://github.com/nestjs/nest))
+- Uses Typescript strict null checks
 - ES2017 latest features like Async/Await
 - CORS enabled
 - Uses [npm](https://www.npmjs.com/)
