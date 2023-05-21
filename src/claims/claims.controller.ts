@@ -9,7 +9,7 @@ import {
   // Patch,
   // Put,
   Delete,
-  UseInterceptors,
+  // UseInterceptors,
 } from '@nestjs/common';
 import { Controller } from '@nestjs/common';
 import {
@@ -30,13 +30,14 @@ import { ClaimsService } from './claims.service';
 import { Claim } from './schemas/claim.schema';
 import { CreateClaimDto } from './dto/create-claim.dto';
 import { Public } from '../auth/decorators/public-route.decorator';
-import MongooseClassSerializerInterceptor from '../utils/interceptors/mongoose-class-serializer.interceptor';
+// import MongooseClassSerializerInterceptor from '../utils/interceptors/mongoose-class-serializer.interceptor';
+import { ClaimResponseType } from './types/claim-response.type';
 
 @ApiTags('Claims')
 @Controller({
   version: '1',
 })
-@UseInterceptors(MongooseClassSerializerInterceptor(Claim))
+// @UseInterceptors(MongooseClassSerializerInterceptor(Claim))
 export class ClaimsController {
   constructor(private readonly claimService: ClaimsService) {}
 
@@ -63,11 +64,16 @@ export class ClaimsController {
     @Query() { page, perPage }: PaginationParams,
     @LoggedUser() user: User,
     @Param('articleId', new ParseObjectIdPipe()) articleId: Types.ObjectId,
-  ): Promise<Claim[]> {
+  ): Promise<ClaimResponseType[]> {
     if (perPage > 50) {
       perPage = 50;
     }
-    return this.claimService.findManyWithPagination(articleId, page, perPage);
+    return this.claimService.findManyWithPagination(
+      articleId,
+      page,
+      perPage,
+      user,
+    );
   }
 
   @Get(':claimId')
@@ -80,8 +86,8 @@ export class ClaimsController {
     @Param('claimId', new ParseObjectIdPipe()) claimId: Types.ObjectId,
     @LoggedUser() user: User,
     @Param('articleId', new ParseObjectIdPipe()) articleId: Types.ObjectId,
-  ): Promise<NullableType<Claim>> {
-    return this.claimService.findOne({ _id: claimId, article: articleId });
+  ): Promise<NullableType<ClaimResponseType>> {
+    return this.claimService.findOne(articleId, claimId, user);
   }
 
   // @Patch(':id')

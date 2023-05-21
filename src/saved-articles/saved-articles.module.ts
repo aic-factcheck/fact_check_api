@@ -18,7 +18,6 @@ import { Article, ArticleSchema } from '../articles/schemas/article.schema';
   controllers: [SavedArticlesController],
   providers: [SavedArticlesService],
   exports: [
-    MongooseModule.forFeature([{ name: Article.name, schema: ArticleSchema }]),
     MongooseModule.forFeature([
       { name: SavedArticle.name, schema: SavedArticleSchema },
     ]),

@@ -33,7 +33,7 @@ export const IsClaimOwnerGuard = (paramId: string) => {
 
       if (_.includes(request.user.roles, 'admin')) return true;
 
-      const claim: Claim | null = await this.claimService.findOne({ _id });
+      const claim: Claim | null = await this.claimService.findByQuery({ _id });
       if (!claim) return false;
 
       if (claim.addedBy._id !== request.user._id) return false;

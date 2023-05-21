@@ -80,6 +80,7 @@ export class ReviewsController {
       claimId,
       page,
       perPage,
+      user,
     );
   }
 

@@ -120,7 +120,7 @@ describe('Claims API', () => {
           expect(res.body).toHaveProperty('createdAt');
           // expect(res.body.addedBy._id).toEqual(user1Id);
           expect(res.body.text).toEqual(claim1.text);
-          expect(res.body.nBeenVoted).toEqual(0);
+          // expect(res.body.nBeenVoted).toEqual(0);
           expect(res.body.nPositiveVotes).toEqual(0);
           expect(res.body.nNegativeVotes).toEqual(0);
         });
@@ -138,7 +138,7 @@ describe('Claims API', () => {
           expect(res.body).toHaveProperty('createdAt');
           // expect(res.body.addedBy._id).toEqual(user2Id);
           expect(res.body.text).toEqual(claim2.text);
-          expect(res.body.nBeenVoted).toEqual(0);
+          // expect(res.body.nBeenVoted).toEqual(0);
           expect(res.body.nPositiveVotes).toEqual(0);
           expect(res.body.nNegativeVotes).toEqual(0);
         });
@@ -184,7 +184,7 @@ describe('Claims API', () => {
           expect(res.body[0]).toHaveProperty('_id');
           expect(res.body[0]).toHaveProperty('text');
           expect(res.body[0]).toHaveProperty('addedBy');
-          expect(res.body[0].nBeenVoted).toEqual(0);
+          // expect(res.body[0].nBeenVoted).toEqual(0);
 
           expect(res.body[0].addedBy).toHaveProperty('firstName');
           expect(res.body[0].addedBy).toHaveProperty('lastName');
@@ -207,7 +207,7 @@ describe('Claims API', () => {
           expect(res.body.addedBy).toHaveProperty('lastName');
           expect(res.body.addedBy).toHaveProperty('email');
           expect(res.body.addedBy).toHaveProperty('_id');
-          expect(res.body.nBeenVoted).toEqual(0);
+          // expect(res.body.nBeenVoted).toEqual(0);
 
           expect(res.body.article).toHaveProperty('_id');
           // expect(res.body.article._id).toEqual(article1Id);

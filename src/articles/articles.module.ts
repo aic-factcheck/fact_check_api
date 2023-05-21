@@ -19,9 +19,6 @@ import {
   controllers: [ArticlesController],
   exports: [
     MongooseModule.forFeature([{ name: Article.name, schema: ArticleSchema }]),
-    MongooseModule.forFeature([
-      { name: SavedArticle.name, schema: SavedArticleSchema },
-    ]),
     ArticlesService,
   ],
 })

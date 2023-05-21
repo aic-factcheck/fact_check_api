@@ -57,6 +57,7 @@ export class ReviewsService {
 
   async findOne(query: object): Promise<NullableType<Review>> {
     const claim = await this.reviewModel.findOne(query);
+    // TODO add user's vote
     if (!claim) {
       throw new NotFoundException(`Review not found`);
     }
@@ -68,7 +69,9 @@ export class ReviewsService {
     claimId: Types.ObjectId,
     page = 1,
     perPage = 20,
+    loggedUser: User,
   ): Promise<Review[]> {
+    // TODO add user's vote
     return this.reviewModel
       .find({ article: articleId, claim: claimId })
       .skip(perPage * (page - 1))

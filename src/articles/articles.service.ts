@@ -13,7 +13,7 @@ import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
 import { ReplaceArticleDto } from './dto/replace-article.dto';
 import { User } from '../users/schemas/user.schema';
-import { ArticleResponseType } from './interfaces/article-response.interface';
+import { ArticleResponseType } from './types/article-response.type';
 import { SavedArticle } from '../saved-articles/schemas/saved-article.schema';
 
 @Injectable()

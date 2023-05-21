@@ -31,7 +31,7 @@ import { User } from '../users/schemas/user.schema';
 import { ReplaceArticleDto } from './dto/replace-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
 import { Public } from '../auth/decorators/public-route.decorator';
-import { ArticleResponseType } from './interfaces/article-response.interface';
+import { ArticleResponseType } from './types/article-response.type';
 
 @ApiTags('Articles')
 @Controller({
