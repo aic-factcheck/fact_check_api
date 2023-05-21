@@ -10,10 +10,10 @@ import {
 import { VoteService } from './vote.service';
 import { CreateVoteDto } from './dto/create-vote.dto';
 import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
-import { LoggedUser } from 'src/users/decorators/logged-user.decorator';
-import { User } from 'src/users/schemas/user.schema';
+import { LoggedUser } from '../users/decorators/logged-user.decorator';
+import { User } from '../users/schemas/user.schema';
 import { Types } from 'mongoose';
-import { ParseObjectIdPipe } from 'src/utils/pipes/parse-object-id.pipe';
+import { ParseObjectIdPipe } from '../utils/pipes/parse-object-id.pipe';
 import { VoteObjectEnum } from './enums/vote.enum';
 import { Vote } from './schemas/vote.schema';
 
