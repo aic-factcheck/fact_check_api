@@ -52,6 +52,9 @@ export class Claim {
     return this.nPositiveVotes + this.nNegativeVotes;
   }
 
+  @Prop({ default: false })
+  isClosed: boolean;
+
   @Prop({ default: 0 })
   nReviews: number;
 

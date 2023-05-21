@@ -3,10 +3,11 @@ import { Injectable } from '@nestjs/common';
 import { User } from '../users/schemas/user.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { Article } from '../articles/schemas/article.schema';
-import { Review } from '../reviews/schemas/review.schema';
 import { Claim } from '../claims/schemas/claim.schema';
 import { Model } from 'mongoose';
 import { SavedArticle } from '../saved-articles/schemas/saved-article.schema';
+import { SortByEnum, getSortByObject } from './enums/sort-by.enum';
+import { DurationLimitEnum, getDurationQuery } from './enums/duration.enum';
 
 @Injectable()
 export class HotService {
@@ -58,10 +59,20 @@ export class HotService {
     });
   }
 
-  findClaims(page = 1, perPage = 20, user: User | null, query: object) {
+  findClaims(
+    page = 1,
+    perPage = 20,
+    user: User | null,
+    query: object,
+    sortBy: SortByEnum | null,
+    duration: DurationLimitEnum | null,
+  ) {
+    if (!sortBy) sortBy = SortByEnum.POSITIVE_VOTES_DESC;
+    if (!duration) duration = DurationLimitEnum.MONTH;
+
     return this.claimModel
-      .find(query)
-      .sort({ nPositiveVotes: 'desc', createdAt: 'desc' })
+      .find(_.merge(query, getDurationQuery(duration)))
+      .sort(getSortByObject(sortBy))
       .skip(perPage * (page - 1))
       .limit(perPage);
   }

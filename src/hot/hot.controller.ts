@@ -3,6 +3,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  ParseEnumPipe,
   Query,
   UseInterceptors,
 } from '@nestjs/common';
@@ -13,6 +14,8 @@ import { LoggedUser } from '../users/decorators/logged-user.decorator';
 import { User } from '../users/schemas/user.schema';
 import { PaginationParams } from '../utils/types/pagination-params';
 import MongooseClassSerializerInterceptor from '../utils/interceptors/mongoose-class-serializer.interceptor';
+import { SortByEnum } from './enums/sort-by.enum';
+import { DurationLimitEnum } from './enums/duration.enum';
 
 @ApiTags('Hot')
 @Controller({
@@ -38,13 +41,35 @@ export class HotController {
   @Get('claims')
   @Public()
   @HttpCode(HttpStatus.OK)
+  @ApiQuery({
+    name: 'sortBy',
+    required: false,
+    enum: SortByEnum,
+    example: SortByEnum.POSITIVE_VOTES_ASC,
+  })
+  @ApiQuery({
+    name: 'duration',
+    required: false,
+    enum: DurationLimitEnum,
+    example: DurationLimitEnum.WEEK,
+  })
   @ApiQuery({ name: 'page', required: false, type: Number, example: 1 })
   @ApiQuery({ name: 'perPage', required: false, type: Number, example: 20 })
   getHottestClaims(
     @LoggedUser() user: User | null,
     @Query() { page, perPage }: PaginationParams,
+    @Query('sortBy', new ParseEnumPipe(SortByEnum)) sortBy: SortByEnum | null,
+    @Query('duration', new ParseEnumPipe(DurationLimitEnum))
+    duration: DurationLimitEnum | null,
   ) {
-    return this.hotService.findClaims(page, perPage, user, {});
+    return this.hotService.findClaims(
+      page,
+      perPage,
+      user,
+      {},
+      sortBy,
+      duration,
+    );
   }
 
   @Get('users')
