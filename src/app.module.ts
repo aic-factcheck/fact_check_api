@@ -13,6 +13,7 @@ import { SavedArticlesModule } from './saved-articles/saved-articles.module';
 import { ClaimsModule } from './claims/claims.module';
 // import { PinoLoggerModule } from './common/logger/logger.module';
 import { ReviewsModule } from './reviews/reviews.module';
+import { VoteModule } from './vote/vote.module';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { ReviewsModule } from './reviews/reviews.module';
     SavedArticlesModule,
     ClaimsModule,
     ReviewsModule,
+    VoteModule,
     // PinoLoggerModule,
   ],
   controllers: [],

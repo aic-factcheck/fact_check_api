@@ -7,7 +7,7 @@ import {
   IsArray,
   IsUrl,
 } from 'class-validator';
-import { VoteTypes } from '../contants/vote.types';
+import { VoteTypes } from '../enums/vote.types';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateReviewDto {

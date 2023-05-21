@@ -56,13 +56,8 @@ entity "Vote" as vote {
   *_id : string <<generated>>
   --
   *addedBy : text <<FK>>
-  --
-  One of following is required
-  --
-  *userId: text <<FK>>
-  ' *articleId: text <<FK>>
-  *claimId: text <<FK>>
-  *reviewId: text <<FK>>
+  *referencedId: text <<FK>>
+  *type: {ARTICLE, CLAIM, REVIEW, USER}
   --
   ' *text: Text
   *rating: Number {-1,0,1}

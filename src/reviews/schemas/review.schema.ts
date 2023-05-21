@@ -4,7 +4,7 @@ import { Expose, Transform } from 'class-transformer';
 import { User } from '../../users/schemas/user.schema';
 import { Article } from '../../articles/schemas/article.schema';
 import { Claim } from '../../claims/schemas/claim.schema';
-import { VoteTypes } from '../contants/vote.types';
+import { VoteTypes } from '../enums/vote.types';
 
 export type ReviewDocument = HydratedDocument<Review>;
 

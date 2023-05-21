@@ -4,6 +4,7 @@ import {
   HttpStatus,
   Injectable,
   NotFoundException,
+  NotImplementedException,
 } from '@nestjs/common';
 import { Claim, ClaimDocument } from './schemas/claim.schema';
 import { InjectModel } from '@nestjs/mongoose';
@@ -137,40 +138,24 @@ export class ClaimsService {
     return this.mergeClaimsWithReviews(claims, userReviews);
   }
 
-  // async update(
-  //   _id: Types.ObjectId,
-  //   updateClaimDto: UpdateClaimDto,
-  // ): Promise<Claim> {
-  // await this.checkResourceAccess(loggedUser, claimId);
-  //   const updatedClaim: Claim = await this.claimModel.findByIdAndUpdate(
-  //     _id,
-  //     updateClaimDto,
-  //     {
-  //       returnOriginal: false,
-  //     },
-  //   );
-  //   if (!updatedClaim) {
-  //     throw new NotFoundException(`Claim #${updatedClaim._id} not found`);
-  //   }
-  //   return updatedClaim;
-  // }
-
-  // async replace(
-  //   _id: Types.ObjectId,
-  //   loggedUser: User,
-  //   claimDto: ReplaceClaimDto,
-  // ): Promise<Claim> {
-  // await this.checkResourceAccess(loggedUser, claimId);
-  //   return this.claimModel.findByIdAndUpdate(
-  //     _id,
-  //     _.assign(claimDto, { addedBy: loggedUser._id }),
-  //     {
-  //       override: true,
-  //       upsert: true,
-  //       returnOriginal: false,
-  //     },
-  //   );
-  // }
+  async replace(
+    _id: Types.ObjectId,
+    loggedUser: User,
+    claimDto: CreateClaimDto,
+  ): Promise<Claim> {
+    await this.checkResourceAccess(loggedUser, _id);
+    // TODO should not delete old.. just create new object
+    throw new NotImplementedException('Not yet implemented');
+    // return this.claimModel.findByIdAndUpdate(
+    //   _id,
+    //   _.assign(claimDto, { addedBy: loggedUser._id }),
+    //   {
+    //     override: true,
+    //     upsert: true,
+    //     returnOriginal: false,
+    //   },
+    // );
+  }
 
   async delete(
     loggedUser: User,
