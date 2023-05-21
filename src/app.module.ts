@@ -15,6 +15,7 @@ import { ClaimsModule } from './claims/claims.module';
 import { ReviewsModule } from './reviews/reviews.module';
 import { VoteModule } from './vote/vote.module';
 import { HotModule } from './hot/hot.module';
+import { SearchModule } from './search/search.module';
 
 @Module({
   imports: [
@@ -50,6 +51,7 @@ import { HotModule } from './hot/hot.module';
     ReviewsModule,
     VoteModule,
     HotModule,
+    SearchModule,
     // PinoLoggerModule,
   ],
   controllers: [],

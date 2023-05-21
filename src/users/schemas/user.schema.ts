@@ -11,7 +11,13 @@ export class User {
   @Transform((params) => params.obj._id.toString())
   _id: Types.ObjectId;
 
-  @Prop({ required: true, unique: true, minlength: 6, maxlength: 255 })
+  @Prop({
+    required: true,
+    unique: true,
+    minlength: 6,
+    maxlength: 255,
+    index: 'text',
+  })
   email: string;
 
   @Prop({ required: true })
@@ -23,10 +29,10 @@ export class User {
     return `${this.firstName} ${this.lastName}`;
   }
 
-  @Prop({ required: true })
+  @Prop({ required: true, index: 'text' })
   firstName: string;
 
-  @Prop({ required: true })
+  @Prop({ required: true, index: 'text' })
   lastName: string;
 
   @Prop({ type: [String], default: ['user'], required: true })

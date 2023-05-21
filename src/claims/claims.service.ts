@@ -14,6 +14,7 @@ import { Model, Types } from 'mongoose';
 import { NullableType } from '../utils/types/nullable.type';
 import { Review, ReviewDocument } from '../reviews/schemas/review.schema';
 import { ClaimResponseType } from './types/claim-response.type';
+import { mergeClaimsWithReviews } from '../utils/helpers/merge-claims-reviews.helper';
 
 @Injectable()
 export class ClaimsService {
@@ -93,49 +94,23 @@ export class ClaimsService {
     } as ClaimResponseType;
   }
 
-  /*
-   * Takes `claims` array and logged user array of `reviews`
-   * returns new array of merged claims with user's review for each claim
-   */
-  async mergeClaimsWithReviews(
-    claims: ClaimDocument[],
-    reviews: ReviewDocument[],
-  ): Promise<ClaimResponseType[]> {
-    const mergedClaims: ClaimResponseType[] = claims.map((claim) => {
-      const userReview = _.find(reviews, { claimId: claim._id });
-
-      return {
-        ...claim.toObject(),
-        userReview,
-      } as ClaimResponseType;
-      // const mergedClaim = _.assign(claim, { userReview });
-      // if (userReview) {
-      //   mergedClaim.userReview = userReview.vote;
-      // } else {
-      //   mergedClaim.userReview = null;
-      // }
-      // return mergedClaim;
-    });
-
-    return mergedClaims;
-  }
-
   async findManyWithPagination(
     articleId: Types.ObjectId,
     page = 1,
     perPage = 20,
-    loggedUser: User,
+    user: User | null,
   ): Promise<ClaimResponseType[]> {
-    const userReviews: ReviewDocument[] = await this.reviewModel
-      .find({ addedBy: loggedUser._id })
-      .lean();
+    let userReviews;
+    if (user) {
+      userReviews = await this.reviewModel.find({ addedBy: user._id }).lean();
+    }
 
     const claims: ClaimDocument[] = await this.claimModel
       .find({ article: articleId })
       .skip(perPage * (page - 1))
       .limit(perPage);
 
-    return this.mergeClaimsWithReviews(claims, userReviews);
+    return mergeClaimsWithReviews(claims, userReviews);
   }
 
   async replace(

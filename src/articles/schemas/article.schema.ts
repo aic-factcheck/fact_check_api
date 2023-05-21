@@ -29,16 +29,16 @@ export class Article {
   })
   addedBy: User;
 
-  @Prop({ required: true, maxlength: 512, index: true })
+  @Prop({ required: true, maxlength: 512, index: 'text' })
   title: string;
 
-  @Prop({ required: true, maxlength: 16448, index: true })
+  @Prop({ required: true, maxlength: 16448, index: 'text' })
   text: string;
 
   @Prop({ type: [Types.ObjectId], default: [] }) // TODO ref claim
   claims: Types.ObjectId[];
 
-  @Prop({ required: true, maxlength: 512, index: true })
+  @Prop({ required: true, maxlength: 512, index: 'text' })
   sourceUrl: string;
 
   @Prop({ default: 'article', enum: articleTypes })

@@ -35,7 +35,7 @@ export class Claim {
   })
   articles: Article[];
 
-  @Prop({ required: true, maxlength: 512, index: true })
+  @Prop({ required: true, maxlength: 512, index: 'text' })
   text: string;
 
   @Prop({ required: true, default: 'en', index: true })
