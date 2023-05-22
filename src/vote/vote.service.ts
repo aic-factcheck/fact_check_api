@@ -12,6 +12,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Article } from '../articles/schemas/article.schema';
 import { Review } from '../reviews/schemas/review.schema';
 import { Claim } from '../claims/schemas/claim.schema';
+import { GameService } from '../game/game.service';
+import { GameAtionEnum } from '../game/enums/reputation.enum';
 
 @Injectable()
 export class VoteService {
@@ -21,6 +23,7 @@ export class VoteService {
     @InjectModel(Claim.name) private claimModel: Model<Claim>,
     @InjectModel(Review.name) private reviewModel: Model<Review>,
     @InjectModel(User.name) private userModel: Model<User>,
+    private readonly gameService: GameService,
   ) {}
 
   async referencedObjExists(
@@ -42,13 +45,16 @@ export class VoteService {
     return docCount;
   }
 
-  async unvote(referencedId: Types.ObjectId, type: VoteObjectEnum) {
+  async unvote(referencedId: Types.ObjectId, type: VoteObjectEnum, user: User) {
     const oldVote: VoteDocument | null = await this.voteModel.findOneAndDelete({
       referencedId,
       type,
     });
 
-    if (!oldVote) return;
+    if (!oldVote) {
+      this.gameService.addReputation(user, GameAtionEnum.VOTE);
+      return;
+    }
 
     let nPositiveVotes = 0;
     let nNegativeVotes = 0;
@@ -191,7 +197,7 @@ export class VoteService {
       throw new NotFoundException('Referenced object not found');
     }
 
-    await this.unvote(referencedId, type);
+    await this.unvote(referencedId, type, loggedUser);
 
     return this.vote(referencedId, type, loggedUser, createDto.rating);
   }

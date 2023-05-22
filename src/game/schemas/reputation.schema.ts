@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { now, HydratedDocument, Types } from 'mongoose';
 import { Expose, Transform } from 'class-transformer';
 import { User } from '../../users/schemas/user.schema';
-import { ReputationEnum } from '../enums/reputation.enum';
+import { GameAtionEnum } from '../enums/reputation.enum';
 
 export type ReputationDocument = HydratedDocument<Reputation>;
 
@@ -21,10 +21,13 @@ export class Reputation {
   user: User;
 
   @Prop({ required: true, type: Number })
-  rep: number;
+  points: number;
 
-  @Prop({ required: true, type: String, enum: ReputationEnum })
-  action: ReputationEnum;
+  @Prop({ type: Types.ObjectId, index: true })
+  referencedId: Types.ObjectId;
+
+  @Prop({ required: true, type: String, enum: GameAtionEnum })
+  action: GameAtionEnum;
 
   @Prop({ default: now() })
   createdAt: Date;

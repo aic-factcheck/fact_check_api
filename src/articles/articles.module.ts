@@ -7,6 +7,7 @@ import {
   SavedArticle,
   SavedArticleSchema,
 } from '../saved-articles/schemas/saved-article.schema';
+import { GameModule } from '../game/game.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import {
     MongooseModule.forFeature([
       { name: SavedArticle.name, schema: SavedArticleSchema },
     ]),
+    GameModule,
   ],
   providers: [ArticlesService],
   controllers: [ArticlesController],

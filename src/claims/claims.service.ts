@@ -15,12 +15,15 @@ import { NullableType } from '../common/types/nullable.type';
 import { Review, ReviewDocument } from '../reviews/schemas/review.schema';
 import { ClaimResponseType } from './types/claim-response.type';
 import { mergeClaimsWithReviews } from '../common/helpers/merge-claims-reviews.helper';
+import { GameService } from '../game/game.service';
+import { GameAtionEnum } from '../game/enums/reputation.enum';
 
 @Injectable()
 export class ClaimsService {
   constructor(
     @InjectModel(Claim.name) private claimModel: Model<Claim>,
     @InjectModel(Review.name) private reviewModel: Model<Review>,
+    private readonly gameService: GameService,
   ) {}
 
   async checkResourceAccess(user: User, _id: Types.ObjectId): Promise<boolean> {
@@ -57,6 +60,7 @@ export class ClaimsService {
         articles: [articleId],
       }),
     );
+    this.gameService.addReputation(loggedUser, GameAtionEnum.CREATE_CLAIM);
     // TODO add claimId to Article{articleId}.claims
     return createdClaim.save();
   }

@@ -2,6 +2,7 @@ import * as bcrypt from 'bcrypt';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { now, HydratedDocument, Types } from 'mongoose';
 import { Exclude, Expose, Transform } from 'class-transformer';
+import { SavedArticle } from '../../saved-articles/schemas/saved-article.schema';
 
 export type UserDocument = HydratedDocument<User>;
 
@@ -57,8 +58,11 @@ export class User {
   @Prop({ default: 0 })
   nBeenVoted: number;
 
-  // @Prop({ type: [ type: Types.ObjectId], ref: 'Article' } })
-  // savedArticles: SavedArticle[];
+  @Prop({ default: 0 })
+  reputation: number;
+
+  @Prop({ type: [Types.ObjectId], ref: 'Article', default: [] })
+  savedArticles: SavedArticle[];
 
   @Prop({ default: 1 })
   level: number;

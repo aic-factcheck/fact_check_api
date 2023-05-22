@@ -1,7 +1,7 @@
 /**
  * Reason why reputation was added
  */
-export enum ReputationEnum {
+export enum GameAtionEnum {
   REGISTER = 'REGISTER',
   DAILY_LOGIN = 'DAILY_LOGIN',
   CREATE_ARTICLE = 'CREATE_ARTICLE',
@@ -15,29 +15,29 @@ export enum ReputationEnum {
   JOIN_COMMUNITY = 'JOIN_COMMUNITY',
 }
 
-export function getScoreFor(option: ReputationEnum): number {
-  switch (option as ReputationEnum) {
-    case ReputationEnum.REGISTER:
+export function getRepForAction(option: GameAtionEnum): number {
+  switch (option as GameAtionEnum) {
+    case GameAtionEnum.REGISTER:
       return 0;
-    case ReputationEnum.DAILY_LOGIN:
+    case GameAtionEnum.DAILY_LOGIN:
       return 0;
-    case ReputationEnum.CREATE_ARTICLE:
+    case GameAtionEnum.CREATE_ARTICLE:
       return 8;
-    case ReputationEnum.CREATE_CLAIM:
+    case GameAtionEnum.CREATE_CLAIM:
       return 20;
-    case ReputationEnum.CREATE_REVIEW:
+    case GameAtionEnum.CREATE_REVIEW:
       return 30;
-    case ReputationEnum.APPEAR_TOP:
+    case GameAtionEnum.APPEAR_TOP:
       return 10;
-    case ReputationEnum.INVITE:
+    case GameAtionEnum.INVITE:
       return 30;
-    case ReputationEnum.SHARE:
+    case GameAtionEnum.SHARE:
       return 15;
-    case ReputationEnum.VOTE:
+    case GameAtionEnum.VOTE:
       return 3;
-    case ReputationEnum.CREATE_COMMUNITY:
+    case GameAtionEnum.CREATE_COMMUNITY:
       return 100;
-    case ReputationEnum.JOIN_COMMUNITY:
+    case GameAtionEnum.JOIN_COMMUNITY:
       return 10;
   }
 }

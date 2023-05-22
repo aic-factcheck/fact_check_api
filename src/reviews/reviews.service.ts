@@ -12,10 +12,15 @@ import { Model, Types } from 'mongoose';
 import { NullableType } from '../common/types/nullable.type';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { Review, ReviewDocument } from './schemas/review.schema';
+import { GameService } from '../game/game.service';
+import { GameAtionEnum } from '../game/enums/reputation.enum';
 
 @Injectable()
 export class ReviewsService {
-  constructor(@InjectModel(Review.name) private reviewModel: Model<Review>) {}
+  constructor(
+    @InjectModel(Review.name) private reviewModel: Model<Review>,
+    private readonly gameService: GameService,
+  ) {}
 
   async checkResourceAccess(user: User, _id: Types.ObjectId): Promise<boolean> {
     if (_.includes(user.roles, 'admin')) return true;
@@ -52,6 +57,7 @@ export class ReviewsService {
         claim: claimId,
       }),
     );
+    this.gameService.addReputation(loggedUser, GameAtionEnum.CREATE_REVIEW);
     return createdReview.save();
   }
 

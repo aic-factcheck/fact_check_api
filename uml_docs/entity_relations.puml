@@ -22,15 +22,19 @@ entity "User" as user {
   savedArticles: [<<FK>>]
   verified: boolean;
   loginAttempts: number;
+  --
+  reputation: number
 }
 
-entity "Experience" as exp {
+entity "Reputation" as rep {
   *_id : string <<generated>>
   --
-  *userId : text <<FK>>
-  *exp: number
+  *user : text <<FK>>
+  *points: number
   *action: actionId
   *createdAt
+  --
+  referencedId: text <<FK>>
 }
 
 entity "Saved" as saved {
@@ -121,7 +125,7 @@ user ||..o{ article
 user ||..o{ inv
 user ||..o{ saved
 user ||..o{ vote
-user ||..o{ exp
+user ||..o{ rep
 article }o..o{ claim
 article ||..o{ saved
 ' article ||..o{ vote

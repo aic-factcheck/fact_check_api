@@ -82,6 +82,8 @@ export class AuthService {
         level: user.level,
         roles: user.roles,
         nReviews: user.nReviews,
+        reputation: user.reputation,
+        savedArticles: user.savedArticles,
         nBeenVoted: user.nBeenVoted,
         updatedAt: user.updatedAt,
       },

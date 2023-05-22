@@ -35,7 +35,7 @@ export class Article {
   @Prop({ required: true, maxlength: 16448, index: 'text' })
   text: string;
 
-  @Prop({ type: [Types.ObjectId], default: [] }) // TODO ref claim
+  @Prop({ type: [Types.ObjectId], default: [], ref: 'Claim' })
   claims: Types.ObjectId[];
 
   @Prop({ required: true, maxlength: 512, index: 'text' })

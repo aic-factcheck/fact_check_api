@@ -15,6 +15,8 @@ import { ReplaceArticleDto } from './dto/replace-article.dto';
 import { User } from '../users/schemas/user.schema';
 import { ArticleResponseType } from './types/article-response.type';
 import { SavedArticle } from '../saved-articles/schemas/saved-article.schema';
+import { GameService } from '../game/game.service';
+import { GameAtionEnum } from '../game/enums/reputation.enum';
 
 @Injectable()
 export class ArticlesService {
@@ -22,6 +24,7 @@ export class ArticlesService {
     @InjectModel(Article.name) private articleModel: Model<Article>,
     @InjectModel(SavedArticle.name)
     private savedArticleModel: Model<SavedArticle>,
+    private readonly gameService: GameService,
   ) {}
 
   async checkResourceAccess(user: User, _id: Types.ObjectId): Promise<boolean> {
@@ -53,6 +56,7 @@ export class ArticlesService {
     const createdArticle: ArticleDocument = new this.articleModel(
       _.assign(createArticleDto, { addedBy: loggedUser._id }),
     );
+    this.gameService.addReputation(loggedUser, GameAtionEnum.CREATE_ARTICLE);
     return createdArticle.save();
   }
 
