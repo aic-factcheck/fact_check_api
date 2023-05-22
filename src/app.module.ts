@@ -17,6 +17,7 @@ import { VoteModule } from './vote/vote.module';
 import { HotModule } from './hot/hot.module';
 import { SearchModule } from './search/search.module';
 import { GameModule } from './game/game.module';
+import { StatsModule } from './stats/stats.module';
 
 @Module({
   imports: [
@@ -54,6 +55,7 @@ import { GameModule } from './game/game.module';
     HotModule,
     SearchModule,
     GameModule,
+    StatsModule,
     // PinoLoggerModule,
   ],
   controllers: [],
