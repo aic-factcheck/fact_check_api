@@ -12,6 +12,7 @@ import { MongooseModule } from '@nestjs/mongoose';
   providers: [ReviewsService],
   exports: [
     MongooseModule.forFeature([{ name: Review.name, schema: ReviewSchema }]),
+    ReviewsService,
   ],
 })
 export class ReviewsModule {}

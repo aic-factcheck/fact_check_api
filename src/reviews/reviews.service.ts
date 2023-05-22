@@ -55,6 +55,15 @@ export class ReviewsService {
     return createdReview.save();
   }
 
+  async findByQuery(query: object): Promise<NullableType<Review>> {
+    const claim = await this.reviewModel.findOne(query);
+    // TODO add user's vote
+    if (!claim) {
+      throw new NotFoundException(`Review not found`);
+    }
+    return claim;
+  }
+
   async findOne(query: object): Promise<NullableType<Review>> {
     const claim = await this.reviewModel.findOne(query);
     // TODO add user's vote
