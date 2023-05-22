@@ -1,7 +1,7 @@
 import { Controller, Get, HttpCode, HttpStatus, Query } from '@nestjs/common';
 import { LoggedUser } from '../users/decorators/logged-user.decorator';
 import { User } from '../users/schemas/user.schema';
-import { PaginationParams } from '../utils/types/pagination-params';
+import { PaginationParams } from '../common/types/pagination-params';
 import { SearchService } from './search.service';
 import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { Public } from '../auth/decorators/public-route.decorator';

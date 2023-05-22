@@ -7,10 +7,10 @@ import { Test } from '@nestjs/testing';
 import { ValidationPipe } from '@nestjs/common';
 import { useContainer } from 'class-validator';
 import { Connection } from 'mongoose';
-import { DatabaseService } from '../src/common/database/database.service';
-import validationOptions from '../src/utils/validation-options';
+import { DatabaseService } from '../src/shared/database/database.service';
+import validationOptions from '../src/common/validation-options';
 import { ConfigModule } from '@nestjs/config';
-import { DatabaseModule } from '../src/common/database/database.module';
+import { DatabaseModule } from '../src/shared/database/database.module';
 // import { Logger } from 'nestjs-pino';
 
 export let app: NestExpressApplication;

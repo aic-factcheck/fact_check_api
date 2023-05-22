@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsEmail, IsString } from 'class-validator';
 import { Transform } from 'class-transformer';
-import { lowerCaseTransformer } from '../../utils/transformers/lower-case.transformer';
+import { lowerCaseTransformer } from '../../common/transformers/lower-case.transformer';
 
 export class RefreshTokenDto {
   // @ApiProperty({ example: '645bc57ca9f31b9cbb2f865f' })

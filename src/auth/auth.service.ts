@@ -10,7 +10,7 @@ import { randomBytes } from 'crypto';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
 import { AuthEmailLoginDto } from './dto/auth-email-login.dto';
-import { AuthResponseType } from '../utils/types/auth/auth-response.type';
+import { AuthResponseType } from '../common/types/auth/auth-response.type';
 import { ConfigService } from '@nestjs/config';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import {

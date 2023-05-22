@@ -11,10 +11,10 @@ import { InjectModel } from '@nestjs/mongoose';
 import { User } from '../users/schemas/user.schema';
 import { CreateClaimDto } from './dto/create-claim.dto';
 import { Model, Types } from 'mongoose';
-import { NullableType } from '../utils/types/nullable.type';
+import { NullableType } from '../common/types/nullable.type';
 import { Review, ReviewDocument } from '../reviews/schemas/review.schema';
 import { ClaimResponseType } from './types/claim-response.type';
-import { mergeClaimsWithReviews } from '../utils/helpers/merge-claims-reviews.helper';
+import { mergeClaimsWithReviews } from '../common/helpers/merge-claims-reviews.helper';
 
 @Injectable()
 export class ClaimsService {

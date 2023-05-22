@@ -13,7 +13,7 @@ import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { LoggedUser } from '../users/decorators/logged-user.decorator';
 import { User } from '../users/schemas/user.schema';
 import { Types } from 'mongoose';
-import { ParseObjectIdPipe } from '../utils/pipes/parse-object-id.pipe';
+import { ParseObjectIdPipe } from '../common/pipes/parse-object-id.pipe';
 import { VoteObjectEnum } from './enums/vote.enum';
 import { Vote } from './schemas/vote.schema';
 

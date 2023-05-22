@@ -6,10 +6,10 @@ import { Claim, ClaimDocument } from '../claims/schemas/claim.schema';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { SavedArticle } from '../saved-articles/schemas/saved-article.schema';
-import { NullableType } from '../utils/types/nullable.type';
+import { NullableType } from '../common/types/nullable.type';
 import { Review, ReviewDocument } from '../reviews/schemas/review.schema';
 import { ClaimResponseType } from '../claims/types/claim-response.type';
-import { mergeClaimsWithReviews } from '../utils/helpers/merge-claims-reviews.helper';
+import { mergeClaimsWithReviews } from '../common/helpers/merge-claims-reviews.helper';
 
 @Injectable()
 export class SearchService {

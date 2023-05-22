@@ -7,7 +7,7 @@ import {
   SavedArticle,
   SavedArticleDocument,
 } from './schemas/saved-article.schema';
-import { NullableType } from '../utils/types/nullable.type';
+import { NullableType } from '../common/types/nullable.type';
 
 @Injectable()
 export class SavedArticlesService {

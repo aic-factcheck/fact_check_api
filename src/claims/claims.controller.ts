@@ -20,9 +20,9 @@ import {
   // ApiOperation,
   // ApiBody,
 } from '@nestjs/swagger';
-import { NullableType } from '../utils/types/nullable.type';
-import { PaginationParams } from '../utils/types/pagination-params';
-import { ParseObjectIdPipe } from '../utils/pipes/parse-object-id.pipe';
+import { NullableType } from '../common/types/nullable.type';
+import { PaginationParams } from '../common/types/pagination-params';
+import { ParseObjectIdPipe } from '../common/pipes/parse-object-id.pipe';
 import { Types } from 'mongoose';
 import { LoggedUser } from '../users/decorators/logged-user.decorator';
 import { User } from '../users/schemas/user.schema';

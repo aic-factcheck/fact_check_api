@@ -9,9 +9,9 @@ import {
 } from '@nestjs/common';
 import { Controller } from '@nestjs/common';
 import { ApiTags, ApiQuery, ApiBearerAuth } from '@nestjs/swagger';
-import MongooseClassSerializerInterceptor from '../utils/interceptors/mongoose-class-serializer.interceptor';
-import { PaginationParams } from '../utils/types/pagination-params';
-import { ParseObjectIdPipe } from '../utils/pipes/parse-object-id.pipe';
+import MongooseClassSerializerInterceptor from '../common/interceptors/mongoose-class-serializer.interceptor';
+import { PaginationParams } from '../common/types/pagination-params';
+import { ParseObjectIdPipe } from '../common/pipes/parse-object-id.pipe';
 import { Types } from 'mongoose';
 import { Article } from '../articles/schemas/article.schema';
 import { LoggedUser } from '../users/decorators/logged-user.decorator';

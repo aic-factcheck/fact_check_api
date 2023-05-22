@@ -12,8 +12,8 @@ import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { Public } from '../auth/decorators/public-route.decorator';
 import { LoggedUser } from '../users/decorators/logged-user.decorator';
 import { User } from '../users/schemas/user.schema';
-import { PaginationParams } from '../utils/types/pagination-params';
-import MongooseClassSerializerInterceptor from '../utils/interceptors/mongoose-class-serializer.interceptor';
+import { PaginationParams } from '../common/types/pagination-params';
+import MongooseClassSerializerInterceptor from '../common/interceptors/mongoose-class-serializer.interceptor';
 import { SortByEnum } from './enums/sort-by.enum';
 import { DurationLimitEnum } from './enums/duration.enum';
 

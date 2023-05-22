@@ -25,11 +25,11 @@ import {
 import { User } from './schemas/user.schema';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { NullableType } from '../utils/types/nullable.type';
-import MongooseClassSerializerInterceptor from '../utils/interceptors/mongoose-class-serializer.interceptor';
-import { PaginationParams } from '../utils/types/pagination-params';
+import { NullableType } from '../common/types/nullable.type';
+import MongooseClassSerializerInterceptor from '../common/interceptors/mongoose-class-serializer.interceptor';
+import { PaginationParams } from '../common/types/pagination-params';
 import { Roles } from '../auth/decorators/roles.decorator';
-import { ParseObjectIdPipe } from '../utils/pipes/parse-object-id.pipe';
+import { ParseObjectIdPipe } from '../common/pipes/parse-object-id.pipe';
 import { Types } from 'mongoose';
 import { ReplaceUserDto } from './dto/replace-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';

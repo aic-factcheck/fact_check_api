@@ -3,8 +3,8 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { ConfigService } from '@nestjs/config';
-import { JwtPayloadType } from '../../utils/types/auth/jwt-payload.type';
-import { OrNeverType } from '../../utils/types/or-never.type';
+import { JwtPayloadType } from '../../common/types/auth/jwt-payload.type';
+import { OrNeverType } from '../../common/types/or-never.type';
 import { UsersService } from '../../users/users.service';
 import { User } from '../../users/schemas/user.schema';
 

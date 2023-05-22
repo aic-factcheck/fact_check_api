@@ -8,7 +8,7 @@ import {
 } from 'class-validator';
 import { Transform } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
-import { lowerCaseTransformer } from '../../utils/transformers/lower-case.transformer';
+import { lowerCaseTransformer } from '../../common/transformers/lower-case.transformer';
 
 export class UpdateUserDto {
   @ApiProperty({ example: 'test@gmail.com' })

@@ -5,8 +5,8 @@ import { AppModule } from './app.module';
 import { NestFactory } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 import { useContainer } from 'class-validator';
-import { AllConfigType } from './common/config/config.type';
-import validationOptions from './utils/validation-options';
+import { AllConfigType } from './shared/config/config.type';
+import validationOptions from './common/validation-options';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 // import { Logger } from 'nestjs-pino';
 

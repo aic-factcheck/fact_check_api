@@ -9,8 +9,8 @@ import {
 } from 'class-validator';
 import { Transform } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
-import { UniqueValidator } from '../../utils/validators/unique-validator';
-import { lowerCaseTransformer } from '../../utils/transformers/lower-case.transformer';
+import { UniqueValidator } from '../../common/validators/unique-validator';
+import { lowerCaseTransformer } from '../../common/transformers/lower-case.transformer';
 
 export class ReplaceUserDto {
   @ApiProperty({ example: 'test@gmail.com' })
