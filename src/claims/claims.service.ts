@@ -17,10 +17,12 @@ import { ClaimResponseType } from './types/claim-response.type';
 import { mergeClaimsWithReviews } from '../common/helpers/merge-claims-reviews.helper';
 import { GameService } from '../game/game.service';
 import { GameAtionEnum } from '../game/enums/reputation.enum';
+import { Article } from '../articles/schemas/article.schema';
 
 @Injectable()
 export class ClaimsService {
   constructor(
+    @InjectModel(Article.name) private articleModel: Model<Article>,
     @InjectModel(Claim.name) private claimModel: Model<Claim>,
     @InjectModel(Review.name) private reviewModel: Model<Review>,
     private readonly gameService: GameService,
@@ -61,7 +63,9 @@ export class ClaimsService {
       }),
     );
     this.gameService.addReputation(loggedUser, GameAtionEnum.CREATE_CLAIM);
-    // TODO add claimId to Article{articleId}.claims
+    this.articleModel.findByIdAndUpdate(articleId, {
+      $push: { savedArticles: createdClaim._id },
+    });
     return createdClaim.save();
   }
 

@@ -29,7 +29,12 @@ export class VoteController {
   @ApiBearerAuth()
   @HttpCode(HttpStatus.CREATED)
   @ApiQuery({ name: 'id', type: String, example: '645cacbfa6693d8100b2d60a' })
-  @ApiQuery({ name: 'type', type: String, example: 'ARTICLE' })
+  @ApiQuery({
+    name: 'type',
+    enum: VoteObjectEnum,
+    required: true,
+    example: VoteObjectEnum.ARTICLE,
+  })
   vote(
     @Body() createVoteDto: CreateVoteDto,
     @LoggedUser() user: User,

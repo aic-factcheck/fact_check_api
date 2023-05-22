@@ -5,11 +5,13 @@ import { Claim, ClaimSchema } from './schemas/claim.schema';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Review, ReviewSchema } from '../reviews/schemas/review.schema';
 import { GameModule } from '../game/game.module';
+import { Article, ArticleSchema } from '../articles/schemas/article.schema';
 
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: Claim.name, schema: ClaimSchema }]),
     MongooseModule.forFeature([{ name: Review.name, schema: ReviewSchema }]),
+    MongooseModule.forFeature([{ name: Article.name, schema: ArticleSchema }]),
     GameModule,
   ],
   controllers: [ClaimsController],

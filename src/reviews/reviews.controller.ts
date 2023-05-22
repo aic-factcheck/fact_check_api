@@ -92,16 +92,12 @@ export class ReviewsController {
   @ApiParam({ name: 'reviewId', type: String })
   @HttpCode(HttpStatus.OK)
   async findOne(
-    @LoggedUser() user: User,
+    @LoggedUser() user: User | null,
     @Param('articleId', new ParseObjectIdPipe()) articleId: Types.ObjectId,
     @Param('claimId', new ParseObjectIdPipe()) claimId: Types.ObjectId,
     @Param('reviewId', new ParseObjectIdPipe()) reviewId: Types.ObjectId,
   ): Promise<NullableType<Review>> {
-    return this.reviewsService.findOne({
-      _id: reviewId,
-      claim: claimId,
-      article: articleId,
-    });
+    return this.reviewsService.findOne(articleId, claimId, reviewId, user);
   }
 
   @Put(':reviewId')

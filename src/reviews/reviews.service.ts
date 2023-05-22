@@ -1,5 +1,6 @@
 import { _ } from 'lodash';
 import {
+  ConflictException,
   HttpException,
   HttpStatus,
   Injectable,
@@ -14,11 +15,18 @@ import { CreateReviewDto } from './dto/create-review.dto';
 import { Review, ReviewDocument } from './schemas/review.schema';
 import { GameService } from '../game/game.service';
 import { GameAtionEnum } from '../game/enums/reputation.enum';
+import { Claim } from '../claims/schemas/claim.schema';
+import { Vote, VoteDocument } from '../vote/schemas/vote.schema';
+import { ReviewResponseType } from './types/review-response.type';
+import { VoteObjectEnum } from '../vote/enums/vote.enum';
 
 @Injectable()
 export class ReviewsService {
   constructor(
     @InjectModel(Review.name) private reviewModel: Model<Review>,
+    @InjectModel(Claim.name) private claimModel: Model<Claim>,
+    @InjectModel(User.name) private userModel: Model<User>,
+    @InjectModel(Vote.name) private voteModel: Model<Vote>,
     private readonly gameService: GameService,
   ) {}
 
@@ -44,12 +52,32 @@ export class ReviewsService {
     return true;
   }
 
-  create(
+  /*
+   * Check whether user (who sends the request) already voted
+   * for this claim -> throws conflict http status
+   */
+  checkCurrentUserReview = async (user: User, claimId) => {
+    const review = await this.reviewModel.findOne({
+      addedBy: user._id,
+      claim: claimId,
+    });
+
+    if (review) {
+      throw new ConflictException({
+        statusCode: HttpStatus.CONFLICT,
+        message: 'User already reviewed this claim.',
+      });
+    }
+  };
+
+  async create(
     articleId: Types.ObjectId,
     claimId: Types.ObjectId,
     loggedUser: User,
     createDto: CreateReviewDto,
-  ) {
+  ): Promise<Review> {
+    await this.checkCurrentUserReview(loggedUser, claimId);
+
     const createdReview: ReviewDocument = new this.reviewModel(
       _.assign(createDto, {
         addedBy: loggedUser._id,
@@ -57,26 +85,56 @@ export class ReviewsService {
         claim: claimId,
       }),
     );
+
     this.gameService.addReputation(loggedUser, GameAtionEnum.CREATE_REVIEW);
+    await this.userModel.findOneAndUpdate(
+      { _id: loggedUser._id },
+      { $inc: { nReviews: 1 } },
+    );
+    await this.claimModel.findOneAndUpdate(
+      { _id: claimId },
+      { $inc: { nReviews: 1 } },
+    );
     return createdReview.save();
   }
 
   async findByQuery(query: object): Promise<NullableType<Review>> {
-    const claim = await this.reviewModel.findOne(query);
+    const review = await this.reviewModel.findOne(query);
     // TODO add user's vote
-    if (!claim) {
+    if (!review) {
       throw new NotFoundException(`Review not found`);
     }
-    return claim;
+    return review;
   }
 
-  async findOne(query: object): Promise<NullableType<Review>> {
-    const claim = await this.reviewModel.findOne(query);
-    // TODO add user's vote
-    if (!claim) {
+  async findOne(
+    articleId: Types.ObjectId,
+    claimId: Types.ObjectId,
+    reviewId: Types.ObjectId,
+    loggedUser: User | null,
+  ): Promise<NullableType<ReviewResponseType>> {
+    const review: ReviewDocument | null = await this.reviewModel.findOne({
+      _id: reviewId,
+      claim: claimId,
+      article: articleId,
+    });
+
+    if (!review) {
       throw new NotFoundException(`Review not found`);
     }
-    return claim;
+
+    let userVote: Vote | null = null;
+    if (loggedUser) {
+      userVote = await this.voteModel
+        .findOne({
+          referencedId: reviewId,
+          addedBy: loggedUser._id,
+          type: VoteObjectEnum.REVIEW,
+        })
+        .lean();
+    }
+
+    return { ...review.toObject(), userVote } as ReviewResponseType;
   }
 
   async findManyWithPagination(
@@ -87,10 +145,24 @@ export class ReviewsService {
     loggedUser: User,
   ): Promise<Review[]> {
     // TODO add user's vote
-    return this.reviewModel
+    return await this.reviewModel
       .find({ article: articleId, claim: claimId })
       .skip(perPage * (page - 1))
       .limit(perPage);
+
+    // const reviewsRes: ReviewResponseType[] = reviews.map((it: Review) => {
+    //   return { ...it, userVote: null } as ReviewResponseType;
+    // });
+
+    // const reviewIds = reviews.map((it: Review) => it._id);
+    // const userVotes = await this.voteModel
+    //   .aggregate([{ $match: { reviewId: { $in: reviewIds } } }])
+    //   .project({ userVote: '$rating', _id: '$reviewId' });
+
+    // const mergedReviews: ReviewResponseType[] = _.values(
+    //   _.merge(_.keyBy(reviewsRes, '_id'), _.keyBy(userVotes, '_id')),
+    // );
+    // return mergedReviews;
   }
 
   async replace(
