@@ -1,4 +1,4 @@
-import { NullableType } from 'src/common/types/nullable.type';
+import { NullableType } from '../../common/types/nullable.type';
 import { Vote } from '../../vote/schemas/vote.schema';
 import { Review } from '../schemas/review.schema';
 

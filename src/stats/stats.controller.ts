@@ -6,7 +6,6 @@ import { LoggedUser } from '../users/decorators/logged-user.decorator';
 import { User } from '../users/schemas/user.schema';
 import { PaginationParams } from '../common/types/pagination-params';
 import { Types } from 'mongoose';
-import { ParseObjectIdPipe } from 'src/common/pipes/parse-object-id.pipe';
 
 @ApiTags('Stats')
 @Controller({

@@ -124,6 +124,17 @@ entity "Review comment" as reviewComment {
   *nBeenVoted: Number
 }
 
+entity "Report" as report {
+  *_id : text <<generated>>
+  --
+  *addedBy : text <<FK>>
+  *reportedUser : text <<FK>>
+  *text: text
+  *isOpen: boolean
+  *nNegativeVotes: number
+  *nNeutralVotes: number
+}
+
 user ||..o{ article
 user ||..o{ inv
 user ||..o{ saved

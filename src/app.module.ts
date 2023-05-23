@@ -18,6 +18,7 @@ import { HotModule } from './hot/hot.module';
 import { SearchModule } from './search/search.module';
 import { GameModule } from './game/game.module';
 import { StatsModule } from './stats/stats.module';
+import { ReportsModule } from './reports/reports.module';
 
 @Module({
   imports: [
@@ -56,6 +57,7 @@ import { StatsModule } from './stats/stats.module';
     SearchModule,
     GameModule,
     StatsModule,
+    ReportsModule,
     // PinoLoggerModule,
   ],
   controllers: [],
