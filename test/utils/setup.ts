@@ -1,16 +1,16 @@
 import { NestExpressApplication } from '@nestjs/platform-express';
-import { AppModule } from '../src/app.module';
-import { ArticlesModule } from '../src/articles/articles.module';
-import { AuthModule } from '../src/auth/auth.module';
-import { UsersModule } from '../src/users/users.module';
+import { AppModule } from '../../src/app.module';
+import { ArticlesModule } from '../../src/articles/articles.module';
+import { AuthModule } from '../../src/auth/auth.module';
+import { UsersModule } from '../../src/users/users.module';
 import { Test } from '@nestjs/testing';
 import { ValidationPipe } from '@nestjs/common';
 import { useContainer } from 'class-validator';
 import { Connection } from 'mongoose';
-import { DatabaseService } from '../src/shared/database/database.service';
-import validationOptions from '../src/common/validation-options';
+import { DatabaseService } from '../../src/shared/database/database.service';
+import validationOptions from '../../src/common/validation-options';
 import { ConfigModule } from '@nestjs/config';
-import { DatabaseModule } from '../src/shared/database/database.module';
+import { DatabaseModule } from '../../src/shared/database/database.module';
 // import { Logger } from 'nestjs-pino';
 
 export let app: NestExpressApplication;

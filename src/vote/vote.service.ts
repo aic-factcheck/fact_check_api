@@ -47,6 +47,7 @@ export class VoteService {
 
   async unvote(referencedId: Types.ObjectId, type: VoteObjectEnum, user: User) {
     const oldVote: VoteDocument | null = await this.voteModel.findOneAndDelete({
+      addedBy: user._id,
       referencedId,
       type,
     });
@@ -68,7 +69,7 @@ export class VoteService {
       await this.userModel.findOneAndUpdate(
         { _id: referencedId },
         {
-          $inc: { nBeenVoted: -1, nPositiveVotes, nNegativeVotes },
+          $inc: { nPositiveVotes, nNegativeVotes },
         },
         {
           returnDocument: 'after',
@@ -78,7 +79,7 @@ export class VoteService {
       await this.articleModel.findOneAndUpdate(
         { _id: referencedId },
         {
-          $inc: { nBeenVoted: -1, nPositiveVotes, nNegativeVotes },
+          $inc: { nPositiveVotes, nNegativeVotes },
         },
         {
           returnDocument: 'after',
@@ -88,7 +89,7 @@ export class VoteService {
       await this.claimModel.findOneAndUpdate(
         { _id: referencedId },
         {
-          $inc: { nBeenVoted: -1, nPositiveVotes, nNegativeVotes },
+          $inc: { nPositiveVotes, nNegativeVotes },
         },
         {
           returnDocument: 'after',
@@ -99,7 +100,6 @@ export class VoteService {
         { _id: referencedId },
         {
           $inc: {
-            nBeenVoted: -1,
             nPositiveVotes,
             nNegativeVotes,
             nNeutralVotes,
@@ -129,7 +129,6 @@ export class VoteService {
     let nPositiveVotes = 0;
     let nNegativeVotes = 0;
     let nNeutralVotes = 0;
-    const nBeenVoted = 1;
     if (rating === 1) nPositiveVotes = 1;
     if (rating === 0) nNeutralVotes = 1;
     if (rating === -1) nNegativeVotes = 1;
@@ -138,7 +137,7 @@ export class VoteService {
       res = await this.userModel.findOneAndUpdate(
         { _id: referencedId },
         {
-          $inc: { nBeenVoted, nPositiveVotes, nNegativeVotes },
+          $inc: { nPositiveVotes, nNegativeVotes },
         },
         {
           returnDocument: 'after',
@@ -148,7 +147,7 @@ export class VoteService {
       res = await this.articleModel.findOneAndUpdate(
         { _id: referencedId },
         {
-          $inc: { nBeenVoted, nPositiveVotes, nNegativeVotes },
+          $inc: { nPositiveVotes, nNegativeVotes },
         },
         {
           returnDocument: 'after',
@@ -158,7 +157,7 @@ export class VoteService {
       res = await this.claimModel.findOneAndUpdate(
         { _id: referencedId },
         {
-          $inc: { nBeenVoted, nPositiveVotes, nNegativeVotes },
+          $inc: { nPositiveVotes, nNegativeVotes },
         },
         {
           returnDocument: 'after',
@@ -169,7 +168,6 @@ export class VoteService {
         { _id: referencedId },
         {
           $inc: {
-            nBeenVoted,
             nPositiveVotes,
             nNegativeVotes,
             nNeutralVotes,

@@ -2,7 +2,7 @@ import * as request from 'supertest';
 import { HttpStatus } from '@nestjs/common';
 import { _, some } from 'lodash';
 
-import { dbConnection, httpServer } from '../setup';
+import { dbConnection, httpServer } from '../utils/setup';
 
 describe('Claims API', () => {
   const password = 'secret';

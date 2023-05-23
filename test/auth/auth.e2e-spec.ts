@@ -1,5 +1,5 @@
 import * as request from 'supertest';
-import { dbConnection, httpServer } from '../setup';
+import { dbConnection, httpServer } from '../utils/setup';
 import { HttpStatus } from '@nestjs/common';
 
 describe('Auth API', () => {

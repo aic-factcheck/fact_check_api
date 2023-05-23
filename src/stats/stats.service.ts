@@ -27,8 +27,7 @@ export class StatsService {
         nPos: { $sum: '$nPositiveVotes' },
         nNeg: { $sum: '$nNegativeVotes' },
         total: { $sum: 1 },
-      })
-      .exec();
+      });
 
     if (
       claims.length <= 0 ||
@@ -59,8 +58,7 @@ export class StatsService {
         nNeg: { $sum: '$nNegativeVotes' },
         nNeut: { $sum: '$nNeutralVotes' },
         total: { $sum: 1 },
-      })
-      .exec();
+      });
 
     if (
       rev.length <= 0 ||
@@ -130,7 +128,7 @@ export class StatsService {
   async leaderboard(page = 1, perPage = 20, user: User | null) {
     const users: UserDocument[] = await this.userModel
       .find()
-      .sort({ nReviews: -1 })
+      .sort({ rating: -1 })
       .limit(perPage)
       .skip(perPage * (page - 1))
       .select('-password');

@@ -22,19 +22,18 @@ export class UsersService {
   }
 
   async findByEmail(email: string): Promise<NullableType<User>> {
-    return this.userModel.findOne({ email }).exec();
+    return this.userModel.findOne({ email });
   }
 
   async findById(_id: Types.ObjectId): Promise<NullableType<User>> {
-    return this.userModel.findById(_id).exec();
+    return this.userModel.findById(_id);
   }
 
   async findManyWithPagination(page = 1, perPage = 20): Promise<User[]> {
     return this.userModel
       .find()
       .limit(perPage)
-      .skip(perPage * (page - 1))
-      .exec();
+      .skip(perPage * (page - 1));
   }
 
   async update(

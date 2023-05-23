@@ -28,8 +28,7 @@ export class HotService {
       .find(query)
       .skip(perPage * (page - 1))
       .limit(perPage)
-      .sort({ nPositiveVotes: 'desc' })
-      .exec();
+      .sort({ nPositiveVotes: 'desc' });
   }
 
   async findArticles(
