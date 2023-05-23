@@ -1,5 +1,5 @@
 import { _ } from 'lodash';
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateReportDto } from './dto/create-report.dto';
 import { UpdateReportDto } from './dto/update-report.dto';
 import { Report, ReportDocument } from './schemas/report.schema';
@@ -10,9 +10,16 @@ import { NullableType } from '../common/types/nullable.type';
 
 @Injectable()
 export class ReportsService {
-  constructor(@InjectModel(Report.name) private reportModel: Model<Report>) {}
+  constructor(
+    @InjectModel(Report.name) private reportModel: Model<Report>,
+    @InjectModel(User.name) private userModel: Model<User>,
+  ) {}
 
-  create(createDto: CreateReportDto, loggedUser: User): Promise<Report> {
+  async create(createDto: CreateReportDto, loggedUser: User): Promise<Report> {
+    const user = await this.userModel.findById(createDto.reportedUser);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
     const report: ReportDocument = new this.reportModel(
       _.assign(createDto, {
         addedBy: loggedUser._id,
@@ -41,11 +48,21 @@ export class ReportsService {
     return this.reportModel.findOne({ _id });
   }
 
-  update(
+  async update(
     _id: Types.ObjectId,
     updateReportDto: UpdateReportDto,
     loggedUser: User,
-  ) {
-    return `This action updates a #${_id} report`;
+  ): Promise<NullableType<Report>> {
+    const updated: Report | null = await this.reportModel.findByIdAndUpdate(
+      _id,
+      updateReportDto,
+      {
+        returnOriginal: false,
+      },
+    );
+    if (!updated) {
+      throw new NotFoundException(`Report not found`);
+    }
+    return updated;
   }
 }

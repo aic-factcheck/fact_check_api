@@ -16,7 +16,7 @@ export class CreateReportDto {
   @IsString()
   text: string;
 
-  @ApiProperty({ example: 'en' })
+  @ApiProperty()
   @IsNotEmpty()
   @IsMongoId()
   reportedUser: User;
