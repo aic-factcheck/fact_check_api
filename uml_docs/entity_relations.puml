@@ -94,6 +94,9 @@ entity "Claim" as claim {
   *nBeenVoted: Number
   *nPositiveVotes: number
   *nNegativeVotes: number
+  *history: [{text,updatedAt,lang,addedBy}]
+  --
+  *nViews: number
 }
 
 entity "Review" as review {

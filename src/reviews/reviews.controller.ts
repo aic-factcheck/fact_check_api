@@ -6,9 +6,9 @@ import {
   Get,
   Query,
   Param,
-  Put,
   Delete,
   UseInterceptors,
+  Patch,
 } from '@nestjs/common';
 import { Controller } from '@nestjs/common';
 import {
@@ -26,10 +26,10 @@ import { LoggedUser } from '../users/decorators/logged-user.decorator';
 import { User } from '../users/schemas/user.schema';
 import { Public } from '../auth/decorators/public-route.decorator';
 import { CreateReviewDto } from './dto/create-review.dto';
-// import { UpdateReviewDto } from './dto/update-review.dto';
 import { Review } from './schemas/review.schema';
 import MongooseClassSerializerInterceptor from '../common/interceptors/mongoose-class-serializer.interceptor';
 import { ReviewsService } from './reviews.service';
+import { UpdateReviewDto } from './dto/update-review.dto';
 
 @ApiTags('Reviews')
 @Controller({
@@ -100,26 +100,25 @@ export class ReviewsController {
     return this.reviewsService.findOne(articleId, claimId, reviewId, user);
   }
 
-  @Put(':reviewId')
+  @Patch(':reviewId')
   @ApiOperation({ summary: 'Replaces the whole Article document by a new one' })
   @ApiBearerAuth()
   @ApiParam({ name: 'articleId', type: String })
   @ApiParam({ name: 'claimId', type: String })
   @ApiParam({ name: 'reviewId', type: String })
-  @ApiParam({ name: 'id', type: String, example: '645cacbfa6693d8100b2d60a' })
   @HttpCode(HttpStatus.OK)
   replace(
-    @Body() createReviewDto: CreateReviewDto,
+    @Body() updateReviewDto: UpdateReviewDto,
     @LoggedUser() user: User,
     @Param('articleId', new ParseObjectIdPipe()) articleId: Types.ObjectId,
     @Param('claimId', new ParseObjectIdPipe()) claimId: Types.ObjectId,
     @Param('reviewId', new ParseObjectIdPipe()) reviewId: Types.ObjectId,
   ): Promise<NullableType<Review>> {
-    return this.reviewsService.replace(
+    return this.reviewsService.update(
       articleId,
       claimId,
       reviewId,
-      createReviewDto,
+      updateReviewDto,
       user,
     );
   }

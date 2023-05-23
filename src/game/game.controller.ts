@@ -4,7 +4,7 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { LoggedUser } from '../users/decorators/logged-user.decorator';
 import { User } from '../users/schemas/user.schema';
 
-@ApiTags('Gane')
+@ApiTags('Game')
 @Controller({
   version: '1',
   path: 'game',

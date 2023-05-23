@@ -1,11 +1,11 @@
 import { _ } from 'lodash';
 import {
+  BadRequestException,
   ConflictException,
   HttpException,
   HttpStatus,
   Injectable,
   NotFoundException,
-  NotImplementedException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from '../users/schemas/user.schema';
@@ -16,9 +16,12 @@ import { Review, ReviewDocument } from './schemas/review.schema';
 import { GameService } from '../game/game.service';
 import { GameAtionEnum } from '../game/enums/reputation.enum';
 import { Claim } from '../claims/schemas/claim.schema';
-import { Vote, VoteDocument } from '../vote/schemas/vote.schema';
+import { Vote } from '../vote/schemas/vote.schema';
 import { ReviewResponseType } from './types/review-response.type';
 import { VoteObjectEnum } from '../vote/enums/vote.enum';
+import { ReviewHistoryType } from './types/review-history.type';
+import { VoteTypes } from './enums/vote.types';
+import { UpdateReviewDto } from './dto/update-review.dto';
 
 @Injectable()
 export class ReviewsService {
@@ -165,24 +168,49 @@ export class ReviewsService {
     // return mergedReviews;
   }
 
-  async replace(
+  async update(
     articleId: Types.ObjectId,
     claimId: Types.ObjectId,
     reviewId: Types.ObjectId,
-    reviewDto: CreateReviewDto,
+    reviewDto: UpdateReviewDto,
     loggedUser: User,
-  ): Promise<Review> {
+  ): Promise<NullableType<Review>> {
     await this.checkResourceAccess(loggedUser, reviewId);
 
-    throw new NotImplementedException('Not yet implemented');
-    // const createdReview: ReviewDocument = new this.reviewModel(
-    //   _.assign(reviewDto, {
-    //     addedBy: loggedUser._id,
-    //     article: articleId,
-    //     claim: claimId,
-    //   }),
-    // );
-    // return createdReview.save();
+    const currentReview = await this.reviewModel.findById(reviewId);
+    if (!currentReview) {
+      throw new NotFoundException('Review not found');
+    }
+    if (currentReview.history.length >= 3) {
+      throw new BadRequestException('Review can be updated up to 3 times');
+    }
+
+    const historyObj: ReviewHistoryType = {
+      text: currentReview.text,
+      lang: currentReview.lang,
+      vote: VoteTypes[currentReview.vote],
+      links: currentReview.links,
+      updatedAt: new Date(),
+      addedBy: loggedUser._id,
+    };
+
+    return this.reviewModel.findByIdAndUpdate(
+      reviewId,
+      _.assign(
+        reviewDto,
+        {
+          addedBy: loggedUser._id,
+          article: articleId,
+          claim: claimId,
+          $push: { history: historyObj },
+        },
+        {
+          override: true,
+          upsert: true,
+          returnOriginal: false,
+        },
+      ),
+    );
   }
 
   async delete(

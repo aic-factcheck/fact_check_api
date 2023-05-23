@@ -5,6 +5,7 @@ import { User } from '../../users/schemas/user.schema';
 import { Article } from '../../articles/schemas/article.schema';
 import { Claim } from '../../claims/schemas/claim.schema';
 import { VoteTypes } from '../enums/vote.types';
+import { ReviewHistoryType } from '../types/review-history.type';
 
 export type ReviewDocument = HydratedDocument<Review>;
 
@@ -69,6 +70,9 @@ export class Review {
     required: true,
   })
   links: string[];
+
+  @Prop({ default: [], maxlength: 3 })
+  history: ReviewHistoryType[];
 
   @Prop({ default: now() })
   createdAt: Date;

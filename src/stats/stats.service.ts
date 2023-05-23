@@ -8,6 +8,7 @@ import { Model, Types } from 'mongoose';
 import { SavedArticle } from '../saved-articles/schemas/saved-article.schema';
 import { UserStatType } from './types/user-stat.type';
 import { Review } from '../reviews/schemas/review.schema';
+import { Reputation } from '../game/schemas/reputation.schema';
 
 @Injectable()
 export class StatsService {
@@ -17,6 +18,7 @@ export class StatsService {
     @InjectModel(SavedArticle.name) private savedModel: Model<SavedArticle>,
     @InjectModel(Claim.name) private claimModel: Model<Claim>,
     @InjectModel(User.name) private userModel: Model<User>,
+    @InjectModel(Reputation.name) private repModel: Model<Reputation>,
   ) {}
 
   async getClaimsStats(userId) {
@@ -114,10 +116,14 @@ export class StatsService {
       claims: {},
       reviews: {},
       articles: {},
+      history: [],
     };
 
-    // const savedArticles = await getSavedArticles(uId);
-    // if (!_.isNil(savedArticles)) _.assign(userStats.articles, savedArticles);
+    if (loggedUser) {
+      const repHistory = await this.repModel.find({ user: loggedUser._id });
+      _.assign(userStats.history, repHistory);
+    }
+
     _.assign(userStats.articles, await this.getSavedArticles(user));
     _.assign(userStats.claims, await this.getClaimsStats(user));
     _.assign(userStats.reviews, await this.getReviewsStats(user));

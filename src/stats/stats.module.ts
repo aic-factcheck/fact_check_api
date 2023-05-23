@@ -10,6 +10,10 @@ import {
   SavedArticleSchema,
 } from '../saved-articles/schemas/saved-article.schema';
 import { Review, ReviewSchema } from '../reviews/schemas/review.schema';
+import {
+  Reputation,
+  ReputationSchema,
+} from '../game/schemas/reputation.schema';
 
 @Module({
   imports: [
@@ -17,6 +21,9 @@ import { Review, ReviewSchema } from '../reviews/schemas/review.schema';
     MongooseModule.forFeature([{ name: Claim.name, schema: ClaimSchema }]),
     MongooseModule.forFeature([{ name: Review.name, schema: ReviewSchema }]),
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
+    MongooseModule.forFeature([
+      { name: Reputation.name, schema: ReputationSchema },
+    ]),
     MongooseModule.forFeature([
       { name: SavedArticle.name, schema: SavedArticleSchema },
     ]),

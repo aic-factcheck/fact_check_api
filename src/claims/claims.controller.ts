@@ -6,7 +6,7 @@ import {
   Get,
   Query,
   Param,
-  // Patch,
+  Patch,
   // Put,
   Delete,
   // UseInterceptors,
@@ -17,8 +17,8 @@ import {
   ApiQuery,
   ApiBearerAuth,
   ApiParam,
-  // ApiOperation,
-  // ApiBody,
+  ApiOperation,
+  ApiBody,
 } from '@nestjs/swagger';
 import { NullableType } from '../common/types/nullable.type';
 import { PaginationParams } from '../common/types/pagination-params';
@@ -90,22 +90,27 @@ export class ClaimsController {
     return this.claimService.findOne(articleId, claimId, user);
   }
 
-  // @Patch(':id')
-  // @ApiBearerAuth()
-  // @ApiParam({
-  //   name: 'articleId',
-  //   type: String,
-  // })
-  // @ApiOperation({ summary: 'Updates specified fields of existing Article' })
-  // @ApiBody({ type: ReplaceClaimDto })
-  // @ApiParam({ name: 'id', type: String, example: '645cacbfa6693d8100b2d60a' })
-  // @HttpCode(HttpStatus.OK)
-  // update(
-  //   @Param('id', new ParseObjectIdPipe()) _id: Types.ObjectId,
-  //   @Body() articleDto: UpdateArticleDto,
-  // ): Promise<NullableType<Claim>> {
-  //   return this.claimService.update(_id, articleDto);
-  // }
+  @Patch(':claimId')
+  @ApiBearerAuth()
+  @ApiParam({
+    name: 'articleId',
+    type: String,
+  })
+  @ApiOperation({ summary: 'Updates specified fields of existing Article' })
+  @ApiBody({ type: CreateClaimDto })
+  @ApiParam({
+    name: 'claimId',
+    type: String,
+    example: '645cacbfa6693d8100b2d60a',
+  })
+  @HttpCode(HttpStatus.OK)
+  update(
+    @Param('claimId', new ParseObjectIdPipe()) claimId: Types.ObjectId,
+    @Body() articleDto: CreateClaimDto,
+    @LoggedUser() user: User,
+  ): Promise<NullableType<Claim>> {
+    return this.claimService.update(claimId, articleDto, user);
+  }
 
   // @Put(':id')
   // @ApiOperation({ summary: 'Replaces the whole Article document by a new one' })

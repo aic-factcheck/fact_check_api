@@ -1,10 +1,10 @@
 import { _ } from 'lodash';
 import {
+  BadRequestException,
   HttpException,
   HttpStatus,
   Injectable,
   NotFoundException,
-  NotImplementedException,
 } from '@nestjs/common';
 import { Claim, ClaimDocument } from './schemas/claim.schema';
 import { InjectModel } from '@nestjs/mongoose';
@@ -18,6 +18,7 @@ import { mergeClaimsWithReviews } from '../common/helpers/merge-claims-reviews.h
 import { GameService } from '../game/game.service';
 import { GameAtionEnum } from '../game/enums/reputation.enum';
 import { Article } from '../articles/schemas/article.schema';
+import { ClaimHistoryType } from './types/claim-history.type';
 
 @Injectable()
 export class ClaimsService {
@@ -83,10 +84,13 @@ export class ClaimsService {
     claimId: Types.ObjectId,
     loggedUser: User,
   ): Promise<NullableType<ClaimResponseType>> {
-    const claim: ClaimDocument | null = await this.claimModel.findOne({
-      _id: claimId,
-      article: articleId,
-    });
+    const claim: ClaimDocument | null = await this.claimModel.findOneAndUpdate(
+      {
+        _id: claimId,
+        article: articleId,
+      },
+      { $inc: { nViews: 1 } },
+    );
     if (!claim) {
       throw new NotFoundException(`Claim not found`);
     }
@@ -121,23 +125,39 @@ export class ClaimsService {
     return mergeClaimsWithReviews(claims, userReviews);
   }
 
-  async replace(
+  async update(
     _id: Types.ObjectId,
-    loggedUser: User,
     claimDto: CreateClaimDto,
+    loggedUser: User,
   ): Promise<Claim> {
     await this.checkResourceAccess(loggedUser, _id);
-    // TODO should not delete old.. just create new object
-    throw new NotImplementedException('Not yet implemented');
-    // return this.claimModel.findByIdAndUpdate(
-    //   _id,
-    //   _.assign(claimDto, { addedBy: loggedUser._id }),
-    //   {
-    //     override: true,
-    //     upsert: true,
-    //     returnOriginal: false,
-    //   },
-    // );
+    const currentClaim = await this.claimModel.findById(_id);
+    if (!currentClaim) {
+      throw new NotFoundException('Claim not found');
+    }
+    if (currentClaim.history.length >= 3) {
+      throw new BadRequestException('Claim can be updated up to 3 times');
+    }
+
+    const historyObj: ClaimHistoryType = {
+      text: currentClaim.text,
+      lang: currentClaim.lang,
+      updatedAt: new Date(),
+      addedBy: loggedUser._id,
+    };
+
+    return this.claimModel.findByIdAndUpdate(
+      _id,
+      _.assign(claimDto, {
+        addedBy: loggedUser._id,
+        $push: { history: historyObj },
+      }),
+      {
+        override: true,
+        upsert: true,
+        returnOriginal: false,
+      },
+    );
   }
 
   async delete(
