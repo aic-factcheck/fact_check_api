@@ -8,12 +8,12 @@ export type RefreshTokenDocument = HydratedDocument<RefreshToken>;
 export class RefreshToken {
   @Expose()
   @Transform((params) => params.obj._id.toString())
-  _id: ObjectId;
+  _id: Types.ObjectId;
 
   @Expose()
   @Transform((params) => params.obj.userId.toString())
   @Prop({ type: Types.ObjectId, ref: 'User', required: true })
-  userId: ObjectId;
+  userId: Types.ObjectId;
 
   @Prop({ required: true, unique: true })
   email: string;

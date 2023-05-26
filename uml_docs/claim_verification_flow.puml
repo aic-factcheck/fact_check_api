@@ -1,85 +1,107 @@
 @startuml Claim verification flow
 
-|#goldenrod|author| Author (User)
+|#goldenrod|author| Authororized (User)
 |#tomato|expert| Expert (Journalist)
 |#salmon|system| System (App)
 |#coral|participant| Participant (user)
 
 |author|
 start
-:Submit article;
-while (Another claim?)
-  :Add claim;
-endwhile
-:Request verification;
-|system|
-:set Deadline
-============
-(14 days - for each claim)
-Start participantion;
-|participant|
-:List claims;
-note right
-  Choose list:
-  (not yet verified)
+:Submit article
+====
+POST /articles;
+while (Select claim)
+  :Submit new claim
   ====
-  - Hottest All time
-  - Hottest today
-  - Hottest last week
-  - Hottest last month
-end note
-:Claim voting phase;
-:Select claim;
-if (submit new Review?) is (true) then
-:Submit new review 
-==============
-- Add analysis
-- Add Proofs (urls);
-else (false)
-:Vote for existing reviews
-==========================
-- Positive votes
-- Not enough info
-- Negative vote;
-endif
+  POST /articles/:articleId/claims;
+endwhile
+|participant|
+:List the most trending claims
+=====
+GET /hot/claims?duration=WEEK&sortBy=POSITIVE_VOTES_DESC;
+' note right
+'   Choose list:
+'   (not yet verified)
+'   ====
+'   - Hottest All time
+'   - Hottest today
+'   - Hottest last week
+'   - Hottest last month
+' end note
+' :Claim voting phase;
+:Select claim
+====
+GET /articles/:articleId/claims/:claimId;
+fork
+  :Add new review for selected claim
+  ====
+  POST /articles/:articleId/claims/:claimId/reviews;
+fork again
+  :Vote for reviews of selected claim
+  ====
+  POST \n/vote?id=:reviewId&type=REVIEW;
+end fork
+
+' if (Submit review) is (true) then
+' :GET /articles/:articleId/claims/:claimId
+' ==============
+' - Add analysis
+' - Add Proofs (urls);
+' else (false)
+' :Vote for existing reviews
+' ==========================
+' - Positive votes
+' - Not enough info
+' - Negative vote;
+' endif
 |system|
-:Deadline of a claim reached
-=======================
-Close participation;
+:Deadline of a claim reached;
+note right
+  Automatic (once a day) cronjob
+  ------------------------------
+  Find claim that is:
+  - not evaluated yet
+  - older than 14 days
+end note
+:Close participation
+=====
+Disable:
+- voting
+- Adding reviews;
 :Reviews comparison & analysis
 ==============================
-based on number of votes;
+Based on number of votes;
 if (Winner exists?\n (Vote-majority based)) is (false) then
 :Request expert analysis;
 |expert|
 :Submit analysis;
 else (true)
 |system|
-:Select review as the result;
+:Select review as the result
+====
+Result is a score (5..10)
+score = (# of votes of winning review / # of votes) / 10;
 endif
 |system|
-:Give points to winner-reviewer;
-' note left
-'   winner exists
-'   Or
-'   Expert marked existing Review
-' end note
+:Give points to winner-reviewer
+====
+points awarded = score * 50; 
 :Close participantion
 =====================
 - Show results
 - Close request;
 -> Author request expert analysis;
 |author|
-if (Expert analysis does not exist) is (true) then
-|author|
-:Request expert-analysis;
+if (Expert analysis exists) is (true) then
 
-|expert|
-:Submit analysis;
-|system|
 else (false)
+  |author|
+  :Request expert-analysis;
 
+  |expert|
+  :Submit analysis;
+  |system|
 endif
-:Show results, Close request;
+:Show results, Close claim;
 stop
 @enduml

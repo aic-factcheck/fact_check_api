@@ -42,6 +42,7 @@ import { Public } from '../auth/decorators/public-route.decorator';
   path: 'users',
   version: '1',
 })
+@ApiBearerAuth()
 @UseInterceptors(MongooseClassSerializerInterceptor(User))
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
@@ -49,7 +50,6 @@ export class UsersController {
   @Post()
   @SerializeOptions({ groups: ['admin'] })
   @Roles('admin')
-  @ApiBearerAuth()
   @HttpCode(HttpStatus.CREATED)
   create(@Body() createUserDto: CreateUserDto): Promise<User> {
     return this.usersService.create(createUserDto);
@@ -59,7 +59,6 @@ export class UsersController {
   @Public()
   @SerializeOptions({ groups: ['admin'] })
   @Roles('admin')
-  @ApiBearerAuth()
   @HttpCode(HttpStatus.OK)
   @ApiQuery({ name: 'page', required: false, type: Number, example: 1 })
   @ApiQuery({ name: 'perPage', required: false, type: Number, example: 20 })
@@ -70,57 +69,54 @@ export class UsersController {
     return this.usersService.findManyWithPagination(page, perPage);
   }
 
-  @Get(':id')
+  @Get(':userId')
   @Public()
   @SerializeOptions({ groups: ['admin'] })
-  @ApiParam({ name: 'id', type: String, example: '645cacbfa6693d8100b2d60a' })
+  @ApiParam({ name: 'userId', type: String })
   @HttpCode(HttpStatus.OK)
   findOne(
-    @Param('id', new ParseObjectIdPipe()) _id: Types.ObjectId,
+    @Param('userId', new ParseObjectIdPipe()) _id: Types.ObjectId,
   ): Promise<NullableType<User>> {
     return this.usersService.findOne({ _id });
   }
 
-  @Patch(':id')
-  @ApiBearerAuth()
+  @Patch(':userId')
   @ApiOperation({ summary: 'Updates specified fields of existing user' })
   @ApiBody({ type: ReplaceUserDto })
-  @ApiParam({ name: 'id', type: String, example: '645cacbfa6693d8100b2d60a' })
+  @ApiParam({ name: 'userId', type: String })
   @SerializeOptions({ groups: ['admin'] })
   @HttpCode(HttpStatus.CREATED)
   update(
-    @Param('id', new ParseObjectIdPipe()) _id: Types.ObjectId,
+    @Param('userId', new ParseObjectIdPipe()) userId: Types.ObjectId,
     @Body() userDto: UpdateUserDto,
     @LoggedUser() user: User,
   ): Promise<NullableType<User>> {
-    return this.usersService.update(_id, user, userDto);
+    return this.usersService.update(userId, user, userDto);
   }
 
-  @Put(':id')
+  @Put(':userId')
   @ApiOperation({ summary: 'Replaces the whole user document by a new one' })
-  @ApiBearerAuth()
-  @ApiParam({ name: 'id', type: String, example: '645cacbfa6693d8100b2d60a' })
+  @ApiParam({ name: 'userId', type: String })
   @SerializeOptions({ groups: ['admin'] })
   @Roles('admin')
   @HttpCode(HttpStatus.CREATED)
   replace(
-    @Param('id', new ParseObjectIdPipe()) _id: Types.ObjectId,
+    @Param('userId', new ParseObjectIdPipe()) userId: Types.ObjectId,
     @Body() userDto: ReplaceUserDto,
     @LoggedUser() user: User,
   ): Promise<NullableType<User>> {
-    return this.usersService.replace(_id, user, userDto);
+    return this.usersService.replace(userId, user, userDto);
   }
 
-  @Delete(':id')
-  @ApiBearerAuth()
-  @ApiParam({ name: 'id', type: String, example: '645cacbfa6693d8100b2d60a' })
+  @Delete(':userId')
+  @ApiParam({ name: 'userId', type: String })
   @HttpCode(HttpStatus.NO_CONTENT)
   async delete(
-    @Param('id', new ParseObjectIdPipe()) _id: Types.ObjectId,
+    @Param('userId', new ParseObjectIdPipe()) userId: Types.ObjectId,
     @Res() res: Response,
   ) {
     try {
-      const deletedUser = await this.usersService.delete(_id);
+      const deletedUser = await this.usersService.delete(userId);
       return res.status(HttpStatus.NO_CONTENT).json({
         message: 'User deleted successfully',
         deletedUser,
@@ -128,5 +124,16 @@ export class UsersController {
     } catch (err) {
       return res.status(err.status).json(err.response);
     }
+  }
+
+  @Post(':userId/ban')
+  @Roles('admin')
+  @ApiParam({ name: 'userId', type: String })
+  @HttpCode(HttpStatus.CREATED)
+  banUser(
+    @Param('userId', new ParseObjectIdPipe()) userId: Types.ObjectId,
+    @LoggedUser() loggedUser: User,
+  ): Promise<User> {
+    return this.usersService.ban(userId, loggedUser);
   }
 }

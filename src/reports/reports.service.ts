@@ -28,12 +28,21 @@ export class ReportsService {
     return report.save();
   }
 
-  findAll(
+  async findAll(
     page = 1,
     perPage = 20,
     user: User,
     openedOnly = true,
   ): Promise<Report[]> {
+    // const mostReportedUsers = await this.reportModel
+    //   .aggregate([{ $match: { isOpen: true } }])
+    //   .group({
+    //     _id: 'reportedUser',
+    //     nReports: { $count: {} },
+    //   })
+    //   .skip(perPage * (page - 1))
+    //   .limit(perPage); // TODO ?
+
     return this.reportModel
       .find({ isOpen: true })
       .sort({ createdAt: 'desc' })

@@ -37,7 +37,7 @@ entity "Reputation" as rep {
   referencedId: text <<FK>>
 }
 
-entity "Saved" as saved {
+entity "SavedArticles" as saved {
   *_id : string <<generated>>
   --
   *addedBy : text <<FK>>
@@ -131,8 +131,7 @@ entity "Report" as report {
   *reportedUser : text <<FK>>
   *text: text
   *isOpen: boolean
-  *nNegativeVotes: number
-  *nNeutralVotes: number
+  *createdAt
 }
 
 user ||..o{ article
@@ -140,6 +139,7 @@ user ||..o{ inv
 user ||..o{ saved
 user ||..o{ vote
 user ||..o{ rep
+user ||..o{ report
 article }o..o{ claim
 article ||..o{ saved
 ' article ||..o{ vote

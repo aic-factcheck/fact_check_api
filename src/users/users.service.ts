@@ -78,4 +78,13 @@ export class UsersService {
     }
     return deletedUser;
   }
+
+  async ban(idToBeBanned: Types.ObjectId, loggedUser: User): Promise<User> {
+    const bannedUser = await this.userModel.findById(idToBeBanned);
+    if (!bannedUser) {
+      throw new NotFoundException(`User #${idToBeBanned} not found`);
+    }
+    // TODO ban all his resources
+    return bannedUser;
+  }
 }
