@@ -172,7 +172,7 @@ describe('Articles API', () => {
   describe('GET /articles', () => {
     it('should list articles', () => {
       return request(httpServer)
-        .get('/articles')
+        .get('/articles?page=1&perPage=100')
         .auth(userAccessToken, { type: 'bearer' })
         .expect(HttpStatus.OK)
         .then(async (res) => {

@@ -18,9 +18,10 @@ describe('Claims API', () => {
     text: 'Second claim with random text.',
     lang: 'en',
   };
-  // const claim1Updated = {
-  //   text: 'updated text of claim',
-  // };
+  const claim1Updated = {
+    text: 'updated text of claim',
+    lang: 'en',
+  };
   let claim1Id;
   // let claim2Id;
 
@@ -169,7 +170,7 @@ describe('Claims API', () => {
   describe('GET /articles/:articleId/claims', () => {
     it('should list claims for article', async () => {
       return request(httpServer)
-        .get(`/articles/${article1Id}/claims`)
+        .get(`/articles/${article1Id}/claims?page=1&perPage=100000`)
         .auth(user1AccessToken, { type: 'bearer' })
         .expect(HttpStatus.OK)
         .then(async (res) => {
@@ -215,98 +216,83 @@ describe('Claims API', () => {
     });
   });
 
-  // describe('PUT /articles/:articleId/claims/:claimId', () => {
-  //   it('should replace claim', async () => {
-  //     const xArticles = await Article.find({});
+  describe('PUT /articles/:articleId/claims/:claimId', () => {
+    it('should replace claim', async () => {
+      // const xArticles = await Article.find({});
+      return request(httpServer)
+        .patch(`/articles/${article1Id}/claims/${claim1Id}`)
+        .auth(user1AccessToken, { type: 'bearer' })
+        .send(claim1Updated)
+        .expect(HttpStatus.OK)
+        .then((res) => {
+          expect(res.body._id).toEqual(claim1Id);
+          expect(res.body.text).toEqual(claim1Updated.text);
+          expect(res.body.addedBy).toHaveProperty('firstName');
+          expect(res.body.addedBy).toHaveProperty('lastName');
+          expect(res.body.addedBy).toHaveProperty('email');
 
-  //     return request(httpServer)
-  //       .put(`/articles/${article1Id}/claims/${claim1Id}`)
-  //       .auth(user1AccessToken, { type: 'bearer' })
-  //       .send(claim1Updated)
-  //       .expect(HttpStatus.OK)
-  //       .then((res) => {
-  //         expect(res.body).to.include(claim1Updated);
-
-  //         expect(res.body._id).toEqual(claim1Id);
-  //         expect(res.body.text).toEqual(claim1Updated.text);
-  //         expect(res.body.article1Id).toEqual(article1Id.toString());
-  //         expect(res.body.articles).to.include(article1Id.toString());
-
-  //         expect(res.body.addedBy._id).toEqual(user._id);
-  //         expect(res.body.addedBy).toHaveProperty('firstName');
-  //         expect(res.body.addedBy).toHaveProperty('lastName');
-  //         expect(res.body.addedBy).toHaveProperty('email');
-  //       });
-  //   });
-
-  //   it('should report error when text is not provided', async () => {
-  //     const xArticles = await Article.find({});
-
-  //     return request(httpServer)
-  //       .put(`/articles/${article1Id}/claims/${claim1Id}`)
-  //       .auth(user1AccessToken, { type: 'bearer' })
-  //       .send(_.omit(claim1Updated, ['text']))
-  //       .expect(HttpStatus.BAD_REQUEST)
-  //       .then((res) => {
-  //         const { field, location, messages } = res.body.errors[0];
-
-  //         expect(field).toEqual('text');
-  //         expect(location).toEqual('body');
-  //         expect(messages).to.include('"text" is required');
-  //       });
-  //   });
-
-  //   it('should report error when sourceUrl is shorter than 5', async () => {
-  //     const xArticles = await Article.find({});
-  //     const newClaimToUpdate = {
-  //       text: 'xdd',
-  //     };
-
-  //     return request(httpServer)
-  //       .put(`/articles/${article1Id}/claims/${claim1Id}`)
-  //       .auth(user1AccessToken, { type: 'bearer' })
-  //       .send(newClaimToUpdate)
-  //       .expect(HttpStatus.BAD_REQUEST)
-  //       .then((res) => {
-  //         const { field, location, messages } = res.body.errors[0];
-
-  //         expect(field).toEqual('text');
-  //         expect(location).toEqual('body');
-  //         expect(messages).to.include(
-  //           '"text" length must be at least 6 characters long',
-  //         );
-  //       });
-  //   });
-
-  //   it('should report error "Claim does not exist" when claim does not exists', async () => {
-  //     const xArticles = await Article.find({});
-
-  //     return request(httpServer)
-  //       .put(`/articles/${article1Id}/claims/tenerife`)
-  //       .auth(user1AccessToken, { type: 'bearer' })
-  //       .expect(HttpStatus.NOT_FOUND)
-  //       .then((res) => {
-  //         expect(res.body.code).toEqual(404);
-  //         expect(res.body.message).toEqual('Claim does not exist');
-  //       });
-  //   });
-
-  //   it('should report error when logged user is not the owner of claim', async () => {
-  //     const xArticles = await Article.find({});
-
-  //     return request(httpServer)
-  //       .put(`/articles/${article1Id}/claims/${claim1Id}`)
-  //       .auth(user2AccessToken, { type: 'bearer' })
-  //       .send(claim1Updated)
-  //       .expect(HttpStatus.FORBIDDEN)
-  //       .then((res) => {
-  //         expect(res.body.code).toEqual(HttpStatus.FORBIDDEN);
-  //         expect(res.body.message).toEqual(
-  //           'Forbidden to perform this action over selected resource.',
-  //         );
-  //       });
-  //   });
-  // });
+          expect(res.body.history.length).toBe(1);
+        });
+    });
+    //   it('should report error when text is not provided', async () => {
+    //     const xArticles = await Article.find({});
+    //     return request(httpServer)
+    //       .put(`/articles/${article1Id}/claims/${claim1Id}`)
+    //       .auth(user1AccessToken, { type: 'bearer' })
+    //       .send(_.omit(claim1Updated, ['text']))
+    //       .expect(HttpStatus.BAD_REQUEST)
+    //       .then((res) => {
+    //         const { field, location, messages } = res.body.errors[0];
+    //         expect(field).toEqual('text');
+    //         expect(location).toEqual('body');
+    //         expect(messages).to.include('"text" is required');
+    //       });
+    //   });
+    //   it('should report error when sourceUrl is shorter than 5', async () => {
+    //     const xArticles = await Article.find({});
+    //     const newClaimToUpdate = {
+    //       text: 'xdd',
+    //     };
+    //     return request(httpServer)
+    //       .put(`/articles/${article1Id}/claims/${claim1Id}`)
+    //       .auth(user1AccessToken, { type: 'bearer' })
+    //       .send(newClaimToUpdate)
+    //       .expect(HttpStatus.BAD_REQUEST)
+    //       .then((res) => {
+    //         const { field, location, messages } = res.body.errors[0];
+    //         expect(field).toEqual('text');
+    //         expect(location).toEqual('body');
+    //         expect(messages).to.include(
+    //           '"text" length must be at least 6 characters long',
+    //         );
+    //       });
+    //   });
+    //   it('should report error "Claim does not exist" when claim does not exists', async () => {
+    //     const xArticles = await Article.find({});
+    //     return request(httpServer)
+    //       .put(`/articles/${article1Id}/claims/tenerife`)
+    //       .auth(user1AccessToken, { type: 'bearer' })
+    //       .expect(HttpStatus.NOT_FOUND)
+    //       .then((res) => {
+    //         expect(res.body.code).toEqual(404);
+    //         expect(res.body.message).toEqual('Claim does not exist');
+    //       });
+    //   });
+    //   it('should report error when logged user is not the owner of claim', async () => {
+    //     const xArticles = await Article.find({});
+    //     return request(httpServer)
+    //       .put(`/articles/${article1Id}/claims/${claim1Id}`)
+    //       .auth(user2AccessToken, { type: 'bearer' })
+    //       .send(claim1Updated)
+    //       .expect(HttpStatus.FORBIDDEN)
+    //       .then((res) => {
+    //         expect(res.body.code).toEqual(HttpStatus.FORBIDDEN);
+    //         expect(res.body.message).toEqual(
+    //           'Forbidden to perform this action over selected resource.',
+    //         );
+    //       });
+    //   });
+  });
 
   // describe('PATCH /articles/:articleId/claims/:claimId', () => {
   //   it('should update claim', async () => {
