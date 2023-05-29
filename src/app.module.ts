@@ -19,6 +19,8 @@ import { SearchModule } from './search/search.module';
 import { GameModule } from './game/game.module';
 import { StatsModule } from './stats/stats.module';
 import { ReportsModule } from './reports/reports.module';
+import { ScheduleModule } from '@nestjs/schedule';
+import { TasksModule } from './tasks/tasks.module';
 
 @Module({
   imports: [
@@ -58,6 +60,8 @@ import { ReportsModule } from './reports/reports.module';
     GameModule,
     StatsModule,
     ReportsModule,
+    ScheduleModule.forRoot(),
+    TasksModule,
     // PinoLoggerModule,
   ],
   controllers: [],

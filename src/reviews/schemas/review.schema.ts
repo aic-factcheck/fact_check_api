@@ -79,6 +79,9 @@ export class Review {
 
   @Prop({ default: now() })
   updatedAt: Date;
+
+  @Prop({ default: false })
+  isWinner: boolean;
 }
 
 export const ReviewSchema = SchemaFactory.createForClass(Review);

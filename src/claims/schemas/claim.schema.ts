@@ -56,9 +56,6 @@ export class Claim {
   @Prop({ default: 0 })
   nViews: number;
 
-  @Prop({ default: false })
-  isClosed: boolean;
-
   @Prop({ default: 0 })
   nReviews: number;
 
@@ -70,6 +67,15 @@ export class Claim {
 
   @Prop({ default: now() })
   updatedAt: Date;
+
+  @Prop({ default: false })
+  isRated: boolean;
+
+  @Prop({ min: 0, max: 10 })
+  rating: number;
+
+  @Prop()
+  ratedAt: Date;
 }
 
 export const ClaimSchema = SchemaFactory.createForClass(Claim);
