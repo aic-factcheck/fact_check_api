@@ -11,13 +11,18 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { NullableType } from '../common/types/nullable.type';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ReplaceUserDto } from './dto/replace-user.dto';
-// import { Article } from '../articles/schemas/article.schema';
-// import { Claim } from '../claims/schemas/claim.schema';
-// import { Review } from '../reviews/schemas/review.schema';
+import { Article } from '../articles/schemas/article.schema';
+import { Claim } from '../claims/schemas/claim.schema';
+import { Review } from '../reviews/schemas/review.schema';
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectModel(User.name) private userModel: Model<User>) {}
+  constructor(
+    @InjectModel(User.name) private userModel: Model<User>,
+    @InjectModel(Article.name) private articleModel: Model<Article>,
+    @InjectModel(Claim.name) private claimModel: Model<Claim>,
+    @InjectModel(Review.name) private reviewModel: Model<Review>,
+  ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
     const createdUser: UserDocument = new this.userModel(createUserDto);
@@ -96,37 +101,37 @@ export class UsersService {
     // return bannedUser;
   }
 
-  // async findArticlesWithPagination(
-  //   page = 1,
-  //   perPage = 20,
-  //   author: User,
-  // ): Promise<Article[]> {
-  //   console.log(await this.articleModel.find());
-  //   return this.articleModel
-  //     .find({ author: author._id })
-  //     .limit(perPage)
-  //     .skip(perPage * (page - 1));
-  // }
+  async findArticlesWithPagination(
+    page = 1,
+    perPage = 20,
+    author: User,
+  ): Promise<Article[]> {
+    console.log(await this.articleModel.find());
+    return this.articleModel
+      .find({ author: author._id })
+      .limit(perPage)
+      .skip(perPage * (page - 1));
+  }
 
-  // async findClaimsWithPagination(
-  //   page = 1,
-  //   perPage = 20,
-  //   author: User,
-  // ): Promise<Claim[]> {
-  //   return this.claimModel
-  //     .find({ author: author._id })
-  //     .limit(perPage)
-  //     .skip(perPage * (page - 1));
-  // }
+  async findClaimsWithPagination(
+    page = 1,
+    perPage = 20,
+    author: User,
+  ): Promise<Claim[]> {
+    return this.claimModel
+      .find({ author: author._id })
+      .limit(perPage)
+      .skip(perPage * (page - 1));
+  }
 
-  // async findReviewsWithPagination(
-  //   page = 1,
-  //   perPage = 20,
-  //   author: User,
-  // ): Promise<Review[]> {
-  //   return this.reviewModel
-  //     .find({ author: author._id })
-  //     .limit(perPage)
-  //     .skip(perPage * (page - 1));
-  // }
+  async findReviewsWithPagination(
+    page = 1,
+    perPage = 20,
+    author: User,
+  ): Promise<Review[]> {
+    return this.reviewModel
+      .find({ author: author._id })
+      .limit(perPage)
+      .skip(perPage * (page - 1));
+  }
 }

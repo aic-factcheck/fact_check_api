@@ -129,53 +129,50 @@ export class UsersController {
     }
   }
 
-  // @Get(':userId/articles')
-  // @Public()
-  // @HttpCode(HttpStatus.OK)
-  // @ApiParam({ name: 'userId', type: String })
-  // @ApiQuery({ name: 'page', required: false, type: Number, example: 1 })
-  // @ApiQuery({ name: 'perPage', required: false, type: Number, example: 20 })
-  // async listUserArticles(
-  //   @Query() { page, perPage }: PaginationParams,
-  //   @LoggedUser() user: User,
-  // ): Promise<Article[]> {
-  //   if (perPage > 50) {
-  //     perPage = 50;
-  //   }
-  //   return this.usersService.findArticlesWithPagination(page, perPage, user);
-  // }
+  @Get(':userId/articles')
+  @HttpCode(HttpStatus.OK)
+  @ApiParam({ name: 'userId', type: String })
+  @ApiQuery({ name: 'page', required: false, type: Number, example: 1 })
+  @ApiQuery({ name: 'perPage', required: false, type: Number, example: 20 })
+  async listUserArticles(
+    @Query() { page, perPage }: PaginationParams,
+    @LoggedUser() user: User,
+  ): Promise<Article[]> {
+    if (perPage > 50) {
+      perPage = 50;
+    }
+    return this.usersService.findArticlesWithPagination(page, perPage, user);
+  }
 
-  // @Get(':userId/claims')
-  // @Public()
-  // @HttpCode(HttpStatus.OK)
-  // @ApiParam({ name: 'userId', type: String })
-  // @ApiQuery({ name: 'page', required: false, type: Number, example: 1 })
-  // @ApiQuery({ name: 'perPage', required: false, type: Number, example: 20 })
-  // async listUserClaims(
-  //   @Query() { page, perPage }: PaginationParams,
-  //   @LoggedUser() user: User,
-  // ): Promise<Claim[]> {
-  //   if (perPage > 50) {
-  //     perPage = 50;
-  //   }
-  //   return this.usersService.findClaimsWithPagination(page, perPage, user);
-  // }
+  @Get(':userId/claims')
+  @HttpCode(HttpStatus.OK)
+  @ApiParam({ name: 'userId', type: String })
+  @ApiQuery({ name: 'page', required: false, type: Number, example: 1 })
+  @ApiQuery({ name: 'perPage', required: false, type: Number, example: 20 })
+  async listUserClaims(
+    @Query() { page, perPage }: PaginationParams,
+    @LoggedUser() user: User,
+  ): Promise<Claim[]> {
+    if (perPage > 50) {
+      perPage = 50;
+    }
+    return this.usersService.findClaimsWithPagination(page, perPage, user);
+  }
 
-  // @Get(':userId/reviews')
-  // @Public()
-  // @HttpCode(HttpStatus.OK)
-  // @ApiParam({ name: 'userId', type: String })
-  // @ApiQuery({ name: 'page', required: false, type: Number, example: 1 })
-  // @ApiQuery({ name: 'perPage', required: false, type: Number, example: 20 })
-  // async listUserReviews(
-  //   @Query() { page, perPage }: PaginationParams,
-  //   @LoggedUser() user: User,
-  // ): Promise<Review[]> {
-  //   if (perPage > 50) {
-  //     perPage = 50;
-  //   }
-  //   return this.usersService.findReviewsWithPagination(page, perPage, user);
-  // }
+  @Get(':userId/reviews')
+  @HttpCode(HttpStatus.OK)
+  @ApiParam({ name: 'userId', type: String })
+  @ApiQuery({ name: 'page', required: false, type: Number, example: 1 })
+  @ApiQuery({ name: 'perPage', required: false, type: Number, example: 20 })
+  async listUserReviews(
+    @Query() { page, perPage }: PaginationParams,
+    @LoggedUser() user: User,
+  ): Promise<Review[]> {
+    if (perPage > 50) {
+      perPage = 50;
+    }
+    return this.usersService.findReviewsWithPagination(page, perPage, user);
+  }
 
   @Post(':userId/ban')
   @Roles('admin')
