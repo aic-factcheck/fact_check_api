@@ -23,7 +23,7 @@ export class SavedArticlesService {
       .countDocuments();
     const alreadySaved = await this.savedArticleModel
       .findOne({
-        addedBy: user._id,
+        author: user._id,
         articleId,
       })
       .countDocuments();
@@ -37,7 +37,7 @@ export class SavedArticlesService {
       { $inc: { nSaved: 1 } },
     );
     const newArticle: SavedArticleDocument = new this.savedArticleModel({
-      addedBy: user._id,
+      author: user._id,
       articleId,
     });
     return newArticle.save();
@@ -49,7 +49,7 @@ export class SavedArticlesService {
     perPage = 20,
   ): Promise<Article[]> {
     const savedArticles = await this.savedArticleModel
-      .find({ addedBy: user._id })
+      .find({ author: user._id })
       .distinct('articleId');
 
     return this.articleModel
@@ -69,7 +69,7 @@ export class SavedArticlesService {
     );
 
     return this.savedArticleModel.findOneAndRemove({
-      addedBy: user._id,
+      author: user._id,
       articleId,
     });
   }

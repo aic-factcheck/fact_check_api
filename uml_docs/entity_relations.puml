@@ -40,7 +40,7 @@ entity "Reputation" as rep {
 entity "SavedArticles" as saved {
   *_id : string <<generated>>
   --
-  *addedBy : text <<FK>>
+  *author : text <<FK>>
   *articleId : text <<FK>>
 }
 
@@ -59,7 +59,7 @@ entity "Invitation" as inv {
 entity "Vote" as vote {
   *_id : string <<generated>>
   --
-  *addedBy : text <<FK>>
+  *author : text <<FK>>
   *referencedId: text <<FK>>
   *type: {ARTICLE, CLAIM, REVIEW, USER}
   --
@@ -72,7 +72,7 @@ entity "Article" as article {
   *_id : text <<generated>>
   --
   *claims: [<<FK>>,...]
-  *addedBy : text <<FK>>
+  *author : text <<FK>>
   *title: text
   *text : text
   *sourceUrl: text
@@ -86,7 +86,7 @@ entity "Article" as article {
 entity "Claim" as claim {
   *_id : text <<generated>>
   --
-  *addedBy: text <<FK>>
+  *author: text <<FK>>
   *priority: number
   *articleId : text <<FK>>
   *articles: [<<FK>>,...]
@@ -94,7 +94,7 @@ entity "Claim" as claim {
   *nBeenVoted: Number
   *nPositiveVotes: number
   *nNegativeVotes: number
-  *history: [{text,updatedAt,lang,addedBy}]
+  *history: [{text,updatedAt,lang,author}]
   --
   *nViews: number
 }
@@ -117,7 +117,7 @@ entity "Review" as review {
 entity "Review comment" as reviewComment {
   *_id : text <<generated>>
   --
-  *addedBy : text <<FK>>
+  *author : text <<FK>>
   *reviewId: text <<FK>>
   *text: text
   *proofUrls: array [text] 
@@ -127,7 +127,7 @@ entity "Review comment" as reviewComment {
 entity "Report" as report {
   *_id : text <<generated>>
   --
-  *addedBy : text <<FK>>
+  *author : text <<FK>>
   *reportedUser : text <<FK>>
   *text: text
   *isOpen: boolean

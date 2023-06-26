@@ -48,7 +48,7 @@ export class HotService {
     if (user) {
       savedArticles = await this.savedModel
         .find({
-          addedBy: user._id,
+          author: user._id,
         })
         .distinct('articleId');
     }

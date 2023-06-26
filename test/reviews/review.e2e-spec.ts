@@ -135,7 +135,7 @@ describe('Reviews API', () => {
           review1Id = res.body._id;
           expect(res.body).toHaveProperty('_id');
           expect(res.body).toHaveProperty('createdAt');
-          // expect(res.body.addedBy._id).toEqual(user1Id);
+          // expect(res.body.author._id).toEqual(user1Id);
           expect(res.body.text).toEqual(review1.text);
           expect(res.body.nBeenVoted).toEqual(0);
           expect(res.body.nPositiveVotes).toEqual(0);
@@ -154,7 +154,7 @@ describe('Reviews API', () => {
           review2Id = res.body._id;
           expect(res.body).toHaveProperty('_id');
           expect(res.body).toHaveProperty('createdAt');
-          // expect(res.body.addedBy._id).toEqual(user2Id);
+          // expect(res.body.author._id).toEqual(user2Id);
           expect(res.body.text).toEqual(review2.text);
           expect(res.body.nBeenVoted).toEqual(0);
           expect(res.body.nPositiveVotes).toEqual(0);

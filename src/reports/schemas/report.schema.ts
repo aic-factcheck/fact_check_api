@@ -17,7 +17,7 @@ export class Report {
     required: true,
     autopopulate: { select: '-password' },
   })
-  addedBy: User;
+  author: User;
 
   @Prop({
     type: Types.ObjectId,

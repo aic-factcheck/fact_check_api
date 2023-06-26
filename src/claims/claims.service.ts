@@ -38,7 +38,7 @@ export class ClaimsService {
       throw new NotFoundException('Claim not found');
     }
 
-    if (!_.isEqual(claim.addedBy._id, user._id)) {
+    if (!_.isEqual(claim.author._id, user._id)) {
       throw new HttpException(
         {
           statusCode: HttpStatus.FORBIDDEN,
@@ -58,7 +58,7 @@ export class ClaimsService {
   ): Promise<Claim> {
     const createdClaim: ClaimDocument = new this.claimModel(
       _.assign(createDto, {
-        addedBy: loggedUser._id,
+        author: loggedUser._id,
         article: articleId,
         articles: [articleId],
       }),
@@ -96,7 +96,7 @@ export class ClaimsService {
     }
 
     const userReview: ReviewDocument | null = await this.reviewModel.findOne({
-      addedBy: loggedUser._id,
+      author: loggedUser._id,
       claim: claimId,
     });
 
@@ -114,7 +114,7 @@ export class ClaimsService {
   ): Promise<ClaimResponseType[]> {
     let userReviews;
     if (user) {
-      userReviews = await this.reviewModel.find({ addedBy: user._id }).lean();
+      userReviews = await this.reviewModel.find({ author: user._id }).lean();
     }
 
     const claims: ClaimDocument[] = await this.claimModel
@@ -143,13 +143,13 @@ export class ClaimsService {
       text: currentClaim.text,
       lang: currentClaim.lang,
       updatedAt: new Date(),
-      addedBy: loggedUser._id,
+      author: loggedUser._id,
     };
 
     return this.claimModel.findByIdAndUpdate(
       _id,
       _.assign(claimDto, {
-        addedBy: loggedUser._id,
+        author: loggedUser._id,
         $push: { history: historyObj },
       }),
       {

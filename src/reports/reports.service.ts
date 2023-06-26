@@ -22,7 +22,7 @@ export class ReportsService {
     }
     const report: ReportDocument = new this.reportModel(
       _.assign(createDto, {
-        addedBy: loggedUser._id,
+        author: loggedUser._id,
       }),
     );
     return report.save();

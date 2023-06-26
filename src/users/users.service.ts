@@ -103,7 +103,7 @@ export class UsersService {
   // ): Promise<Article[]> {
   //   console.log(await this.articleModel.find());
   //   return this.articleModel
-  //     .find({ addedBy: author._id })
+  //     .find({ author: author._id })
   //     .limit(perPage)
   //     .skip(perPage * (page - 1));
   // }
@@ -114,7 +114,7 @@ export class UsersService {
   //   author: User,
   // ): Promise<Claim[]> {
   //   return this.claimModel
-  //     .find({ addedBy: author._id })
+  //     .find({ author: author._id })
   //     .limit(perPage)
   //     .skip(perPage * (page - 1));
   // }
@@ -125,7 +125,7 @@ export class UsersService {
   //   author: User,
   // ): Promise<Review[]> {
   //   return this.reviewModel
-  //     .find({ addedBy: author._id })
+  //     .find({ author: author._id })
   //     .limit(perPage)
   //     .skip(perPage * (page - 1));
   // }

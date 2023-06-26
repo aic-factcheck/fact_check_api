@@ -18,7 +18,7 @@ export class Vote {
     required: true,
     autopopulate: { select: '-password' },
   })
-  addedBy: User;
+  author: User;
 
   @Expose()
   @Prop({ required: true, type: Types.ObjectId })

@@ -174,11 +174,11 @@ describe('HOT API', () => {
           .then(async (res) => {
             const includesClaim1 = some(
               res.body,
-              _.omit(claim1, ['addedBy', '_id']),
+              _.omit(claim1, ['author', '_id']),
             );
             const includesClaim2 = some(
               res.body,
-              _.omit(claim2, ['addedBy', '_id']),
+              _.omit(claim2, ['author', '_id']),
             );
 
             expect(res.body).toBeInstanceOf(Array);
@@ -197,14 +197,8 @@ describe('HOT API', () => {
         .auth(user1AccessToken, { type: 'bearer' })
         .expect(HttpStatus.OK)
         .then(async (res) => {
-          const includesArticle1 = some(
-            res.body,
-            _.omit(article1, ['addedBy']),
-          );
-          const includesArticle2 = some(
-            res.body,
-            _.omit(article2, ['addedBy']),
-          );
+          const includesArticle1 = some(res.body, _.omit(article1, ['author']));
+          const includesArticle2 = some(res.body, _.omit(article2, ['author']));
 
           expect(res.body).toBeInstanceOf(Array);
           expect(res.body.length).toEqual(2);

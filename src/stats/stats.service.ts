@@ -23,7 +23,7 @@ export class StatsService {
 
   async getClaimsStats(userId) {
     const claims = await this.claimModel
-      .aggregate([{ $match: { addedBy: userId } }])
+      .aggregate([{ $match: { author: userId } }])
       .group({
         _id: null,
         nPos: { $sum: '$nPositiveVotes' },
@@ -53,7 +53,7 @@ export class StatsService {
 
   async getReviewsStats(user: User) {
     const rev = await this.reviewModel
-      .aggregate([{ $match: { addedBy: user._id } }])
+      .aggregate([{ $match: { author: user._id } }])
       .group({
         _id: null,
         nPos: { $sum: '$nPositiveVotes' },
@@ -87,7 +87,7 @@ export class StatsService {
 
   async getSavedArticles(user: User) {
     const articles = await this.articleModel
-      .aggregate([{ $match: { addedBy: user._id } }])
+      .aggregate([{ $match: { author: user._id } }])
       .group({ _id: null, nSaved: { $sum: '$nSaved' }, total: { $sum: 1 } });
 
     if (
@@ -141,12 +141,12 @@ export class StatsService {
     const userIds = users.map((el) => el._id);
 
     const articles: ArticleDocument[] = await this.articleModel
-      .aggregate([{ $match: { addedBy: { $in: userIds } } }])
-      .group({ _id: '$addedBy', nArticles: { $sum: 1 } });
+      .aggregate([{ $match: { author: { $in: userIds } } }])
+      .group({ _id: '$author', nArticles: { $sum: 1 } });
 
     const claims: ClaimDocument[] = await this.claimModel
-      .aggregate([{ $match: { addedBy: { $in: userIds } } }])
-      .group({ _id: '$addedBy', nClaims: { $sum: 1 } });
+      .aggregate([{ $match: { author: { $in: userIds } } }])
+      .group({ _id: '$author', nClaims: { $sum: 1 } });
 
     const transformedUsers = users.map((x: UserDocument) => {
       return {

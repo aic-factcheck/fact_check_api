@@ -17,7 +17,7 @@ export class SavedArticle {
     ref: 'User',
     required: true,
   })
-  addedBy: User;
+  author: User;
 
   @Prop({
     type: Types.ObjectId,

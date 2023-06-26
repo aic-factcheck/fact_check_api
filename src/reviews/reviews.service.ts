@@ -42,7 +42,7 @@ export class ReviewsService {
       throw new NotFoundException('Review not found');
     }
 
-    if (!_.isEqual(review.addedBy._id, user._id)) {
+    if (!_.isEqual(review.author._id, user._id)) {
       throw new HttpException(
         {
           statusCode: HttpStatus.FORBIDDEN,
@@ -61,7 +61,7 @@ export class ReviewsService {
    */
   checkCurrentUserReview = async (user: User, claimId) => {
     const review = await this.reviewModel.findOne({
-      addedBy: user._id,
+      author: user._id,
       claim: claimId,
     });
 
@@ -83,7 +83,7 @@ export class ReviewsService {
 
     const createdReview: ReviewDocument = new this.reviewModel(
       _.assign(createDto, {
-        addedBy: loggedUser._id,
+        author: loggedUser._id,
         article: articleId,
         claim: claimId,
       }),
@@ -131,7 +131,7 @@ export class ReviewsService {
       userVote = await this.voteModel
         .findOne({
           referencedId: reviewId,
-          addedBy: loggedUser._id,
+          author: loggedUser._id,
           type: VoteObjectEnum.REVIEW,
         })
         .lean();
@@ -192,7 +192,7 @@ export class ReviewsService {
       vote: VoteTypes[currentReview.vote],
       links: currentReview.links,
       updatedAt: new Date(),
-      addedBy: loggedUser._id,
+      author: loggedUser._id,
     };
 
     return this.reviewModel.findByIdAndUpdate(
@@ -200,7 +200,7 @@ export class ReviewsService {
       _.assign(
         reviewDto,
         {
-          addedBy: loggedUser._id,
+          author: loggedUser._id,
           article: articleId,
           claim: claimId,
           $push: { history: historyObj },

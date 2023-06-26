@@ -27,7 +27,7 @@ export class Article {
     required: true,
     autopopulate: { select: '-password' },
   })
-  addedBy: User;
+  author: User;
 
   @Prop({ required: true, maxlength: 512, index: 'text' })
   title: string;

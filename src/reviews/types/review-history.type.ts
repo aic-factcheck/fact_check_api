@@ -7,5 +7,5 @@ export interface ReviewHistoryType {
   links: string[];
   lang: string;
   updatedAt: Date;
-  addedBy: Types.ObjectId;
+  author: Types.ObjectId;
 }

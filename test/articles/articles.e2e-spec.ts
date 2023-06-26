@@ -74,14 +74,14 @@ describe('Articles API', () => {
         .post('/auth/login')
         .send(admin)
         .expect(201);
-      // adminId = res.body.addedBy._id;
+      // adminId = res.body.author._id;
       adminAccessToken = res.body.token.accessToken;
 
       res = await request(httpServer)
         .post('/auth/login')
         .send(user)
         .expect(201);
-      // userId = res.body.addedBy._id;
+      // userId = res.body.author._id;
       userAccessToken = res.body.token.accessToken;
 
       res = await request(httpServer)
@@ -102,7 +102,7 @@ describe('Articles API', () => {
         .then((res) => {
           expect(res.body).toHaveProperty('_id');
           expect(res.body).toHaveProperty('createdAt');
-          // expect(res.body.addedBy._id).toEqual(user._id);
+          // expect(res.body.author._id).toEqual(user._id);
           expect(res.body.text).toEqual(article1.text);
           expect(res.body.sourceUrl).toEqual(article1.sourceUrl);
           expect(res.body.sourceType).toEqual(article1.sourceType);
@@ -120,7 +120,7 @@ describe('Articles API', () => {
         .then((res) => {
           expect(res.body).toHaveProperty('_id');
           expect(res.body).toHaveProperty('createdAt');
-          // expect(res.body.addedBy._id).toEqual(userId);
+          // expect(res.body.author._id).toEqual(userId);
           expect(res.body.text).toEqual(article2.text);
           expect(res.body.sourceUrl).toEqual(article2.sourceUrl);
           expect(res.body.sourceType).toEqual(article2.sourceType);
@@ -189,14 +189,14 @@ describe('Articles API', () => {
           expect(res.body[0].nPositiveVotes).toEqual(0);
           expect(res.body[0].nNegativeVotes).toEqual(0);
 
-          expect(res.body[0].addedBy).toHaveProperty('firstName');
-          expect(res.body[0].addedBy).toHaveProperty('lastName');
-          expect(res.body[0].addedBy).toHaveProperty('email');
-          expect(res.body[0].addedBy).toHaveProperty('_id');
-          // expect(res.body[0].addedBy._id).toEqual(userId);
-          expect(res.body[0].addedBy).toHaveProperty('createdAt');
+          expect(res.body[0].author).toHaveProperty('firstName');
+          expect(res.body[0].author).toHaveProperty('lastName');
+          expect(res.body[0].author).toHaveProperty('email');
+          expect(res.body[0].author).toHaveProperty('_id');
+          // expect(res.body[0].author._id).toEqual(userId);
+          expect(res.body[0].author).toHaveProperty('createdAt');
 
-          expect(res.body[0].addedBy).not.toHaveProperty('password');
+          expect(res.body[0].author).not.toHaveProperty('password');
         });
     });
   });
@@ -217,12 +217,12 @@ describe('Articles API', () => {
           expect(res.body).toHaveProperty('isSavedByUser');
           expect(res.body.isSavedByUser).toEqual(false);
 
-          expect(res.body.addedBy).toHaveProperty('firstName');
-          expect(res.body.addedBy).toHaveProperty('lastName');
-          expect(res.body.addedBy).toHaveProperty('email');
-          expect(res.body.addedBy).toHaveProperty('_id');
-          expect(res.body.addedBy).not.toHaveProperty('password');
-          // expect(res.body.addedBy._id).toEqual(userId);
+          expect(res.body.author).toHaveProperty('firstName');
+          expect(res.body.author).toHaveProperty('lastName');
+          expect(res.body.author).toHaveProperty('email');
+          expect(res.body.author).toHaveProperty('_id');
+          expect(res.body.author).not.toHaveProperty('password');
+          // expect(res.body.author._id).toEqual(userId);
         });
     });
   });
@@ -250,7 +250,7 @@ describe('Articles API', () => {
           expect(res.body.lang).toEqual(updatedArticle.lang);
           expect(res.body.title).toEqual(updatedArticle.title);
 
-          // expect(res.body.addedBy._id).toEqual(userId); // TODO
+          // expect(res.body.author._id).toEqual(userId); // TODO
         });
     });
 
@@ -451,7 +451,7 @@ describe('Articles API', () => {
   //         expect(res.body).to.have.lengthOf(1);
   //         expect(includesArticle2).to.be.true;
 
-  //         expect(res.body[0].addedBy._id).toEqual(user2._id);
+  //         expect(res.body[0].author._id).toEqual(user2._id);
   //       });
   //   });
 
@@ -473,7 +473,7 @@ describe('Articles API', () => {
         .then((res) => {
           expect(res.body).toHaveProperty('_id');
           expect(res.body).toHaveProperty('createdAt');
-          // expect(res.body.addedBy).toEqual(userId);
+          // expect(res.body.author).toEqual(userId);
           // expect(res.body.articleId).toEqual(article1Id);
         })
         .then(async () => {
@@ -537,10 +537,10 @@ describe('Articles API', () => {
         .then(async (res) => {
           expect(res.body).toBeInstanceOf(Array);
           expect(res.body.length).toEqual(1);
-          expect(res.body[0].addedBy).toHaveProperty('firstName');
-          expect(res.body[0].addedBy).toHaveProperty('lastName');
-          expect(res.body[0].addedBy).toHaveProperty('email');
-          expect(res.body[0].addedBy).toHaveProperty('_id');
+          expect(res.body[0].author).toHaveProperty('firstName');
+          expect(res.body[0].author).toHaveProperty('lastName');
+          expect(res.body[0].author).toHaveProperty('email');
+          expect(res.body[0].author).toHaveProperty('_id');
         });
     });
   });

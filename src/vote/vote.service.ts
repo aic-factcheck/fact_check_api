@@ -47,7 +47,7 @@ export class VoteService {
 
   async unvote(referencedId: Types.ObjectId, type: VoteObjectEnum, user: User) {
     const oldVote: VoteDocument | null = await this.voteModel.findOneAndDelete({
-      addedBy: user._id,
+      author: user._id,
       referencedId,
       type,
     });
@@ -115,12 +115,12 @@ export class VoteService {
   async vote(
     referencedId: Types.ObjectId,
     type: VoteObjectEnum,
-    addedBy: User,
+    author: User,
     rating: number,
   ) {
     let res;
     const vote = new this.voteModel({
-      addedBy: addedBy._id,
+      author: author._id,
       rating,
       referencedId,
       type,

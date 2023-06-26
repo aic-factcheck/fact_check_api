@@ -4,5 +4,5 @@ export interface ClaimHistoryType {
   text: string;
   lang: string;
   updatedAt: Date;
-  addedBy: Types.ObjectId;
+  author: Types.ObjectId;
 }

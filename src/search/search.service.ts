@@ -46,7 +46,7 @@ export class SearchService {
   ): Promise<NullableType<ClaimResponseType[]>> {
     let userReviews;
     if (user) {
-      userReviews = await this.reviewModel.find({ addedBy: user._id }).lean();
+      userReviews = await this.reviewModel.find({ author: user._id }).lean();
     }
 
     const claims = await this.claimModel
@@ -70,12 +70,12 @@ export class SearchService {
         { score: { $meta: 'textScore' } },
       )
       .sort({ score: { $meta: 'textScore' } })
-      .populate('addedBy')
+      .populate('author')
       .limit(perPage)
       .skip(perPage * (page - 1));
 
     const savedArticles = await this.savedModel
-      .find({ addedBy: user?._id })
+      .find({ author: user?._id })
       .distinct('articleId');
     articles.forEach((x) =>
       _.assign(x, { isSavedByUser: _.some(savedArticles, x._id) }),

@@ -22,7 +22,7 @@ export class Review {
     autopopulate: { select: '-password' },
     index: true,
   })
-  addedBy: User;
+  author: User;
 
   @Prop({
     type: Types.ObjectId,

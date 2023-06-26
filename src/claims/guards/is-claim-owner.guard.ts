@@ -36,7 +36,7 @@ export const IsClaimOwnerGuard = (paramId: string) => {
       const claim: Claim | null = await this.claimService.findByQuery({ _id });
       if (!claim) return false;
 
-      if (claim.addedBy._id !== request.user._id) return false;
+      if (claim.author._id !== request.user._id) return false;
 
       return true;
     }

@@ -53,7 +53,7 @@ export const IsResourceOwnerGuard = (paramId: string) => {
 
       if (!resource) return false;
 
-      if (resource.addedBy._id !== request.user._id) return false;
+      if (resource.author._id !== request.user._id) return false;
 
       return true;
     }

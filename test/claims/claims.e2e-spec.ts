@@ -119,7 +119,7 @@ describe('Claims API', () => {
           claim1Id = res.body._id;
           expect(res.body).toHaveProperty('_id');
           expect(res.body).toHaveProperty('createdAt');
-          // expect(res.body.addedBy._id).toEqual(user1Id);
+          // expect(res.body.author._id).toEqual(user1Id);
           expect(res.body.text).toEqual(claim1.text);
           // expect(res.body.nBeenVoted).toEqual(0);
           expect(res.body.nPositiveVotes).toEqual(0);
@@ -137,7 +137,7 @@ describe('Claims API', () => {
           // claim2Id = res.body._id;
           expect(res.body).toHaveProperty('_id');
           expect(res.body).toHaveProperty('createdAt');
-          // expect(res.body.addedBy._id).toEqual(user2Id);
+          // expect(res.body.author._id).toEqual(user2Id);
           expect(res.body.text).toEqual(claim2.text);
           // expect(res.body.nBeenVoted).toEqual(0);
           expect(res.body.nPositiveVotes).toEqual(0);
@@ -184,13 +184,13 @@ describe('Claims API', () => {
 
           expect(res.body[0]).toHaveProperty('_id');
           expect(res.body[0]).toHaveProperty('text');
-          expect(res.body[0]).toHaveProperty('addedBy');
+          expect(res.body[0]).toHaveProperty('author');
           // expect(res.body[0].nBeenVoted).toEqual(0);
 
-          expect(res.body[0].addedBy).toHaveProperty('firstName');
-          expect(res.body[0].addedBy).toHaveProperty('lastName');
-          expect(res.body[0].addedBy).toHaveProperty('email');
-          expect(res.body[0].addedBy).toHaveProperty('_id');
+          expect(res.body[0].author).toHaveProperty('firstName');
+          expect(res.body[0].author).toHaveProperty('lastName');
+          expect(res.body[0].author).toHaveProperty('email');
+          expect(res.body[0].author).toHaveProperty('_id');
         });
     });
   });
@@ -204,10 +204,10 @@ describe('Claims API', () => {
         .then(async (res) => {
           expect(res.body).toBeInstanceOf(Object);
 
-          expect(res.body.addedBy).toHaveProperty('firstName');
-          expect(res.body.addedBy).toHaveProperty('lastName');
-          expect(res.body.addedBy).toHaveProperty('email');
-          expect(res.body.addedBy).toHaveProperty('_id');
+          expect(res.body.author).toHaveProperty('firstName');
+          expect(res.body.author).toHaveProperty('lastName');
+          expect(res.body.author).toHaveProperty('email');
+          expect(res.body.author).toHaveProperty('_id');
           // expect(res.body.nBeenVoted).toEqual(0);
 
           expect(res.body.article).toHaveProperty('_id');
@@ -227,9 +227,9 @@ describe('Claims API', () => {
         .then((res) => {
           expect(res.body._id).toEqual(claim1Id);
           expect(res.body.text).toEqual(claim1Updated.text);
-          expect(res.body.addedBy).toHaveProperty('firstName');
-          expect(res.body.addedBy).toHaveProperty('lastName');
-          expect(res.body.addedBy).toHaveProperty('email');
+          expect(res.body.author).toHaveProperty('firstName');
+          expect(res.body.author).toHaveProperty('lastName');
+          expect(res.body.author).toHaveProperty('email');
 
           expect(res.body.history.length).toBe(1);
         });
@@ -314,10 +314,10 @@ describe('Claims API', () => {
   //         expect(res.body.article1Id).toEqual(article1Id.toString());
   //         expect(res.body.articles).to.include(article1Id.toString());
 
-  //         expect(res.body.addedBy._id).toEqual(user._id);
-  //         expect(res.body.addedBy).toHaveProperty('firstName');
-  //         expect(res.body.addedBy).toHaveProperty('lastName');
-  //         expect(res.body.addedBy).toHaveProperty('email');
+  //         expect(res.body.author._id).toEqual(user._id);
+  //         expect(res.body.author).toHaveProperty('firstName');
+  //         expect(res.body.author).toHaveProperty('lastName');
+  //         expect(res.body.author).toHaveProperty('email');
   //       });
   //   });
 
@@ -405,8 +405,8 @@ describe('Claims API', () => {
   //         expect(res.body).toEqual(1);
   //         expect(includesArticle2).toEqual(true);
 
-  //         expect(res.body[0].addedBy._id).toEqual(user2._id);
-  //         expect(res.body[0].addedBy).not.toHaveProperty('password');
+  //         expect(res.body[0].author._id).toEqual(user2._id);
+  //         expect(res.body[0].author).not.toHaveProperty('password');
   //       });
   //   });
 

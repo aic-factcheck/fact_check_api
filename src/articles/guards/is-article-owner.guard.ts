@@ -37,7 +37,7 @@ export const IsArticleOwnerGuard = (paramId: string) => {
 
       if (!article) return false;
 
-      if (article.addedBy._id !== request.user._id) return false;
+      if (article.author._id !== request.user._id) return false;
 
       return true;
     }

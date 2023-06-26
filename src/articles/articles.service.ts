@@ -36,7 +36,7 @@ export class ArticlesService {
       throw new NotFoundException('Article not found');
     }
 
-    if (!_.isEqual(article.addedBy._id, user._id)) {
+    if (!_.isEqual(article.author._id, user._id)) {
       throw new HttpException(
         {
           statusCode: HttpStatus.FORBIDDEN,
@@ -54,7 +54,7 @@ export class ArticlesService {
     createArticleDto: CreateArticleDto,
   ): Promise<Article> {
     const createdArticle: ArticleDocument = new this.articleModel(
-      _.assign(createArticleDto, { addedBy: loggedUser._id }),
+      _.assign(createArticleDto, { author: loggedUser._id }),
     );
     this.gameService.addReputation(loggedUser, GameAtionEnum.CREATE_ARTICLE);
     return createdArticle.save();
@@ -75,7 +75,7 @@ export class ArticlesService {
   ): Promise<ArticleResponseType> {
     const savedArticleCnt = await this.savedArticleModel
       .find({
-        addedBy: user._id,
+        author: user._id,
         articleId,
       })
       .countDocuments();
@@ -105,7 +105,7 @@ export class ArticlesService {
 
     if (user) {
       savedArticles = await this.savedArticleModel
-        .find({ addedBy: user._id })
+        .find({ author: user._id })
         .distinct('articleId');
     }
 
