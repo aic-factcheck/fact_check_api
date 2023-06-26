@@ -1,6 +1,10 @@
 import { _, omit } from 'lodash';
 import { Model, Types } from 'mongoose';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  NotImplementedException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User, UserDocument } from './schemas/user.schema';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -84,7 +88,8 @@ export class UsersService {
     if (!bannedUser) {
       throw new NotFoundException(`User #${idToBeBanned} not found`);
     }
+    throw new NotImplementedException('Ban not yet implemented');
     // TODO ban all his resources
-    return bannedUser;
+    // return bannedUser;
   }
 }

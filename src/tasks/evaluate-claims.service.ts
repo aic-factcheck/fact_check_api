@@ -45,7 +45,10 @@ export class EvaluateClaimsService {
           nNeutralVotes: it.nNeutralVotes,
           nVotes,
           positivityRatio,
-          score: positivityRatio * 0.6 - 0.4 * it.nNegativeVotes,
+          score:
+            positivityRatio * 0.6 -
+            0.4 * it.nNegativeVotes -
+            0.1 * it.nNeutralVotes,
         };
       });
 

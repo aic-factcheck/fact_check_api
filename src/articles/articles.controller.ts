@@ -37,11 +37,11 @@ import { ArticleResponseType } from './types/article-response.type';
 @Controller({
   version: '1',
 })
+@ApiBearerAuth()
 export class ArticlesController {
   constructor(private readonly articlesService: ArticlesService) {}
 
   @Post()
-  @ApiBearerAuth()
   @HttpCode(HttpStatus.CREATED)
   create(
     @Body() createArticleDto: CreateArticleDto,
@@ -52,7 +52,6 @@ export class ArticlesController {
 
   @Get()
   @Public()
-  @ApiBearerAuth()
   @HttpCode(HttpStatus.OK)
   @ApiQuery({ name: 'page', required: false, type: Number, example: 1 })
   @ApiQuery({ name: 'perPage', required: false, type: Number, example: 20 })
@@ -67,7 +66,6 @@ export class ArticlesController {
   }
 
   @Get(':articleId')
-  @ApiBearerAuth()
   @Public()
   @ApiParam({ name: 'articleId', type: String })
   @HttpCode(HttpStatus.OK)
@@ -79,7 +77,6 @@ export class ArticlesController {
   }
 
   @Patch(':articleId')
-  @ApiBearerAuth()
   @ApiOperation({ summary: 'Updates specified fields of existing Article' })
   @ApiBody({ type: ReplaceArticleDto })
   @ApiParam({ name: 'articleId', type: String })
@@ -93,7 +90,6 @@ export class ArticlesController {
   }
 
   @Put(':articleId')
-  @ApiBearerAuth()
   @ApiOperation({ summary: 'Replaces the whole Article document by a new one' })
   @ApiParam({ name: 'articleId', type: String })
   @HttpCode(HttpStatus.OK)
@@ -106,7 +102,6 @@ export class ArticlesController {
   }
 
   @Delete(':articleId')
-  @ApiBearerAuth()
   @ApiParam({ name: 'articleId', type: String })
   @HttpCode(HttpStatus.NO_CONTENT)
   async delete(

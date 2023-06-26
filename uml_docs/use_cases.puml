@@ -14,7 +14,7 @@ package "Fact checking system" {
   Journalist --|> Expert
   Admin --|> User
 
-  usecase UC0 as "0. Register and login user"
+  usecase UC0 as "0. Register and login"
 
   usecase UC1 as "1. List hottest claims"
   note right of UC1
@@ -89,7 +89,7 @@ package "Fact checking system" {
     - Banned user == Visitor
   end note
   
-  usecase UC21 as "21. Add role to user"
+  usecase UC21 as "21. Change user role"
 
   
     Visitor -- UC0

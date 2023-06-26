@@ -35,12 +35,12 @@ import { UpdateReviewDto } from './dto/update-review.dto';
 @Controller({
   version: '1',
 })
+@ApiBearerAuth()
 @UseInterceptors(MongooseClassSerializerInterceptor(Review))
 export class ReviewsController {
   constructor(private readonly reviewsService: ReviewsService) {}
 
   @Post()
-  @ApiBearerAuth()
   @ApiParam({ name: 'articleId', type: String })
   @ApiParam({ name: 'claimId', type: String })
   @HttpCode(HttpStatus.CREATED)
@@ -60,7 +60,6 @@ export class ReviewsController {
 
   @Get()
   @Public()
-  @ApiBearerAuth()
   @ApiParam({ name: 'articleId', type: String })
   @ApiParam({ name: 'claimId', type: String })
   @HttpCode(HttpStatus.OK)
@@ -86,7 +85,6 @@ export class ReviewsController {
 
   @Get(':reviewId')
   @Public()
-  @ApiBearerAuth()
   @ApiParam({ name: 'articleId', type: String })
   @ApiParam({ name: 'claimId', type: String })
   @ApiParam({ name: 'reviewId', type: String })
@@ -102,7 +100,6 @@ export class ReviewsController {
 
   @Patch(':reviewId')
   @ApiOperation({ summary: 'Replaces the whole Article document by a new one' })
-  @ApiBearerAuth()
   @ApiParam({ name: 'articleId', type: String })
   @ApiParam({ name: 'claimId', type: String })
   @ApiParam({ name: 'reviewId', type: String })
@@ -124,7 +121,6 @@ export class ReviewsController {
   }
 
   @Delete(':reviewId')
-  @ApiBearerAuth()
   @ApiParam({ name: 'articleId', type: String })
   @ApiParam({ name: 'claimId', type: String })
   @ApiParam({ name: 'reviewId', type: String })

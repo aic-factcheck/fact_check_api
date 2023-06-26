@@ -37,12 +37,12 @@ import { ClaimResponseType } from './types/claim-response.type';
 @Controller({
   version: '1',
 })
+@ApiBearerAuth()
 // @UseInterceptors(MongooseClassSerializerInterceptor(Claim))
 export class ClaimsController {
   constructor(private readonly claimService: ClaimsService) {}
 
   @Post()
-  @ApiBearerAuth()
   @ApiParam({ name: 'articleId', type: String })
   @HttpCode(HttpStatus.CREATED)
   create(
@@ -55,7 +55,6 @@ export class ClaimsController {
 
   @Get()
   @Public()
-  @ApiBearerAuth()
   @ApiParam({ name: 'articleId', type: String })
   @HttpCode(HttpStatus.OK)
   @ApiQuery({ name: 'page', required: false, type: Number, example: 1 })
@@ -78,7 +77,6 @@ export class ClaimsController {
 
   @Get(':claimId')
   @Public()
-  @ApiBearerAuth()
   @ApiParam({ name: 'articleId', type: String })
   @ApiParam({ name: 'claimId', type: String })
   @HttpCode(HttpStatus.OK)
@@ -91,7 +89,6 @@ export class ClaimsController {
   }
 
   @Patch(':claimId')
-  @ApiBearerAuth()
   @ApiParam({
     name: 'articleId',
     type: String,
@@ -114,7 +111,6 @@ export class ClaimsController {
 
   // @Put(':id')
   // @ApiOperation({ summary: 'Replaces the whole Article document by a new one' })
-  // @ApiBearerAuth()
   // @ApiParam({
   //   name: 'articleId',
   //   type: String,
@@ -130,7 +126,6 @@ export class ClaimsController {
   // }
 
   @Delete(':claimId')
-  @ApiBearerAuth()
   @ApiParam({ name: 'articleId', type: String })
   @ApiParam({ name: 'claimId', type: String })
   @HttpCode(HttpStatus.NO_CONTENT)
