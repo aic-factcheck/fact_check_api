@@ -1,24 +1,13 @@
 import { Module } from '@nestjs/common';
 import { ClaimsController } from './claims.controller';
 import { ClaimsService } from './claims.service';
-import { Claim, ClaimSchema } from './schemas/claim.schema';
-import { MongooseModule } from '@nestjs/mongoose';
-import { Review, ReviewSchema } from '../reviews/schemas/review.schema';
 import { GameModule } from '../game/game.module';
-import { Article, ArticleSchema } from '../articles/schemas/article.schema';
+import { SharedModelsModule } from '../shared/shared-models/shared-models.module';
 
 @Module({
-  imports: [
-    MongooseModule.forFeature([{ name: Claim.name, schema: ClaimSchema }]),
-    MongooseModule.forFeature([{ name: Review.name, schema: ReviewSchema }]),
-    MongooseModule.forFeature([{ name: Article.name, schema: ArticleSchema }]),
-    GameModule,
-  ],
+  imports: [SharedModelsModule, GameModule],
   controllers: [ClaimsController],
   providers: [ClaimsService],
-  exports: [
-    MongooseModule.forFeature([{ name: Claim.name, schema: ClaimSchema }]),
-    ClaimsService,
-  ],
+  exports: [ClaimsService],
 })
 export class ClaimsModule {}

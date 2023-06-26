@@ -11,6 +11,9 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { NullableType } from '../common/types/nullable.type';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ReplaceUserDto } from './dto/replace-user.dto';
+// import { Article } from '../articles/schemas/article.schema';
+// import { Claim } from '../claims/schemas/claim.schema';
+// import { Review } from '../reviews/schemas/review.schema';
 
 @Injectable()
 export class UsersService {
@@ -92,4 +95,38 @@ export class UsersService {
     // TODO ban all his resources
     // return bannedUser;
   }
+
+  // async findArticlesWithPagination(
+  //   page = 1,
+  //   perPage = 20,
+  //   author: User,
+  // ): Promise<Article[]> {
+  //   console.log(await this.articleModel.find());
+  //   return this.articleModel
+  //     .find({ addedBy: author._id })
+  //     .limit(perPage)
+  //     .skip(perPage * (page - 1));
+  // }
+
+  // async findClaimsWithPagination(
+  //   page = 1,
+  //   perPage = 20,
+  //   author: User,
+  // ): Promise<Claim[]> {
+  //   return this.claimModel
+  //     .find({ addedBy: author._id })
+  //     .limit(perPage)
+  //     .skip(perPage * (page - 1));
+  // }
+
+  // async findReviewsWithPagination(
+  //   page = 1,
+  //   perPage = 20,
+  //   author: User,
+  // ): Promise<Review[]> {
+  //   return this.reviewModel
+  //     .find({ addedBy: author._id })
+  //     .limit(perPage)
+  //     .skip(perPage * (page - 1));
+  // }
 }

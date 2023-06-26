@@ -7,14 +7,10 @@ import { UsersModule } from '../users/users.module';
 import { PassportModule } from '@nestjs/passport';
 import { AuthController } from './auth.controller';
 import { UsersService } from '../users/users.service';
-import { MongooseModule } from '@nestjs/mongoose';
-import {
-  RefreshToken,
-  RefreshTokenSchema,
-} from './schemas/refresh-token.schema';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { RolesGuard } from './guards/roles.guard';
+import { SharedModelsModule } from '../shared/shared-models/shared-models.module';
 
 const jwtFactory = {
   imports: [ConfigModule],
@@ -29,9 +25,7 @@ const jwtFactory = {
 
 @Module({
   imports: [
-    MongooseModule.forFeature([
-      { name: RefreshToken.name, schema: RefreshTokenSchema },
-    ]),
+    SharedModelsModule,
     UsersModule,
     PassportModule,
     JwtModule.registerAsync(jwtFactory),
@@ -50,12 +44,7 @@ const jwtFactory = {
     },
     ConfigService,
   ],
-  exports: [
-    AuthService,
-    MongooseModule.forFeature([
-      { name: RefreshToken.name, schema: RefreshTokenSchema },
-    ]),
-  ],
+  exports: [AuthService],
   controllers: [AuthController],
 })
 export class AuthModule {}

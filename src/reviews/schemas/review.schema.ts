@@ -84,4 +84,8 @@ export class Review {
   isWinner: boolean;
 }
 
-export const ReviewSchema = SchemaFactory.createForClass(Review);
+const reviewSchema = SchemaFactory.createForClass(Review);
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+reviewSchema.plugin(require('mongoose-autopopulate'));
+
+export { reviewSchema as ReviewSchema };

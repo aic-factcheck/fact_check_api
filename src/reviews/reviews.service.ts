@@ -145,6 +145,7 @@ export class ReviewsService {
     claimId: Types.ObjectId,
     page = 1,
     perPage = 20,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     loggedUser: User,
   ): Promise<Review[]> {
     // TODO add user's vote

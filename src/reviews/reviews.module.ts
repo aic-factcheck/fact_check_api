@@ -1,26 +1,13 @@
 import { Module } from '@nestjs/common';
 import { ReviewsService } from './reviews.service';
 import { ReviewsController } from './reviews.controller';
-import { Review, ReviewSchema } from './schemas/review.schema';
-import { MongooseModule } from '@nestjs/mongoose';
 import { GameModule } from '../game/game.module';
-import { Claim, ClaimSchema } from '../claims/schemas/claim.schema';
-import { User, UserSchema } from '../users/schemas/user.schema';
-import { Vote, VoteSchema } from '../vote/schemas/vote.schema';
+import { SharedModelsModule } from '../shared/shared-models/shared-models.module';
 
 @Module({
-  imports: [
-    MongooseModule.forFeature([{ name: Review.name, schema: ReviewSchema }]),
-    MongooseModule.forFeature([{ name: Claim.name, schema: ClaimSchema }]),
-    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
-    MongooseModule.forFeature([{ name: Vote.name, schema: VoteSchema }]),
-    GameModule,
-  ],
+  imports: [SharedModelsModule, GameModule],
   controllers: [ReviewsController],
   providers: [ReviewsService],
-  exports: [
-    MongooseModule.forFeature([{ name: Review.name, schema: ReviewSchema }]),
-    ReviewsService,
-  ],
+  exports: [ReviewsService],
 })
 export class ReviewsModule {}

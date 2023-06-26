@@ -21,6 +21,7 @@ import { StatsModule } from './stats/stats.module';
 import { ReportsModule } from './reports/reports.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TasksModule } from './tasks/tasks.module';
+import { SharedModelsModule } from './shared/shared-models/shared-models.module';
 
 @Module({
   imports: [
@@ -62,6 +63,7 @@ import { TasksModule } from './tasks/tasks.module';
     ReportsModule,
     ScheduleModule.forRoot(),
     TasksModule,
+    SharedModelsModule,
     // PinoLoggerModule,
   ],
   controllers: [],

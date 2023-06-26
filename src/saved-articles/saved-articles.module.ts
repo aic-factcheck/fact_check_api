@@ -1,26 +1,12 @@
 import { Module } from '@nestjs/common';
 import { SavedArticlesController } from './saved-articles.controller';
 import { SavedArticlesService } from './saved-articles.service';
-import { MongooseModule } from '@nestjs/mongoose';
-import {
-  SavedArticle,
-  SavedArticleSchema,
-} from './schemas/saved-article.schema';
-import { Article, ArticleSchema } from '../articles/schemas/article.schema';
+import { SharedModelsModule } from '../shared/shared-models/shared-models.module';
 
 @Module({
-  imports: [
-    MongooseModule.forFeature([{ name: Article.name, schema: ArticleSchema }]),
-    MongooseModule.forFeature([
-      { name: SavedArticle.name, schema: SavedArticleSchema },
-    ]),
-  ],
+  imports: [SharedModelsModule],
   controllers: [SavedArticlesController],
   providers: [SavedArticlesService],
-  exports: [
-    MongooseModule.forFeature([
-      { name: SavedArticle.name, schema: SavedArticleSchema },
-    ]),
-  ],
+  exports: [],
 })
 export class SavedArticlesModule {}

@@ -78,4 +78,8 @@ export class Claim {
   ratedAt: Date;
 }
 
-export const ClaimSchema = SchemaFactory.createForClass(Claim);
+const claimSchema = SchemaFactory.createForClass(Claim);
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+claimSchema.plugin(require('mongoose-autopopulate'));
+
+export { claimSchema as ClaimSchema };

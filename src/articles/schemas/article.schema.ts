@@ -68,4 +68,8 @@ export class Article {
   updatedAt: Date;
 }
 
-export const ArticleSchema = SchemaFactory.createForClass(Article);
+const articleSchema = SchemaFactory.createForClass(Article);
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+articleSchema.plugin(require('mongoose-autopopulate'));
+
+export { articleSchema as ArticleSchema };
