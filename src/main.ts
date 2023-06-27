@@ -46,7 +46,10 @@ async function bootstrap() {
 
   app.enableCors();
   app.use(helmet());
-  await app.listen(configService.getOrThrow('app.port', { infer: true }));
+  await app.listen(
+    configService.getOrThrow('app.port', { infer: true }),
+    '0.0.0.0',
+  );
 }
 
 bootstrap();
