@@ -1,19 +1,6 @@
 version: "3"
 
 services:
-  frontend:
-    build:
-      context: ../fact_checking_fe
-      dockerfile: Dockerfile
-    environment:
-      - REACT_APP_API_BASE=http://api:${APP_PORT}
-      - REACT_APP_API_GET_TEXT=http://localhost:1599
-      - PORT=80
-    ports:
-      - 80:80
-    networks:
-      - nesjs-network
-
   api:
     build:
       context: .
@@ -22,7 +9,7 @@ services:
       - ./:/usr/src/app
       - /usr/src/app/node_modules
     ports:
-      - ${APP_PORT}:${APP_PORT}
+      - 80:${APP_PORT}
     environment:
       - MONGO_URI=mongodb://mongodb:27017/fact_checking_be
       - MONGO_URI_TEST=mongodb://mongodb:27017/fact_checking_be_test

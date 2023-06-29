@@ -134,12 +134,23 @@ entity "Report" as report {
   *createdAt
 }
 
+entity "Refresh Token" as refresh {
+  *_id : text <<generated>>
+  --
+  *userId : text <<FK>>
+  *email: string;
+  *refreshToken: string
+  *expires: Date;
+  *createdAt: Date
+}
+
 user ||..o{ article
 user ||..o{ inv
 user ||..o{ saved
 user ||..o{ vote
 user ||..o{ rep
-user ||..o{ report
+user ||..|| report
+user ||..|{ refresh
 article }o..o{ claim
 article ||..o{ saved
 ' article ||..o{ vote
