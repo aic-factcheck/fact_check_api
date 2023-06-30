@@ -61,7 +61,7 @@ describe('Users API', () => {
           expect(body._id).toBeDefined();
           expect(body.email).toBeDefined();
           expect(body.firstName).toBeDefined();
-          expect(body.lastName).toBeDefined();\
+          expect(body.lastName).toBeDefined();
           expect(body.level).toBeDefined();
           expect(body.nReviews).toBeDefined();
           expect(body.password).not.toBeDefined();
