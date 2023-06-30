@@ -25,11 +25,6 @@ export class User {
   @Exclude()
   password: string;
 
-  @Expose()
-  get name(): string {
-    return `${this.firstName} ${this.lastName}`;
-  }
-
   @Prop({ required: true, index: 'text' })
   firstName: string;
 

@@ -29,7 +29,6 @@ describe('AuthService', () => {
     picture: 'any',
     updatedAt: new Date(),
     createdAt: new Date(),
-    name: 'John Doe',
     verified: false,
     loginAttempts: 3,
     invitedBy: '',

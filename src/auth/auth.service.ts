@@ -77,7 +77,6 @@ export class AuthService {
         _id: user._id,
         firstName: user.firstName,
         lastName: user.lastName,
-        name: user.name,
         email: user.email,
         level: user.level,
         roles: user.roles,
