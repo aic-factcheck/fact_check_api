@@ -57,12 +57,16 @@ export class ArticlesController {
   @ApiQuery({ name: 'perPage', required: false, type: Number, example: 20 })
   async list(
     @Query() { page, perPage }: PaginationParams,
-    @LoggedUser() user: User,
+    @LoggedUser() loggedUser: User,
   ): Promise<Article[]> {
     if (perPage > 50) {
       perPage = 50;
     }
-    return this.articlesService.findManyWithPagination(user, page, perPage);
+    return this.articlesService.findManyWithPagination(
+      loggedUser,
+      page,
+      perPage,
+    );
   }
 
   @Get(':articleId')

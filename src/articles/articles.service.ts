@@ -92,7 +92,7 @@ export class ArticlesService {
   }
 
   async findManyWithPagination(
-    user: User,
+    loggedUser: User,
     page = 1,
     perPage = 20,
   ): Promise<ArticleResponseType[]> {
@@ -103,9 +103,9 @@ export class ArticlesService {
 
     let savedArticles: Types.ObjectId[] = [];
 
-    if (user) {
+    if (loggedUser) {
       savedArticles = await this.savedArticleModel
-        .find({ author: user._id })
+        .find({ author: loggedUser._id })
         .distinct('articleId');
     }
 

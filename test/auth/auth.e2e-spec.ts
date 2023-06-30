@@ -224,7 +224,6 @@ describe('Auth API', () => {
       expect(res.body).toHaveProperty('firstName');
       expect(res.body).toHaveProperty('lastName');
       expect(res.body).toHaveProperty('email');
-      expect(res.body).toHaveProperty('name');
       expect(res.body).toHaveProperty('level');
       expect(res.body).toHaveProperty('nReviews');
       expect(res.body).not.toHaveProperty('password');

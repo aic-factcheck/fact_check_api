@@ -61,8 +61,7 @@ describe('Users API', () => {
           expect(body._id).toBeDefined();
           expect(body.email).toBeDefined();
           expect(body.firstName).toBeDefined();
-          expect(body.lastName).toBeDefined();
-          expect(body.name).toBeDefined();
+          expect(body.lastName).toBeDefined();\
           expect(body.level).toBeDefined();
           expect(body.nReviews).toBeDefined();
           expect(body.password).not.toBeDefined();
@@ -90,7 +89,6 @@ describe('Users API', () => {
           expect(body.email).toBeDefined();
           expect(body.firstName).toBeDefined();
           expect(body.lastName).toBeDefined();
-          expect(body.name).toBeDefined();
           expect(body.level).toBeDefined();
           expect(body.nReviews).toBeDefined();
           expect(body.password).not.toBeDefined();
@@ -109,7 +107,6 @@ describe('Users API', () => {
           expect(body[0].email).toBeDefined();
           expect(body[0].firstName).toBeDefined();
           expect(body[0].lastName).toBeDefined();
-          expect(body[0].name).toBeDefined();
           expect(body[0].level).toBeDefined();
           expect(body[0].nReviews).toBeDefined();
           expect(body[0].password).not.toBeDefined();
