@@ -46,7 +46,6 @@ import { Review } from '../reviews/schemas/review.schema';
   version: '1',
 })
 @ApiBearerAuth()
-@UseInterceptors(MongooseClassSerializerInterceptor(User))
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
@@ -54,6 +53,7 @@ export class UsersController {
   @SerializeOptions({ groups: ['admin'] })
   @Roles('admin')
   @HttpCode(HttpStatus.CREATED)
+  @UseInterceptors(MongooseClassSerializerInterceptor(User))
   create(@Body() createUserDto: CreateUserDto): Promise<User> {
     return this.usersService.create(createUserDto);
   }
@@ -65,6 +65,7 @@ export class UsersController {
   @HttpCode(HttpStatus.OK)
   @ApiQuery({ name: 'page', required: false, type: Number, example: 1 })
   @ApiQuery({ name: 'perPage', required: false, type: Number, example: 20 })
+  @UseInterceptors(MongooseClassSerializerInterceptor(User))
   async list(@Query() { page, perPage }: PaginationParams): Promise<User[]> {
     if (perPage > 50) {
       perPage = 50;
@@ -77,6 +78,7 @@ export class UsersController {
   @SerializeOptions({ groups: ['admin'] })
   @ApiParam({ name: 'userId', type: String })
   @HttpCode(HttpStatus.OK)
+  @UseInterceptors(MongooseClassSerializerInterceptor(User))
   findOne(
     @Param('userId', new ParseObjectIdPipe()) _id: Types.ObjectId,
   ): Promise<NullableType<User>> {
@@ -89,6 +91,7 @@ export class UsersController {
   @ApiParam({ name: 'userId', type: String })
   @SerializeOptions({ groups: ['admin'] })
   @HttpCode(HttpStatus.CREATED)
+  @UseInterceptors(MongooseClassSerializerInterceptor(User))
   update(
     @Param('userId', new ParseObjectIdPipe()) userId: Types.ObjectId,
     @Body() userDto: UpdateUserDto,
@@ -103,6 +106,7 @@ export class UsersController {
   @SerializeOptions({ groups: ['admin'] })
   @Roles('admin')
   @HttpCode(HttpStatus.CREATED)
+  @UseInterceptors(MongooseClassSerializerInterceptor(User))
   replace(
     @Param('userId', new ParseObjectIdPipe()) userId: Types.ObjectId,
     @Body() userDto: ReplaceUserDto,
@@ -114,6 +118,7 @@ export class UsersController {
   @Delete(':userId')
   @ApiParam({ name: 'userId', type: String })
   @HttpCode(HttpStatus.NO_CONTENT)
+  @UseInterceptors(MongooseClassSerializerInterceptor(User))
   async delete(
     @Param('userId', new ParseObjectIdPipe()) userId: Types.ObjectId,
     @Res() res: Response,
@@ -181,6 +186,7 @@ export class UsersController {
   @Roles('admin')
   @ApiParam({ name: 'userId', type: String })
   @HttpCode(HttpStatus.CREATED)
+  @UseInterceptors(MongooseClassSerializerInterceptor(User))
   banUser(
     @Param('userId', new ParseObjectIdPipe()) userId: Types.ObjectId,
     @LoggedUser() loggedUser: User,

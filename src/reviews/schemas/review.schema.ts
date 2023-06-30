@@ -36,10 +36,9 @@ export class Review {
     type: Types.ObjectId,
     ref: 'Claim',
     required: true,
-    // autopopulate: { maxDepth: 1 },
+    autopopulate: { maxDepth: 1 },
     index: true,
   })
-  @Transform((params) => params.obj._id.toString())
   claim: Claim;
 
   @Prop({ required: true, maxlength: 512, index: true })
