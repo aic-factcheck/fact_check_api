@@ -136,12 +136,13 @@ export class UsersController {
   @ApiQuery({ name: 'perPage', required: false, type: Number, example: 20 })
   async listUserArticles(
     @Query() { page, perPage }: PaginationParams,
-    @LoggedUser() user: User,
+    @Param('userId', new ParseObjectIdPipe()) userId: Types.ObjectId,
+    // @LoggedUser() user: User,
   ): Promise<Article[]> {
     if (perPage > 50) {
       perPage = 50;
     }
-    return this.usersService.findArticlesWithPagination(page, perPage, user);
+    return this.usersService.findArticlesWithPagination(page, perPage, userId);
   }
 
   @Get(':userId/claims')
@@ -151,12 +152,13 @@ export class UsersController {
   @ApiQuery({ name: 'perPage', required: false, type: Number, example: 20 })
   async listUserClaims(
     @Query() { page, perPage }: PaginationParams,
-    @LoggedUser() user: User,
+    @Param('userId', new ParseObjectIdPipe()) userId: Types.ObjectId,
+    // @LoggedUser() user: User,
   ): Promise<Claim[]> {
     if (perPage > 50) {
       perPage = 50;
     }
-    return this.usersService.findClaimsWithPagination(page, perPage, user);
+    return this.usersService.findClaimsWithPagination(page, perPage, userId);
   }
 
   @Get(':userId/reviews')
@@ -166,12 +168,13 @@ export class UsersController {
   @ApiQuery({ name: 'perPage', required: false, type: Number, example: 20 })
   async listUserReviews(
     @Query() { page, perPage }: PaginationParams,
-    @LoggedUser() user: User,
+    @Param('userId', new ParseObjectIdPipe()) userId: Types.ObjectId,
+    // @LoggedUser() user: User,
   ): Promise<Review[]> {
     if (perPage > 50) {
       perPage = 50;
     }
-    return this.usersService.findReviewsWithPagination(page, perPage, user);
+    return this.usersService.findReviewsWithPagination(page, perPage, userId);
   }
 
   @Post(':userId/ban')

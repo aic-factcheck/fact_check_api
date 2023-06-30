@@ -104,11 +104,11 @@ export class UsersService {
   async findArticlesWithPagination(
     page = 1,
     perPage = 20,
-    author: User,
+    authorId: Types.ObjectId,
   ): Promise<Article[]> {
     console.log(await this.articleModel.find());
     return this.articleModel
-      .find({ author: author._id })
+      .find({ author: authorId })
       .limit(perPage)
       .skip(perPage * (page - 1));
   }
@@ -116,10 +116,10 @@ export class UsersService {
   async findClaimsWithPagination(
     page = 1,
     perPage = 20,
-    author: User,
+    authorId: Types.ObjectId,
   ): Promise<Claim[]> {
     return this.claimModel
-      .find({ author: author._id })
+      .find({ author: authorId })
       .limit(perPage)
       .skip(perPage * (page - 1));
   }
@@ -127,10 +127,10 @@ export class UsersService {
   async findReviewsWithPagination(
     page = 1,
     perPage = 20,
-    author: User,
+    authorId: Types.ObjectId,
   ): Promise<Review[]> {
     return this.reviewModel
-      .find({ author: author._id })
+      .find({ author: authorId })
       .limit(perPage)
       .skip(perPage * (page - 1));
   }
