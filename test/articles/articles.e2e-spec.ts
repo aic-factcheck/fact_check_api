@@ -227,145 +227,138 @@ describe('Articles API', () => {
     });
   });
 
-  describe('PUT /articles/:articleId', () => {
-    it('should replace article', async () => {
-      const updatedArticle = {
-        text: 'This is an updated article',
-        sourceUrl: 'https://www.update.com/',
-        sourceType: 'article',
-        lang: 'cz',
-        title: 'New updated title',
-      };
+  // describe('PUT /articles/:articleId', () => {
+  //   it('should replace article', async () => {
+  //     const updatedArticle = {
+  //       text: 'This is an updated article',
+  //       sourceUrl: 'https://www.update.com/',
+  //       sourceType: 'article',
+  //       lang: 'cz',
+  //       title: 'New updated title',
+  //     };
 
-      return request(httpServer)
-        .put(`/articles/${article1Id}`)
-        .auth(userAccessToken, { type: 'bearer' })
-        .send(updatedArticle)
-        .expect(HttpStatus.OK)
-        .then((res) => {
-          expect(res.body._id).toEqual(article1Id);
-          expect(res.body.text).toEqual(updatedArticle.text);
-          expect(res.body.sourceUrl).toEqual(updatedArticle.sourceUrl);
-          expect(res.body.sourceType).toEqual(updatedArticle.sourceType);
-          expect(res.body.lang).toEqual(updatedArticle.lang);
-          expect(res.body.title).toEqual(updatedArticle.title);
+  //     return request(httpServer)
+  //       .put(`/articles/${article1Id}`)
+  //       .auth(userAccessToken, { type: 'bearer' })
+  //       .send(updatedArticle)
+  //       .expect(HttpStatus.OK)
+  //       .then((res) => {
+  //         expect(res.body._id).toEqual(article1Id);
+  //         expect(res.body.text).toEqual(updatedArticle.text);
+  //         expect(res.body.sourceUrl).toEqual(updatedArticle.sourceUrl);
+  //         expect(res.body.sourceType).toEqual(updatedArticle.sourceType);
+  //         expect(res.body.lang).toEqual(updatedArticle.lang);
+  //         expect(res.body.title).toEqual(updatedArticle.title);
 
-          // expect(res.body.author._id).toEqual(userId); // TODO
-        });
-    });
+  //         // expect(res.body.author._id).toEqual(userId); // TODO
+  //       });
+  //   });
 
-    it('should report error when text is not provided', async () => {
-      const updatedArticle = {
-        title: 'This is an updated article',
-        sourceUrl: 'https://www.update.com/',
-        sourceType: 'article',
-        lang: 'cz',
-      };
+  //   it('should report error when text is not provided', async () => {
+  //     const updatedArticle = {
+  //       title: 'This is an updated article',
+  //       sourceUrl: 'https://www.update.com/',
+  //       sourceType: 'article',
+  //       lang: 'cz',
+  //     };
 
-      return request(httpServer)
-        .put(`/articles/${article1Id}`)
-        .auth(userAccessToken, { type: 'bearer' })
-        .send(updatedArticle)
-        .expect(HttpStatus.UNPROCESSABLE_ENTITY)
-        .then((res) => {
-          const { statusCode, errors } = res.body;
-          expect(statusCode).toEqual(HttpStatus.UNPROCESSABLE_ENTITY);
-          expect(errors).toHaveProperty('text');
-        });
-    });
+  //     return request(httpServer)
+  //       .put(`/articles/${article1Id}`)
+  //       .auth(userAccessToken, { type: 'bearer' })
+  //       .send(updatedArticle)
+  //       .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+  //       .then((res) => {
+  //         const { statusCode, errors } = res.body;
+  //         expect(statusCode).toEqual(HttpStatus.UNPROCESSABLE_ENTITY);
+  //         expect(errors).toHaveProperty('text');
+  //       });
+  //   });
 
-    it('should report error when sourceUrl is longer than 256', async () => {
-      const updatedArticle = {
-        text: 'This is an updated article',
-        sourceUrl:
-          'https://www.update.com/asdbdadadsdasdbdadadsddadaasdbdadadsddadaasdbdadadsddadaasdbdadadsddadaasdbdadadsddadadadaasdbdadadsdasdbdadadsddadaasdbdadadsddadaasdbdadadsddadaasdbdadadsddadaasdbdadadsddadadadaasdbdadadsdasdbdadadsddadaasdbdadadsddadaasdbdadadsddadaasdbdadadsddadaasdbdadadsddadadadahttps://www.update.com/asdbdadadsdasdbdadadsddadaasdbdadadsddadaasdbdadadsddadaasdbdadadsddadaasdbdadadsddadadadaasdbdadadsdasdbdadadsddadaasdbdadadsddadaasdbdadadsddadaasdbdadadsddadaasdbdadadsddadadadaasdbdadadsdasdbdadadsddadaasdbdadadsddadaasdbdadadsddadaasdbdadadsddadaasdbdadadsddadadada',
-        sourceType: 'article',
-        lang: 'cz',
-        title: 'Title1',
-      };
+  //   it('should report error when sourceUrl is longer than 256', async () => {
+  //     const updatedArticle = {
+  //       text: 'This is an updated article',
+  //       sourceUrl:
+  //         'https://www.update.com/asdbdadadsdasdbdadadsddadaasdbdadadsddadaasdbdadadsddadaasdbdadadsddadaasdbdadadsddadadadaasdbdadadsdasdbdadadsddadaasdbdadadsddadaasdbdadadsddadaasdbdadadsddadaasdbdadadsddadadadaasdbdadadsdasdbdadadsddadaasdbdadadsddadaasdbdadadsddadaasdbdadadsddadaasdbdadadsddadadadahttps://www.update.com/asdbdadadsdasdbdadadsddadaasdbdadadsddadaasdbdadadsddadaasdbdadadsddadaasdbdadadsddadadadaasdbdadadsdasdbdadadsddadaasdbdadadsddadaasdbdadadsddadaasdbdadadsddadaasdbdadadsddadadadaasdbdadadsdasdbdadadsddadaasdbdadadsddadaasdbdadadsddadaasdbdadadsddadaasdbdadadsddadadada',
+  //       sourceType: 'article',
+  //       lang: 'cz',
+  //       title: 'Title1',
+  //     };
 
-      return request(httpServer)
-        .put(`/articles/${article1Id}`)
-        .auth(userAccessToken, { type: 'bearer' })
-        .send(updatedArticle)
-        .expect(HttpStatus.UNPROCESSABLE_ENTITY)
-        .then((res) => {
-          const { statusCode, errors } = res.body;
-          expect(statusCode).toEqual(HttpStatus.UNPROCESSABLE_ENTITY);
-          expect(errors).toHaveProperty('sourceUrl');
-        });
-    });
+  //     return request(httpServer)
+  //       .put(`/articles/${article1Id}`)
+  //       .auth(userAccessToken, { type: 'bearer' })
+  //       .send(updatedArticle)
+  //       .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+  //       .then((res) => {
+  //         const { statusCode, errors } = res.body;
+  //         expect(statusCode).toEqual(HttpStatus.UNPROCESSABLE_ENTITY);
+  //         expect(errors).toHaveProperty('sourceUrl');
+  //       });
+  //   });
 
-    it('should report error Error when is not ObjectId', () => {
-      return request(httpServer)
-        .put('/articles/not-an-object-id')
-        .auth(userAccessToken, { type: 'bearer' })
-        .send(article1)
-        .expect(HttpStatus.UNPROCESSABLE_ENTITY)
-        .then((res) => {
-          expect(res.body.statusCode).toEqual(HttpStatus.UNPROCESSABLE_ENTITY);
-        });
-    });
+  //   it('should report error Error when is not ObjectId', () => {
+  //     return request(httpServer)
+  //       .put('/articles/not-an-object-id')
+  //       .auth(userAccessToken, { type: 'bearer' })
+  //       .send(article1)
+  //       .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+  //       .then((res) => {
+  //         expect(res.body.statusCode).toEqual(HttpStatus.UNPROCESSABLE_ENTITY);
+  //       });
+  //   });
 
-    it('should report error "Article does not exist" when article does not exists', () => {
-      return request(httpServer)
-        .put('/articles/6464f39798e10e49d6bead2a')
-        .auth(userAccessToken, { type: 'bearer' })
-        .send(article1)
-        .expect(HttpStatus.NOT_FOUND)
-        .then((res) => {
-          expect(res.body.statusCode).toEqual(404);
-          expect(res.body.message).toEqual('Article not found');
-        });
-    });
+  //   it('should report error "Article does not exist" when article does not exists', () => {
+  //     return request(httpServer)
+  //       .put('/articles/6464f39798e10e49d6bead2a')
+  //       .auth(userAccessToken, { type: 'bearer' })
+  //       .send(article1)
+  //       .expect(HttpStatus.NOT_FOUND)
+  //       .then((res) => {
+  //         expect(res.body.statusCode).toEqual(404);
+  //         expect(res.body.message).toEqual('Article not found');
+  //       });
+  //   });
 
-    it('should report error when logged user is not the owner of article', async () => {
-      const updatedArticle = {
-        text: 'This is an updated article',
-        sourceUrl: 'https://www.update.com/',
-        sourceType: 'article',
-        lang: 'cz',
-        title: 'Updated Article',
-      };
+  //   it('should report error when logged user is not the owner of article', async () => {
+  //     const updatedArticle = {
+  //       text: 'This is an updated article',
+  //       sourceUrl: 'https://www.update.com/',
+  //       sourceType: 'article',
+  //       lang: 'cz',
+  //       title: 'Updated Article',
+  //     };
 
-      return request(httpServer)
-        .put(`/articles/${article1Id}`)
-        .auth(user2AccessToken, { type: 'bearer' })
-        .send(updatedArticle)
-        .expect(HttpStatus.FORBIDDEN)
-        .then((res) => {
-          expect(res.body.statusCode).toEqual(HttpStatus.FORBIDDEN);
-          expect(res.body.message).toEqual('Forbidden');
-        });
-    });
+  //     return request(httpServer)
+  //       .put(`/articles/${article1Id}`)
+  //       .auth(user2AccessToken, { type: 'bearer' })
+  //       .send(updatedArticle)
+  //       .expect(HttpStatus.FORBIDDEN)
+  //       .then((res) => {
+  //         expect(res.body.statusCode).toEqual(HttpStatus.FORBIDDEN);
+  //         expect(res.body.message).toEqual('Forbidden');
+  //       });
+  //   });
 
-    it('admin can access users resource', async () => {
-      const updatedArticle = {
-        text: 'This is an updated article',
-        sourceUrl: 'https://www.update.com/',
-        sourceType: 'article',
-        lang: 'cz',
-        title: 'New updated title',
-      };
+  //   it('admin can access users resource', async () => {
+  //     const updatedArticle = {
+  //       text: 'This is an updated article',
+  //       sourceUrl: 'https://www.update.com/',
+  //       sourceType: 'article',
+  //       lang: 'cz',
+  //       title: 'New updated title',
+  //     };
 
-      return request(httpServer)
-        .put(`/articles/${article1Id}`)
-        .auth(adminAccessToken, { type: 'bearer' })
-        .send(updatedArticle)
-        .expect(HttpStatus.OK);
-    });
-  });
+  //     return request(httpServer)
+  //       .put(`/articles/${article1Id}`)
+  //       .auth(adminAccessToken, { type: 'bearer' })
+  //       .send(updatedArticle)
+  //       .expect(HttpStatus.OK);
+  //   });
+  // });
 
   describe('PATCH /articles/:articleId', () => {
     it('should update only text field of article', async () => {
       const text = 'new text field';
-      const updatedArticle = {
-        text: 'This is an updated article',
-        sourceUrl: 'https://www.update.com/',
-        sourceType: 'article',
-        lang: 'cz',
-      };
-
       return request(httpServer)
         .patch(`/articles/${article1Id}`)
         .auth(userAccessToken, { type: 'bearer' })
@@ -376,20 +369,13 @@ describe('Articles API', () => {
 
           expect(res.body._id).toEqual(article1Id);
           expect(res.body.text).toEqual(text);
-          expect(res.body.sourceUrl).toEqual(updatedArticle.sourceUrl);
-          expect(res.body.sourceType).toEqual(updatedArticle.sourceType);
-          expect(res.body.lang).toEqual(updatedArticle.lang);
+          expect(res.body.sourceUrl).toEqual(article1.sourceUrl);
+          expect(res.body.sourceType).toEqual(article1.sourceType);
+          expect(res.body.lang).toEqual(article1.lang);
         });
     });
 
     it('should not update article when no parameters were given', async () => {
-      const updatedArticle = {
-        text: 'new text field',
-        sourceUrl: 'https://www.update.com/',
-        sourceType: 'article',
-        lang: 'cz',
-      };
-
       return request(httpServer)
         .patch(`/articles/${article1Id}`)
         .auth(userAccessToken, { type: 'bearer' })
@@ -397,9 +383,9 @@ describe('Articles API', () => {
         .expect(HttpStatus.OK)
         .then((res) => {
           expect(res.body._id).toEqual(article1Id);
-          expect(res.body.sourceUrl).toEqual(updatedArticle.sourceUrl);
-          expect(res.body.sourceType).toEqual(updatedArticle.sourceType);
-          expect(res.body.lang).toEqual(updatedArticle.lang);
+          expect(res.body.sourceUrl).toEqual(article1.sourceUrl);
+          expect(res.body.sourceType).toEqual(article1.sourceType);
+          expect(res.body.lang).toEqual(article1.lang);
         });
     });
 

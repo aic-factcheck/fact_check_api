@@ -7,17 +7,11 @@ import {
   Query,
   Param,
   Delete,
-  UseInterceptors,
   Patch,
+  UseGuards,
 } from '@nestjs/common';
 import { Controller } from '@nestjs/common';
-import {
-  ApiTags,
-  ApiQuery,
-  ApiBearerAuth,
-  ApiParam,
-  ApiOperation,
-} from '@nestjs/swagger';
+import { ApiTags, ApiQuery, ApiBearerAuth, ApiParam } from '@nestjs/swagger';
 import { NullableType } from '../common/types/nullable.type';
 import { PaginationParams } from '../common/types/pagination-params';
 import { ParseObjectIdPipe } from '../common/pipes/parse-object-id.pipe';
@@ -27,16 +21,16 @@ import { User } from '../users/schemas/user.schema';
 import { Public } from '../auth/decorators/public-route.decorator';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { Review } from './schemas/review.schema';
-import MongooseClassSerializerInterceptor from '../common/interceptors/mongoose-class-serializer.interceptor';
 import { ReviewsService } from './reviews.service';
 import { UpdateReviewDto } from './dto/update-review.dto';
+import { DoesArticleExist } from '../common/guards/article-exists.guard';
+import { DoesClaimExist } from '../common/guards/claim-exists.guard';
 
 @ApiTags('Reviews')
 @Controller({
   version: '1',
 })
 @ApiBearerAuth()
-@UseInterceptors(MongooseClassSerializerInterceptor(Review))
 export class ReviewsController {
   constructor(private readonly reviewsService: ReviewsService) {}
 
@@ -44,6 +38,7 @@ export class ReviewsController {
   @ApiParam({ name: 'articleId', type: String })
   @ApiParam({ name: 'claimId', type: String })
   @HttpCode(HttpStatus.CREATED)
+  @UseGuards(DoesArticleExist, DoesClaimExist)
   create(
     @Body() createReviewDto: CreateReviewDto,
     @LoggedUser() user: User,
@@ -99,12 +94,11 @@ export class ReviewsController {
   }
 
   @Patch(':reviewId')
-  @ApiOperation({ summary: 'Replaces the whole Article document by a new one' })
   @ApiParam({ name: 'articleId', type: String })
   @ApiParam({ name: 'claimId', type: String })
   @ApiParam({ name: 'reviewId', type: String })
   @HttpCode(HttpStatus.OK)
-  replace(
+  update(
     @Body() updateReviewDto: UpdateReviewDto,
     @LoggedUser() user: User,
     @Param('articleId', new ParseObjectIdPipe()) articleId: Types.ObjectId,

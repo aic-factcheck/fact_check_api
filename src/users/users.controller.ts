@@ -9,7 +9,6 @@ import {
   UseInterceptors,
   SerializeOptions,
   Patch,
-  Put,
   Delete,
   Res,
 } from '@nestjs/common';
@@ -100,20 +99,20 @@ export class UsersController {
     return this.usersService.update(userId, user, userDto);
   }
 
-  @Put(':userId')
-  @ApiOperation({ summary: 'Replaces the whole user document by a new one' })
-  @ApiParam({ name: 'userId', type: String })
-  @SerializeOptions({ groups: ['admin'] })
-  @Roles('admin')
-  @HttpCode(HttpStatus.CREATED)
-  @UseInterceptors(MongooseClassSerializerInterceptor(User))
-  replace(
-    @Param('userId', new ParseObjectIdPipe()) userId: Types.ObjectId,
-    @Body() userDto: ReplaceUserDto,
-    @LoggedUser() user: User,
-  ): Promise<NullableType<User>> {
-    return this.usersService.replace(userId, user, userDto);
-  }
+  // @Put(':userId')
+  // @ApiOperation({ summary: 'Replaces the whole user document by a new one' })
+  // @ApiParam({ name: 'userId', type: String })
+  // @SerializeOptions({ groups: ['admin'] })
+  // @Roles('admin')
+  // @HttpCode(HttpStatus.CREATED)
+  // @UseInterceptors(MongooseClassSerializerInterceptor(User))
+  // replace(
+  //   @Param('userId', new ParseObjectIdPipe()) userId: Types.ObjectId,
+  //   @Body() userDto: ReplaceUserDto,
+  //   @LoggedUser() user: User,
+  // ): Promise<NullableType<User>> {
+  //   return this.usersService.replace(userId, user, userDto);
+  // }
 
   @Delete(':userId')
   @ApiParam({ name: 'userId', type: String })

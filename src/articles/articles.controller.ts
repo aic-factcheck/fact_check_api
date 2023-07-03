@@ -7,7 +7,6 @@ import {
   Query,
   Param,
   Patch,
-  Put,
   Delete,
 } from '@nestjs/common';
 import { Controller } from '@nestjs/common';
@@ -91,18 +90,6 @@ export class ArticlesController {
     @LoggedUser() user: User,
   ): Promise<NullableType<Article>> {
     return this.articlesService.update(_id, user, articleDto);
-  }
-
-  @Put(':articleId')
-  @ApiOperation({ summary: 'Replaces the whole Article document by a new one' })
-  @ApiParam({ name: 'articleId', type: String })
-  @HttpCode(HttpStatus.OK)
-  replace(
-    @Param('articleId', new ParseObjectIdPipe()) _id: Types.ObjectId,
-    @Body() articleDto: ReplaceArticleDto,
-    @LoggedUser() user: User,
-  ): Promise<NullableType<Article>> {
-    return this.articlesService.replace(_id, user, articleDto);
   }
 
   @Delete(':articleId')

@@ -7,9 +7,8 @@ import {
   Query,
   Param,
   Patch,
-  // Put,
   Delete,
-  // UseInterceptors,
+  UseGuards,
 } from '@nestjs/common';
 import { Controller } from '@nestjs/common';
 import {
@@ -30,21 +29,21 @@ import { ClaimsService } from './claims.service';
 import { Claim } from './schemas/claim.schema';
 import { CreateClaimDto } from './dto/create-claim.dto';
 import { Public } from '../auth/decorators/public-route.decorator';
-// import MongooseClassSerializerInterceptor from '../utils/interceptors/mongoose-class-serializer.interceptor';
 import { ClaimResponseType } from './types/claim-response.type';
+import { DoesArticleExist } from '../common/guards/article-exists.guard';
 
 @ApiTags('Claims')
 @Controller({
   version: '1',
 })
 @ApiBearerAuth()
-// @UseInterceptors(MongooseClassSerializerInterceptor(Claim))
 export class ClaimsController {
   constructor(private readonly claimService: ClaimsService) {}
 
   @Post()
   @ApiParam({ name: 'articleId', type: String })
   @HttpCode(HttpStatus.CREATED)
+  @UseGuards(DoesArticleExist)
   create(
     @Body() createArticleDto: CreateClaimDto,
     @LoggedUser() user: User,
@@ -89,17 +88,10 @@ export class ClaimsController {
   }
 
   @Patch(':claimId')
-  @ApiParam({
-    name: 'articleId',
-    type: String,
-  })
   @ApiOperation({ summary: 'Updates specified fields of existing Article' })
   @ApiBody({ type: CreateClaimDto })
-  @ApiParam({
-    name: 'claimId',
-    type: String,
-    example: '645cacbfa6693d8100b2d60a',
-  })
+  @ApiParam({ name: 'articleId', type: String })
+  @ApiParam({ name: 'claimId', type: String })
   @HttpCode(HttpStatus.OK)
   update(
     @Param('claimId', new ParseObjectIdPipe()) claimId: Types.ObjectId,
@@ -108,22 +100,6 @@ export class ClaimsController {
   ): Promise<NullableType<Claim>> {
     return this.claimService.update(claimId, articleDto, user);
   }
-
-  // @Put(':id')
-  // @ApiOperation({ summary: 'Replaces the whole Article document by a new one' })
-  // @ApiParam({
-  //   name: 'articleId',
-  //   type: String,
-  // })
-  // @ApiParam({ name: 'id', type: String, example: '645cacbfa6693d8100b2d60a' })
-  // @HttpCode(HttpStatus.OK)
-  // replace(
-  //   @Param('id', new ParseObjectIdPipe()) _id: Types.ObjectId,
-  //   @Body() articleDto: ReplaceClaimDto,
-  //   @LoggedUser() user: User,
-  // ): Promise<NullableType<Claim>> {
-  //   return this.claimService.replace(_id, user, articleDto);
-  // }
 
   @Delete(':claimId')
   @ApiParam({ name: 'articleId', type: String })

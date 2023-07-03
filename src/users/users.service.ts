@@ -10,7 +10,7 @@ import { User, UserDocument } from './schemas/user.schema';
 import { CreateUserDto } from './dto/create-user.dto';
 import { NullableType } from '../common/types/nullable.type';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { ReplaceUserDto } from './dto/replace-user.dto';
+// import { ReplaceUserDto } from './dto/replace-user.dto';
 import { Article } from '../articles/schemas/article.schema';
 import { Claim } from '../claims/schemas/claim.schema';
 import { Review } from '../reviews/schemas/review.schema';
@@ -50,10 +50,12 @@ export class UsersService {
 
   async update(
     _id: Types.ObjectId,
-    user: User,
+    loggedUser: User,
     updateUserDto: UpdateUserDto,
   ): Promise<User> {
-    const ommitRoles: string = _.includes(user.roles, 'admin') ? 'roles' : '';
+    const ommitRoles: string = _.includes(loggedUser.roles, 'admin')
+      ? ''
+      : 'roles';
     updateUserDto = omit(updateUserDto, ommitRoles);
 
     const updatedUser: User | null = await this.userModel.findByIdAndUpdate(
@@ -64,24 +66,24 @@ export class UsersService {
       },
     );
     if (!updatedUser) {
-      throw new NotFoundException(`User #${user._id} not found`);
+      throw new NotFoundException(`User #${_id} not found`);
     }
     return updatedUser;
   }
 
-  async replace(
-    _id: Types.ObjectId,
-    user: User,
-    userDto: ReplaceUserDto,
-  ): Promise<User> {
-    if (!_.includes(user.roles, 'admin')) userDto = omit(userDto, 'roles');
+  // async replace(
+  //   _id: Types.ObjectId,
+  //   user: User,
+  //   userDto: ReplaceUserDto,
+  // ): Promise<User> {
+  //   if (!_.includes(user.roles, 'admin')) userDto = omit(userDto, 'roles');
 
-    return this.userModel.findByIdAndUpdate(_id, userDto, {
-      override: true,
-      upsert: true,
-      returnOriginal: false,
-    });
-  }
+  //   return this.userModel.findByIdAndUpdate(_id, userDto, {
+  //     override: true,
+  //     upsert: true,
+  //     returnOriginal: false,
+  //   });
+  // }
 
   async delete(userId: Types.ObjectId): Promise<User> {
     const deletedUser = await this.userModel.findByIdAndDelete(userId);

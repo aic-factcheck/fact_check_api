@@ -11,7 +11,7 @@ import { NullableType } from '../common/types/nullable.type';
 import { Article, ArticleDocument } from './schemas/article.schema';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
-import { ReplaceArticleDto } from './dto/replace-article.dto';
+// import { ReplaceArticleDto } from './dto/replace-article.dto';
 import { User } from '../users/schemas/user.schema';
 import { ArticleResponseType } from './types/article-response.type';
 import { SavedArticle } from '../saved-articles/schemas/saved-article.schema';
@@ -133,19 +133,6 @@ export class ArticlesService {
       throw new NotFoundException(`Article not found`);
     }
     return updatedArticle;
-  }
-
-  async replace(
-    _id: Types.ObjectId,
-    loggedUser: User,
-    articleDto: ReplaceArticleDto,
-  ): Promise<Article> {
-    await this.checkResourceAccess(loggedUser, _id);
-    return this.articleModel.findByIdAndUpdate(_id, articleDto, {
-      override: true,
-      upsert: true,
-      returnOriginal: false,
-    });
   }
 
   async delete(_id: Types.ObjectId, loggedUser: User): Promise<Article> {
