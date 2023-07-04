@@ -48,10 +48,8 @@ export class Claim {
   @Prop({ default: 0 })
   nPositiveVotes: number;
 
-  @Expose()
-  get nBeenVoted(): number {
-    return this.nPositiveVotes + this.nNegativeVotes;
-  }
+  @Prop({ type: [String], default: [], index: true })
+  categories: string[];
 
   @Prop({ default: 0 })
   nViews: number;

@@ -5,6 +5,7 @@ import {
   IsString,
   IsUrl,
   IsOptional,
+  IsArray,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -24,6 +25,11 @@ export class UpdateArticleDto {
   @IsString()
   @IsOptional()
   text?: string;
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  categories: string[];
 
   @ApiProperty({ example: 'www.google.com' })
   @IsNotEmpty()

@@ -1,4 +1,3 @@
-import { _ } from 'lodash';
 import { Injectable } from '@nestjs/common';
 import { User } from '../users/schemas/user.schema';
 import { GameAtionEnum, getRepForAction } from './enums/reputation.enum';

@@ -3,6 +3,8 @@ import {
   MinLength,
   MaxLength,
   IsString,
+  IsArray,
+  IsOptional,
   // IsUrl,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
@@ -19,4 +21,10 @@ export class CreateClaimDto {
   @IsNotEmpty()
   @MaxLength(32)
   lang: string;
+
+  @ApiProperty({ example: ['crime', 'war', 'facism'] })
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  categories: string[];
 }

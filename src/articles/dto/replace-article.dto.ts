@@ -4,6 +4,8 @@ import {
   MaxLength,
   IsString,
   IsUrl,
+  IsArray,
+  IsOptional,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -21,6 +23,11 @@ export class ReplaceArticleDto {
   @MaxLength(16448)
   @IsString()
   text: string;
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  categories: string[];
 
   @ApiProperty({ example: 'www.google.com' })
   @IsNotEmpty()

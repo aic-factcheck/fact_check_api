@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { now, HydratedDocument, ObjectId, Types } from 'mongoose';
+import { now, HydratedDocument, Types } from 'mongoose';
 import { Expose, Transform } from 'class-transformer';
 
 export type RefreshTokenDocument = HydratedDocument<RefreshToken>;

@@ -4,6 +4,8 @@ import {
   MaxLength,
   IsString,
   IsUrl,
+  IsArray,
+  IsOptional,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -24,6 +26,13 @@ export class CreateArticleDto {
 
   // @Prop({ type: [Types.ObjectId], default: [] })
   // claims: Types.ObjectId[];
+
+  @ApiProperty({ example: ['crime', 'war'] })
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  // @ArrayMinSize(1)
+  categories: string[];
 
   @ApiProperty({ example: 'www.google.com' })
   @IsNotEmpty()

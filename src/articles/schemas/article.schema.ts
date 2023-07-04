@@ -38,6 +38,9 @@ export class Article {
   @Prop({ type: [Types.ObjectId], default: [], ref: 'Claim' })
   claims: Types.ObjectId[];
 
+  @Prop({ type: [String], default: [], index: true })
+  categories: string[];
+
   @Prop({ required: true, maxlength: 512, index: 'text' })
   sourceUrl: string;
 
@@ -52,11 +55,6 @@ export class Article {
 
   @Prop({ default: 0 })
   nPositiveVotes: number;
-
-  @Expose()
-  get nBeenVoted(): number {
-    return this.nPositiveVotes + this.nNegativeVotes;
-  }
 
   @Prop({ default: 0 })
   nSaved: number;
