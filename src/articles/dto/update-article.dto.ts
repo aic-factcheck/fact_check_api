@@ -6,6 +6,7 @@ import {
   IsUrl,
   IsOptional,
   IsArray,
+  ArrayMaxSize,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -29,6 +30,7 @@ export class UpdateArticleDto {
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
+  @ArrayMaxSize(10)
   categories: string[];
 
   @ApiProperty({ example: 'www.google.com' })

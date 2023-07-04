@@ -6,6 +6,7 @@ import {
   IsUrl,
   IsArray,
   IsOptional,
+  ArrayMaxSize,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -31,6 +32,7 @@ export class CreateArticleDto {
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
+  @ArrayMaxSize(10)
   // @ArrayMinSize(1)
   categories: string[];
 

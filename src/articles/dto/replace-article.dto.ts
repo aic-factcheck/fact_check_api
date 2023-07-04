@@ -6,6 +6,7 @@ import {
   IsUrl,
   IsArray,
   IsOptional,
+  ArrayMaxSize,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -25,6 +26,7 @@ export class ReplaceArticleDto {
   text: string;
 
   @IsOptional()
+  @ArrayMaxSize(10)
   @IsArray()
   @IsString({ each: true })
   categories: string[];

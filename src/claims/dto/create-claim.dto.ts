@@ -5,6 +5,7 @@ import {
   IsString,
   IsArray,
   IsOptional,
+  ArrayMaxSize,
   // IsUrl,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
@@ -22,6 +23,7 @@ export class CreateClaimDto {
   @MaxLength(32)
   lang: string;
 
+  @ArrayMaxSize(10)
   @ApiProperty({ example: ['crime', 'war', 'facism'] })
   @IsOptional()
   @IsArray()
