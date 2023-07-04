@@ -126,15 +126,16 @@ export class ReviewsService {
       throw new NotFoundException(`Review not found`);
     }
 
-    let userVote: Vote | null = null;
+    let userVote: number | null = null;
     if (loggedUser) {
-      userVote = await this.voteModel
+      const vote = await this.voteModel
         .findOne({
           referencedId: reviewId,
           author: loggedUser._id,
           type: VoteObjectEnum.REVIEW,
         })
         .lean();
+      userVote = vote ? vote.rating : null;
     }
 
     return { ...review.toObject(), userVote } as ReviewResponseType;
@@ -145,28 +146,32 @@ export class ReviewsService {
     claimId: Types.ObjectId,
     page = 1,
     perPage = 20,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     loggedUser: User,
   ): Promise<Review[]> {
-    // TODO add user's vote
-    return await this.reviewModel
+    const reviews: ReviewDocument[] = await this.reviewModel
       .find({ article: articleId, claim: claimId })
       .skip(perPage * (page - 1))
       .limit(perPage);
 
-    // const reviewsRes: ReviewResponseType[] = reviews.map((it: Review) => {
-    //   return { ...it, userVote: null } as ReviewResponseType;
-    // });
+    const reviewsRes: ReviewResponseType[] = reviews.map(
+      (it: ReviewDocument) => {
+        return { ...it.toObject(), userVote: null } as ReviewResponseType;
+      },
+    );
 
-    // const reviewIds = reviews.map((it: Review) => it._id);
-    // const userVotes = await this.voteModel
-    //   .aggregate([{ $match: { reviewId: { $in: reviewIds } } }])
-    //   .project({ userVote: '$rating', _id: '$reviewId' });
+    const reviewIds = reviews.map((it: Review) => it._id);
+    const userVotes = await this.voteModel
+      .aggregate([
+        {
+          $match: { referencedId: { $in: reviewIds }, author: loggedUser._id },
+        },
+      ])
+      .project({ userVote: '$rating', _id: '$referencedId' });
 
-    // const mergedReviews: ReviewResponseType[] = _.values(
-    //   _.merge(_.keyBy(reviewsRes, '_id'), _.keyBy(userVotes, '_id')),
-    // );
-    // return mergedReviews;
+    const mergedReviews: ReviewResponseType[] = _.values(
+      _.merge(_.keyBy(reviewsRes, '_id'), _.keyBy(userVotes, '_id')),
+    );
+    return mergedReviews;
   }
 
   async update(
