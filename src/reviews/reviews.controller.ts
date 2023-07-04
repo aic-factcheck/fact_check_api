@@ -14,8 +14,6 @@ import { Controller } from '@nestjs/common';
 import { ApiTags, ApiQuery, ApiBearerAuth, ApiParam } from '@nestjs/swagger';
 import { NullableType } from '../common/types/nullable.type';
 import { PaginationParams } from '../common/types/pagination-params';
-import { ParseObjectIdPipe } from '../common/pipes/parse-object-id.pipe';
-import { Types } from 'mongoose';
 import { LoggedUser } from '../users/decorators/logged-user.decorator';
 import { User } from '../users/schemas/user.schema';
 import { Public } from '../auth/decorators/public-route.decorator';
@@ -25,6 +23,8 @@ import { ReviewsService } from './reviews.service';
 import { UpdateReviewDto } from './dto/update-review.dto';
 import { DoesArticleExist } from '../common/guards/article-exists.guard';
 import { DoesClaimExist } from '../common/guards/claim-exists.guard';
+import { ArticleClaimParamsDto } from './dto/article-claim-params.dto';
+import { ArticleClaimReviewParamsDto } from './dto/article-claim-review-params.dto';
 
 @ApiTags('Reviews')
 @Controller({
@@ -42,8 +42,7 @@ export class ReviewsController {
   create(
     @Body() createReviewDto: CreateReviewDto,
     @LoggedUser() user: User,
-    @Param('articleId', new ParseObjectIdPipe()) articleId: Types.ObjectId,
-    @Param('claimId', new ParseObjectIdPipe()) claimId: Types.ObjectId,
+    @Param() { articleId, claimId }: ArticleClaimParamsDto,
   ): Promise<Review> {
     return this.reviewsService.create(
       articleId,
@@ -63,8 +62,7 @@ export class ReviewsController {
   async list(
     @Query() { page, perPage }: PaginationParams,
     @LoggedUser() user: User,
-    @Param('articleId', new ParseObjectIdPipe()) articleId: Types.ObjectId,
-    @Param('claimId', new ParseObjectIdPipe()) claimId: Types.ObjectId,
+    @Param() { articleId, claimId }: ArticleClaimParamsDto,
   ): Promise<Review[]> {
     if (perPage > 50) {
       perPage = 50;
@@ -86,9 +84,7 @@ export class ReviewsController {
   @HttpCode(HttpStatus.OK)
   async findOne(
     @LoggedUser() user: User | null,
-    @Param('articleId', new ParseObjectIdPipe()) articleId: Types.ObjectId,
-    @Param('claimId', new ParseObjectIdPipe()) claimId: Types.ObjectId,
-    @Param('reviewId', new ParseObjectIdPipe()) reviewId: Types.ObjectId,
+    @Param() { articleId, claimId, reviewId }: ArticleClaimReviewParamsDto,
   ): Promise<NullableType<Review>> {
     return this.reviewsService.findOne(articleId, claimId, reviewId, user);
   }
@@ -101,9 +97,7 @@ export class ReviewsController {
   update(
     @Body() updateReviewDto: UpdateReviewDto,
     @LoggedUser() user: User,
-    @Param('articleId', new ParseObjectIdPipe()) articleId: Types.ObjectId,
-    @Param('claimId', new ParseObjectIdPipe()) claimId: Types.ObjectId,
-    @Param('reviewId', new ParseObjectIdPipe()) reviewId: Types.ObjectId,
+    @Param() { articleId, claimId, reviewId }: ArticleClaimReviewParamsDto,
   ): Promise<NullableType<Review>> {
     return this.reviewsService.update(
       articleId,
@@ -119,11 +113,10 @@ export class ReviewsController {
   @ApiParam({ name: 'claimId', type: String })
   @ApiParam({ name: 'reviewId', type: String })
   @HttpCode(HttpStatus.NO_CONTENT)
+  @UseGuards(DoesArticleExist, DoesClaimExist)
   async delete(
     @LoggedUser() user: User,
-    @Param('articleId', new ParseObjectIdPipe()) articleId: Types.ObjectId,
-    @Param('claimId', new ParseObjectIdPipe()) claimId: Types.ObjectId,
-    @Param('reviewId', new ParseObjectIdPipe()) reviewId: Types.ObjectId,
+    @Param() { articleId, claimId, reviewId }: ArticleClaimReviewParamsDto,
   ) {
     return this.reviewsService.delete(articleId, claimId, reviewId, user);
   }
