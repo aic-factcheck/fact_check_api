@@ -22,11 +22,10 @@ export class SearchController {
   @ApiQuery({ name: 'page', required: false, type: Number, example: 1 })
   @ApiQuery({ name: 'perPage', required: false, type: Number, example: 20 })
   searchUsers(
-    @LoggedUser() user: User | null,
     @Query() { page, perPage }: PaginationParams,
     @Query('text') text: string,
   ) {
-    return this.searchService.findUsers(page, perPage, text, user);
+    return this.searchService.findUsers(page, perPage, text);
   }
 
   @Get('claims')

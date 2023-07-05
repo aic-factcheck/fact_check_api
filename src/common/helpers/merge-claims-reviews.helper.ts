@@ -12,7 +12,7 @@ export async function mergeClaimsWithReviews(
   reviews: ReviewDocument[],
 ): Promise<ClaimResponseType[]> {
   const mergedClaims: ClaimResponseType[] = claims.map((claim) => {
-    let userReview = null;
+    let userReview: ReviewDocument | null = null;
     userReview = _.find(reviews, { claim: claim._id });
     return {
       ...claim.toObject(),

@@ -21,9 +21,9 @@ export class StatsService {
     @InjectModel(Reputation.name) private repModel: Model<Reputation>,
   ) {}
 
-  async getClaimsStats(userId) {
+  async getClaimsStats(user: User) {
     const claims = await this.claimModel
-      .aggregate([{ $match: { author: userId } }])
+      .aggregate([{ $match: { author: user._id } }])
       .group({
         _id: null,
         nPos: { $sum: '$nPositiveVotes' },
@@ -134,7 +134,7 @@ export class StatsService {
   async leaderboard(page = 1, perPage = 20, user: User | null) {
     const users: UserDocument[] = await this.userModel
       .find()
-      .sort({ rating: -1 })
+      .sort({ reputation: -1 })
       .limit(perPage)
       .skip(perPage * (page - 1))
       .select('-password');
