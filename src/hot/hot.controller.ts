@@ -43,13 +43,13 @@ export class HotController {
   @HttpCode(HttpStatus.OK)
   @ApiQuery({
     name: 'sortBy',
-    required: false,
+    required: true,
     enum: SortByEnum,
     example: SortByEnum.POSITIVE_VOTES_ASC,
   })
   @ApiQuery({
     name: 'duration',
-    required: false,
+    required: true,
     enum: DurationLimitEnum,
     example: DurationLimitEnum.WEEK,
   })
@@ -58,18 +58,11 @@ export class HotController {
   getHottestClaims(
     @LoggedUser() user: User | null,
     @Query() { page, perPage }: PaginationParams,
-    @Query('sortBy', new ParseEnumPipe(SortByEnum)) sortBy: SortByEnum | null,
+    @Query('sortBy', new ParseEnumPipe(SortByEnum)) sortBy: SortByEnum,
     @Query('duration', new ParseEnumPipe(DurationLimitEnum))
-    duration: DurationLimitEnum | null,
+    duration: DurationLimitEnum,
   ) {
-    return this.hotService.findClaims(
-      page,
-      perPage,
-      user,
-      {},
-      sortBy,
-      duration,
-    );
+    return this.hotService.findClaims(page, perPage, user, sortBy, duration);
   }
 
   @Get('users')

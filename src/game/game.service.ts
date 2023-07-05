@@ -43,8 +43,4 @@ export class GameService {
       level: this.getLevel(user),
     });
   }
-
-  getProfile(user: User) {
-    return `This action returns a #${user._id} game`;
-  }
 }

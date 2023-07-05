@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { now, HydratedDocument, Types } from 'mongoose';
+import { HydratedDocument, Types } from 'mongoose';
 import { Expose, Transform } from 'class-transformer';
 import { User } from '../../users/schemas/user.schema';
 import { GameAtionEnum } from '../enums/reputation.enum';
@@ -29,10 +29,10 @@ export class Reputation {
   @Prop({ required: true, type: String, enum: GameAtionEnum })
   action: GameAtionEnum;
 
-  @Prop({ default: now() })
+  @Prop({ type: Date })
   createdAt: Date;
 
-  @Prop({ default: now() })
+  @Prop({ type: Date })
   updatedAt: Date;
 }
 

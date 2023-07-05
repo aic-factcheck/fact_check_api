@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { now, HydratedDocument, Types } from 'mongoose';
+import { HydratedDocument, Types } from 'mongoose';
 import { Expose, Transform } from 'class-transformer';
 
 export type RefreshTokenDocument = HydratedDocument<RefreshToken>;
@@ -33,8 +33,11 @@ export class RefreshToken {
   @Prop()
   expires: Date;
 
-  @Prop({ default: now() })
+  @Prop({ type: Date })
   createdAt: Date;
+
+  @Prop({ type: Date })
+  updatedAt: Date;
 }
 
 export const RefreshTokenSchema = SchemaFactory.createForClass(RefreshToken);

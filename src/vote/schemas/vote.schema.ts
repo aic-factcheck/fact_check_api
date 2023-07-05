@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { now, HydratedDocument, Types } from 'mongoose';
+import { HydratedDocument, Types } from 'mongoose';
 import { Expose, Transform } from 'class-transformer';
 import { User } from '../../users/schemas/user.schema';
 import { VoteObjectEnum } from '../enums/vote.enum';
@@ -37,10 +37,10 @@ export class Vote {
   @Prop({ default: 'en' })
   lang: string;
 
-  @Prop({ default: now() })
+  @Prop({ type: Date })
   createdAt: Date;
 
-  @Prop({ default: now() })
+  @Prop({ type: Date })
   updatedAt: Date;
 }
 

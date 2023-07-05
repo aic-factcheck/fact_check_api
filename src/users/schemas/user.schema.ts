@@ -1,6 +1,6 @@
 import * as bcrypt from 'bcrypt';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { now, HydratedDocument, Types } from 'mongoose';
+import { HydratedDocument, Types } from 'mongoose';
 import { Exclude, Expose, Transform } from 'class-transformer';
 import { SavedArticle } from '../../saved-articles/schemas/saved-article.schema';
 
@@ -62,10 +62,10 @@ export class User {
   @Prop({ default: 1 })
   level: number;
 
-  @Prop({ default: now() })
+  @Prop({ type: Date })
   createdAt: Date;
 
-  @Prop({ default: now() })
+  @Prop({ type: Date })
   updatedAt: Date;
 }
 

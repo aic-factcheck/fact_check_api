@@ -7,13 +7,7 @@ import { dbConnection, httpServer } from '../utils/setup';
 describe('HOT API', () => {
   const password = 'secret';
   let article1Id: string;
-  let article2Id: string;
-  // let adminId: string;
-  // let user1Id: string;
-  // let user2Id: string;
   let claim1Id;
-  let review1Id;
-  let review2Id;
 
   const admin = {
     email: 'peter.parker@admin.com',
@@ -149,18 +143,12 @@ describe('HOT API', () => {
         .post(`/articles/${article1Id}/claims/${claim1Id}/reviews`)
         .auth(user1AccessToken, { type: 'bearer' })
         .send(review1)
-        .expect(HttpStatus.CREATED)
-        .then((res) => {
-          review1Id = res.body._id;
-        });
+        .expect(HttpStatus.CREATED);
       await request(httpServer)
         .post(`/articles/${article1Id}/claims/${claim1Id}/reviews`)
         .auth(user2AccessToken, { type: 'bearer' })
         .send(review2)
-        .expect(HttpStatus.CREATED)
-        .then((res) => {
-          review1Id = res.body._id;
-        });
+        .expect(HttpStatus.CREATED);
     });
   });
 
