@@ -21,14 +21,9 @@ export class HotService {
     @InjectModel(Review.name) private reviewModel: Model<Review>,
   ) {}
 
-  findUsers(
-    page = 1,
-    perPage = 20,
-    user: User | null,
-    query: object,
-  ): Promise<User[]> {
+  findUsers(page = 1, perPage = 20): Promise<User[]> {
     return this.userModel
-      .find(query)
+      .find({})
       .skip(perPage * (page - 1))
       .limit(perPage)
       .sort({ nPositiveVotes: 'desc' });
@@ -38,10 +33,9 @@ export class HotService {
     page = 1,
     perPage = 20,
     user: User | null,
-    query: object,
   ): Promise<Article[]> {
     const articles = await this.articleModel
-      .find(query)
+      .find({})
       .sort({ nPositiveVotes: 'desc' })
       .skip(perPage * (page - 1))
       .limit(perPage);

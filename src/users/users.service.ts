@@ -58,17 +58,14 @@ export class UsersService {
       : 'roles';
     updateUserDto = omit(updateUserDto, ommitRoles);
 
-    const updatedUser: User | null = await this.userModel.findByIdAndUpdate(
-      _id,
-      updateUserDto,
-      {
-        returnOriginal: false,
-      },
-    );
-    if (!updatedUser) {
+    const user: UserDocument | null = await this.userModel.findById(_id);
+
+    if (!user) {
       throw new NotFoundException(`User #${_id} not found`);
     }
-    return updatedUser;
+
+    _.assign(user, updateUserDto);
+    return user.save();
   }
 
   // async replace(

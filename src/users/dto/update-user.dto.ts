@@ -1,23 +1,13 @@
 import {
-  IsEmail,
   IsNotEmpty,
   MinLength,
   MaxLength,
   IsString,
   IsOptional,
 } from 'class-validator';
-import { Transform } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
-import { lowerCaseTransformer } from '../../common/transformers/lower-case.transformer';
 
 export class UpdateUserDto {
-  @ApiProperty({ example: 'test@gmail.com' })
-  @Transform(lowerCaseTransformer)
-  @IsNotEmpty()
-  @IsEmail()
-  @IsOptional()
-  email?: string;
-
   @ApiProperty({ example: 'John' })
   @IsNotEmpty()
   @MaxLength(128)

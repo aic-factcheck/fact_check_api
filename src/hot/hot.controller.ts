@@ -35,7 +35,7 @@ export class HotController {
     @LoggedUser() user: User | null,
     @Query() { page, perPage }: PaginationParams,
   ) {
-    return this.hotService.findArticles(page, perPage, user, {});
+    return this.hotService.findArticles(page, perPage, user);
   }
 
   @Get('claims')
@@ -71,10 +71,7 @@ export class HotController {
   @ApiQuery({ name: 'page', required: false, type: Number, example: 1 })
   @ApiQuery({ name: 'perPage', required: false, type: Number, example: 20 })
   @UseInterceptors(MongooseClassSerializerInterceptor(User))
-  getHottestUsers(
-    @LoggedUser() user: User | null,
-    @Query() { page, perPage }: PaginationParams,
-  ) {
-    return this.hotService.findUsers(page, perPage, user, {});
+  getHottestUsers(@Query() { page, perPage }: PaginationParams) {
+    return this.hotService.findUsers(page, perPage);
   }
 }

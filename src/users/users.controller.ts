@@ -11,6 +11,7 @@ import {
   Patch,
   Delete,
   Res,
+  UseGuards,
 } from '@nestjs/common';
 import { Controller } from '@nestjs/common';
 import {
@@ -38,6 +39,7 @@ import { Public } from '../auth/decorators/public-route.decorator';
 import { Article } from '../articles/schemas/article.schema';
 import { Claim } from '../claims/schemas/claim.schema';
 import { Review } from '../reviews/schemas/review.schema';
+import { SelfOrAdminGuard } from '../common/guards/self-or-admin.guard';
 
 @ApiTags('Users')
 @Controller({
@@ -91,6 +93,7 @@ export class UsersController {
   @SerializeOptions({ groups: ['admin'] })
   @HttpCode(HttpStatus.CREATED)
   @UseInterceptors(MongooseClassSerializerInterceptor(User))
+  @UseGuards(SelfOrAdminGuard)
   update(
     @Param('userId', new ParseObjectIdPipe()) userId: Types.ObjectId,
     @Body() userDto: UpdateUserDto,
@@ -118,6 +121,7 @@ export class UsersController {
   @ApiParam({ name: 'userId', type: String })
   @HttpCode(HttpStatus.NO_CONTENT)
   @UseInterceptors(MongooseClassSerializerInterceptor(User))
+  @UseGuards(SelfOrAdminGuard)
   async delete(
     @Param('userId', new ParseObjectIdPipe()) userId: Types.ObjectId,
     @Res() res: Response,
