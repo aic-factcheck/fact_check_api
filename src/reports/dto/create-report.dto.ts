@@ -3,18 +3,26 @@ import {
   MinLength,
   MaxLength,
   IsString,
+  IsOptional,
   IsMongoId,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { User } from '../../users/schemas/user.schema';
 
 export class CreateReportDto {
-  @ApiProperty({ example: 'i report this user because...' })
+  @ApiProperty({ example: 'Spam' })
   @IsNotEmpty()
-  @MinLength(6)
+  @MinLength(2)
+  @MaxLength(64)
+  @IsString()
+  reason: string;
+
+  @ApiProperty({ example: 'i report this user because...' })
+  @IsOptional()
+  @MinLength(0)
   @MaxLength(1028)
   @IsString()
-  text: string;
+  details: string;
 
   @ApiProperty()
   @IsNotEmpty()

@@ -41,11 +41,9 @@ export class ReportsController {
   @ApiQuery({ name: 'page', required: false, type: Number, example: 1 })
   @ApiQuery({ name: 'perPage', required: false, type: Number, example: 20 })
   findAll(
-    @Query() { page, perPage }: PaginationParams,
-    @LoggedUser() user: User,
-    // @Query('openedOnly', new ParseEnumPipe(DurationLimitEnum)) TODO add option
+    @Query() { page, perPage }: PaginationParams, // @Query('openedOnly', new ParseEnumPipe(DurationLimitEnum)) TODO add option
   ) {
-    return this.reportsService.findAll(page, perPage, user);
+    return this.reportsService.findAll(page, perPage);
   }
 
   @Get(':reportId')
@@ -54,9 +52,8 @@ export class ReportsController {
   @HttpCode(HttpStatus.OK)
   findOne(
     @Param('reportId', new ParseObjectIdPipe()) reportId: Types.ObjectId,
-    @LoggedUser() user: User,
   ) {
-    return this.reportsService.findOne(reportId, user);
+    return this.reportsService.findOne(reportId);
   }
 
   @Patch(':reportId')
@@ -65,9 +62,8 @@ export class ReportsController {
   @HttpCode(HttpStatus.CREATED)
   update(
     @Param('reportId', new ParseObjectIdPipe()) reportId: Types.ObjectId,
-    @LoggedUser() user: User,
     @Body() updateReportDto: UpdateReportDto,
   ) {
-    return this.reportsService.update(reportId, updateReportDto, user);
+    return this.reportsService.update(reportId, updateReportDto);
   }
 }

@@ -27,17 +27,26 @@ export class Report {
   })
   reportedUser: User;
 
-  @Prop({ required: true, maxlength: 1028, index: 'text' })
-  text: string;
+  @Prop({ required: true, maxlength: 64, index: 'text' })
+  reason: string;
 
-  @Prop({ default: true })
-  isOpen: boolean;
+  @Prop({ maxlength: 1028, index: 'text' })
+  details: string;
+
+  @Prop({
+    default: 'submitted',
+    enum: ['submitted', 'in_review', 'action_taken', 'dismissed'],
+  })
+  status: boolean;
 
   @Prop({ type: Date })
   createdAt: Date;
 
   @Prop({ type: Date })
   updatedAt: Date;
+
+  @Prop({ type: Date })
+  resolvedAt: Date;
 }
 
 export const ReportSchema = SchemaFactory.createForClass(Report);

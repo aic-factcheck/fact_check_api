@@ -28,12 +28,8 @@ export class ReportsService {
     return report.save();
   }
 
-  async findAll(
-    page = 1,
-    perPage = 20,
-    user: User,
-    openedOnly = true,
-  ): Promise<Report[]> {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async findAll(page = 1, perPage = 20, openedOnly = true): Promise<Report[]> {
     // const mostReportedUsers = await this.reportModel
     //   .aggregate([{ $match: { isOpen: true } }])
     //   .group({
@@ -50,17 +46,13 @@ export class ReportsService {
       .limit(perPage);
   }
 
-  findOne(
-    _id: Types.ObjectId,
-    loggedUser: User,
-  ): Promise<NullableType<Report>> {
+  findOne(_id: Types.ObjectId): Promise<NullableType<Report>> {
     return this.reportModel.findOne({ _id });
   }
 
   async update(
     _id: Types.ObjectId,
     updateReportDto: UpdateReportDto,
-    loggedUser: User,
   ): Promise<NullableType<Report>> {
     const updated: Report | null = await this.reportModel.findByIdAndUpdate(
       _id,
