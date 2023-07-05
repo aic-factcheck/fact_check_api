@@ -14,11 +14,13 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { Article } from '../articles/schemas/article.schema';
 import { Claim } from '../claims/schemas/claim.schema';
 import { Review } from '../reviews/schemas/review.schema';
+import { RefreshToken } from '../auth/schemas/refresh-token.schema';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectModel(User.name) private userModel: Model<User>,
+    @InjectModel(RefreshToken.name) private tokenModel: Model<RefreshToken>,
     @InjectModel(Article.name) private articleModel: Model<Article>,
     @InjectModel(Claim.name) private claimModel: Model<Claim>,
     @InjectModel(Review.name) private reviewModel: Model<Review>,
@@ -82,14 +84,17 @@ export class UsersService {
   //   });
   // }
 
-  async delete(userId: Types.ObjectId): Promise<User> {
+  async delete(userId: Types.ObjectId) {
+    await this.tokenModel.findOneAndDelete({ userId });
     const deletedUser = await this.userModel.findByIdAndDelete(userId);
+
     if (!deletedUser) {
       throw new NotFoundException(`User #${userId} not found`);
     }
-    return deletedUser;
+    return {};
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async ban(idToBeBanned: Types.ObjectId, loggedUser: User): Promise<User> {
     const bannedUser = await this.userModel.findById(idToBeBanned);
     if (!bannedUser) {

@@ -10,7 +10,6 @@ import {
   SerializeOptions,
   Patch,
   Delete,
-  Res,
   UseGuards,
 } from '@nestjs/common';
 import { Controller } from '@nestjs/common';
@@ -33,7 +32,6 @@ import { ParseObjectIdPipe } from '../common/pipes/parse-object-id.pipe';
 import { Types } from 'mongoose';
 import { ReplaceUserDto } from './dto/replace-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { Response } from 'express';
 import { LoggedUser } from './decorators/logged-user.decorator';
 import { Public } from '../auth/decorators/public-route.decorator';
 import { Article } from '../articles/schemas/article.schema';
@@ -124,17 +122,8 @@ export class UsersController {
   @UseGuards(SelfOrAdminGuard)
   async delete(
     @Param('userId', new ParseObjectIdPipe()) userId: Types.ObjectId,
-    @Res() res: Response,
   ) {
-    try {
-      const deletedUser = await this.usersService.delete(userId);
-      return res.status(HttpStatus.NO_CONTENT).json({
-        message: 'User deleted successfully',
-        deletedUser,
-      });
-    } catch (err) {
-      return res.status(err.status).json(err.response);
-    }
+    return this.usersService.delete(userId);
   }
 
   @Get(':userId/articles')
