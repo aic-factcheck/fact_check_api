@@ -12,7 +12,8 @@ export async function mergeClaimsWithReviews(
   reviews: ReviewDocument[],
 ): Promise<ClaimResponseType[]> {
   const mergedClaims: ClaimResponseType[] = claims.map((claim) => {
-    const userReview = _.find(reviews, { claimId: claim._id });
+    let userReview = null;
+    userReview = _.find(reviews, { claim: claim._id });
     return {
       ...claim.toObject(),
       userReview,
@@ -20,11 +21,4 @@ export async function mergeClaimsWithReviews(
   });
 
   return mergedClaims;
-  // const mergedClaim = _.assign(claim, { userReview });
-  // if (userReview) {
-  //   mergedClaim.userReview = userReview.vote;
-  // } else {
-  //   mergedClaim.userReview = null;
-  // }
-  // return mergedClaim;
 }

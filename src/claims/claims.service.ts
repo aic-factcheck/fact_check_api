@@ -95,10 +95,12 @@ export class ClaimsService {
       throw new NotFoundException(`Claim not found`);
     }
 
-    const userReview: ReviewDocument | null = await this.reviewModel.findOne({
-      author: loggedUser._id,
-      claim: claimId,
-    });
+    const userReview: ReviewDocument | null = await this.reviewModel
+      .findOne({
+        author: loggedUser._id,
+        claim: claimId,
+      })
+      .lean();
 
     return {
       ...claim.toObject(),
@@ -110,11 +112,13 @@ export class ClaimsService {
     articleId: Types.ObjectId,
     page = 1,
     perPage = 20,
-    user: User | null,
+    loggedUser: User | null,
   ): Promise<ClaimResponseType[]> {
     let userReviews;
-    if (user) {
-      userReviews = await this.reviewModel.find({ author: user._id }).lean();
+    if (loggedUser) {
+      userReviews = await this.reviewModel
+        .find({ author: loggedUser._id })
+        .lean();
     }
 
     const claims: ClaimDocument[] = await this.claimModel
@@ -144,6 +148,7 @@ export class ClaimsService {
       lang: currentClaim.lang,
       updatedAt: new Date(),
       author: loggedUser._id,
+      categories: currentClaim.categories,
     };
 
     return this.claimModel.findByIdAndUpdate(

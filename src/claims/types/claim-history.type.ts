@@ -5,4 +5,5 @@ export interface ClaimHistoryType {
   lang: string;
   updatedAt: Date;
   author: Types.ObjectId;
+  categories: string[];
 }

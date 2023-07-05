@@ -11,7 +11,13 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { Controller } from '@nestjs/common';
-import { ApiTags, ApiQuery, ApiBearerAuth, ApiParam } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiQuery,
+  ApiBearerAuth,
+  ApiParam,
+  ApiBody,
+} from '@nestjs/swagger';
 import { NullableType } from '../common/types/nullable.type';
 import { PaginationParams } from '../common/types/pagination-params';
 import { LoggedUser } from '../users/decorators/logged-user.decorator';
@@ -98,6 +104,7 @@ export class ReviewsController {
   @ApiParam({ name: 'claimId', type: String })
   @ApiParam({ name: 'reviewId', type: String })
   @HttpCode(HttpStatus.OK)
+  @ApiBody({ type: CreateReviewDto })
   update(
     @Body() updateReviewDto: UpdateReviewDto,
     @LoggedUser() user: User,
