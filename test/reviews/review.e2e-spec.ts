@@ -1,6 +1,6 @@
 import * as request from 'supertest';
 import { HttpStatus } from '@nestjs/common';
-import { _, some } from 'lodash';
+import { _ } from 'lodash';
 
 import { dbConnection, httpServer } from '../utils/setup';
 
@@ -23,8 +23,6 @@ describe('Reviews API', () => {
     lang: 'cz',
   };
   let claimId;
-  let review1Id;
-  let review2Id;
 
   const admin = {
     email: 'peter.parker@admin.com',
@@ -132,7 +130,6 @@ describe('Reviews API', () => {
         .send(review1)
         .expect(HttpStatus.CREATED)
         .then((res) => {
-          review1Id = res.body._id;
           expect(res.body).toHaveProperty('_id');
           expect(res.body).toHaveProperty('createdAt');
           // expect(res.body.author._id).toEqual(user1Id);
@@ -151,7 +148,6 @@ describe('Reviews API', () => {
         .send(review2)
         .expect(HttpStatus.CREATED)
         .then((res) => {
-          review2Id = res.body._id;
           expect(res.body).toHaveProperty('_id');
           expect(res.body).toHaveProperty('createdAt');
           // expect(res.body.author._id).toEqual(user2Id);

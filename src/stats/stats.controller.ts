@@ -31,10 +31,7 @@ export class StatsController {
   @HttpCode(HttpStatus.OK)
   @ApiQuery({ name: 'page', required: false, type: Number, example: 1 })
   @ApiQuery({ name: 'perPage', required: false, type: Number, example: 20 })
-  leaderboard(
-    @LoggedUser() user: User | null,
-    @Query() { page, perPage }: PaginationParams,
-  ) {
-    return this.statsService.leaderboard(page, perPage, user);
+  leaderboard(@Query() { page, perPage }: PaginationParams) {
+    return this.statsService.leaderboard(page, perPage);
   }
 }

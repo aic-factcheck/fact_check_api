@@ -131,7 +131,7 @@ export class StatsService {
     return userStats;
   }
 
-  async leaderboard(page = 1, perPage = 20, user: User | null) {
+  async leaderboard(page = 1, perPage = 20) {
     const users: UserDocument[] = await this.userModel
       .find()
       .sort({ reputation: -1 })
