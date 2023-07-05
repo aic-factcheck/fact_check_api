@@ -91,7 +91,11 @@ export class VoteService {
     createDto: CreateVoteDto,
     loggedUser: User,
   ): Promise<Vote> {
-    if (this.modelMapping[type].countDocuments({ _id: referencedId }) === 0) {
+    const countRef = await this.modelMapping[type].countDocuments({
+      _id: referencedId,
+    });
+
+    if (countRef === 0) {
       throw new NotFoundException('Referenced object not found');
     }
 
