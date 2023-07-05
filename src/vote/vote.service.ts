@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateVoteDto } from './dto/create-vote.dto';
 import { Model, Types } from 'mongoose';
 import { VoteObjectEnum } from './enums/vote.enum';
@@ -17,6 +13,8 @@ import { GameAtionEnum } from '../game/enums/reputation.enum';
 
 @Injectable()
 export class VoteService {
+  private modelMapping;
+
   constructor(
     @InjectModel(Vote.name) private voteModel: Model<Vote>,
     @InjectModel(Article.name) private articleModel: Model<Article>,
@@ -24,25 +22,13 @@ export class VoteService {
     @InjectModel(Review.name) private reviewModel: Model<Review>,
     @InjectModel(User.name) private userModel: Model<User>,
     private readonly gameService: GameService,
-  ) {}
-
-  async referencedObjExists(
-    referencedId: Types.ObjectId,
-    type: VoteObjectEnum,
   ) {
-    let docCount;
-
-    if (type === VoteObjectEnum.ARTICLE) {
-      docCount = await this.articleModel.countDocuments({ _id: referencedId });
-    } else if (type === VoteObjectEnum.CLAIM) {
-      docCount = await this.claimModel.countDocuments({ _id: referencedId });
-    } else if (type === VoteObjectEnum.REVIEW) {
-      docCount = await this.reviewModel.countDocuments({ _id: referencedId });
-    } else if (type === VoteObjectEnum.USER) {
-      docCount = await this.userModel.countDocuments({ _id: referencedId });
-    }
-
-    return docCount;
+    this.modelMapping = {
+      [VoteObjectEnum.ARTICLE]: this.articleModel,
+      [VoteObjectEnum.CLAIM]: this.claimModel,
+      [VoteObjectEnum.REVIEW]: this.reviewModel,
+      [VoteObjectEnum.USER]: this.userModel,
+    };
   }
 
   async unvote(referencedId: Types.ObjectId, type: VoteObjectEnum, user: User) {
@@ -57,59 +43,17 @@ export class VoteService {
       return;
     }
 
-    let nPositiveVotes = 0;
-    let nNegativeVotes = 0;
-    let nNeutralVotes = 0;
+    const voteUpdate = {
+      nPositiveVotes: oldVote.rating === 1 ? -1 : 0,
+      nNeutralVotes: oldVote.rating === 0 ? -1 : 0,
+      nNegativeVotes: oldVote.rating === -1 ? -1 : 0,
+    };
 
-    if (oldVote.rating === 1) nPositiveVotes = -1;
-    if (oldVote.rating === 0) nNeutralVotes = -1;
-    if (oldVote.rating === -1) nNegativeVotes = -1;
-
-    if (type === VoteObjectEnum.USER) {
-      await this.userModel.findOneAndUpdate(
-        { _id: referencedId },
-        {
-          $inc: { nPositiveVotes, nNegativeVotes },
-        },
-        {
-          returnDocument: 'after',
-        },
-      );
-    } else if (type === VoteObjectEnum.ARTICLE) {
-      await this.articleModel.findOneAndUpdate(
-        { _id: referencedId },
-        {
-          $inc: { nPositiveVotes, nNegativeVotes },
-        },
-        {
-          returnDocument: 'after',
-        },
-      );
-    } else if (type === VoteObjectEnum.CLAIM) {
-      await this.claimModel.findOneAndUpdate(
-        { _id: referencedId },
-        {
-          $inc: { nPositiveVotes, nNegativeVotes },
-        },
-        {
-          returnDocument: 'after',
-        },
-      );
-    } else if (type === VoteObjectEnum.REVIEW) {
-      await this.reviewModel.findOneAndUpdate(
-        { _id: referencedId },
-        {
-          $inc: {
-            nPositiveVotes,
-            nNegativeVotes,
-            nNeutralVotes,
-          },
-        },
-        {
-          returnDocument: 'after',
-        },
-      );
-    }
+    await this.modelMapping[type].findOneAndUpdate(
+      { _id: referencedId },
+      { $inc: voteUpdate },
+      { returnDocument: 'after' },
+    );
   }
 
   async vote(
@@ -118,7 +62,6 @@ export class VoteService {
     author: User,
     rating: number,
   ) {
-    let res;
     const vote = new this.voteModel({
       author: author._id,
       rating,
@@ -126,60 +69,17 @@ export class VoteService {
       type,
     });
 
-    let nPositiveVotes = 0;
-    let nNegativeVotes = 0;
-    let nNeutralVotes = 0;
-    if (rating === 1) nPositiveVotes = 1;
-    if (rating === 0) nNeutralVotes = 1;
-    if (rating === -1) nNegativeVotes = 1;
+    const voteUpdate = {
+      nPositiveVotes: rating === 1 ? 1 : 0,
+      nNeutralVotes: rating === 0 ? 1 : 0,
+      nNegativeVotes: rating === -1 ? 1 : 0,
+    };
 
-    if (type === VoteObjectEnum.USER) {
-      res = await this.userModel.findOneAndUpdate(
-        { _id: referencedId },
-        {
-          $inc: { nPositiveVotes, nNegativeVotes },
-        },
-        {
-          returnDocument: 'after',
-        },
-      );
-    } else if (type === VoteObjectEnum.ARTICLE) {
-      res = await this.articleModel.findOneAndUpdate(
-        { _id: referencedId },
-        {
-          $inc: { nPositiveVotes, nNegativeVotes },
-        },
-        {
-          returnDocument: 'after',
-        },
-      );
-    } else if (type === VoteObjectEnum.CLAIM) {
-      res = await this.claimModel.findOneAndUpdate(
-        { _id: referencedId },
-        {
-          $inc: { nPositiveVotes, nNegativeVotes },
-        },
-        {
-          returnDocument: 'after',
-        },
-      );
-    } else if (type === VoteObjectEnum.REVIEW) {
-      res = await this.reviewModel.findOneAndUpdate(
-        { _id: referencedId },
-        {
-          $inc: {
-            nPositiveVotes,
-            nNegativeVotes,
-            nNeutralVotes,
-          },
-        },
-        {
-          returnDocument: 'after',
-        },
-      );
-    } else {
-      throw new BadRequestException('Referenced object does not exist.');
-    }
+    const res = await this.modelMapping[type].findOneAndUpdate(
+      { _id: referencedId },
+      { $inc: voteUpdate },
+      { returnDocument: 'after' },
+    );
 
     await vote.save();
     return res;
@@ -191,12 +91,11 @@ export class VoteService {
     createDto: CreateVoteDto,
     loggedUser: User,
   ): Promise<Vote> {
-    if ((await this.referencedObjExists(referencedId, type)) === 0) {
+    if (this.modelMapping[type].countDocuments({ _id: referencedId }) === 0) {
       throw new NotFoundException('Referenced object not found');
     }
 
     await this.unvote(referencedId, type, loggedUser);
-
     return this.vote(referencedId, type, loggedUser, createDto.rating);
   }
 }
