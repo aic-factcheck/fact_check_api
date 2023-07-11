@@ -8,10 +8,9 @@ import { useContainer } from 'class-validator';
 import { AllConfigType } from './shared/config/config.type';
 import validationOptions from './common/validation-options';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-// import { Logger } from 'nestjs-pino';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, { bufferLogs: true });
+  const app = await NestFactory.create(AppModule);
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
   const configService = app.get(ConfigService<AllConfigType>);
 

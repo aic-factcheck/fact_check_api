@@ -11,7 +11,6 @@ import { DatabaseService } from '../../src/shared/database/database.service';
 import validationOptions from '../../src/common/validation-options';
 import { ConfigModule } from '@nestjs/config';
 import { DatabaseModule } from '../../src/shared/database/database.module';
-// import { Logger } from 'nestjs-pino';
 
 export let app: NestExpressApplication;
 export let dbConnection: Connection;

@@ -11,7 +11,6 @@ import appConfig from './shared/config/app.config';
 import { RouterModule } from '@nestjs/core';
 import { SavedArticlesModule } from './saved-articles/saved-articles.module';
 import { ClaimsModule } from './claims/claims.module';
-// import { PinoLoggerModule } from './common/logger/logger.module';
 import { ReviewsModule } from './reviews/reviews.module';
 import { VoteModule } from './vote/vote.module';
 import { HotModule } from './hot/hot.module';
@@ -22,6 +21,7 @@ import { ReportsModule } from './reports/reports.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TasksModule } from './tasks/tasks.module';
 import { SharedModelsModule } from './shared/shared-models/shared-models.module';
+import { MorganModule } from './shared/logger/logger.module';
 
 @Module({
   imports: [
@@ -64,7 +64,7 @@ import { SharedModelsModule } from './shared/shared-models/shared-models.module'
     ScheduleModule.forRoot(),
     TasksModule,
     SharedModelsModule,
-    // PinoLoggerModule,
+    MorganModule,
   ],
   controllers: [],
   providers: [UniqueValidator],
