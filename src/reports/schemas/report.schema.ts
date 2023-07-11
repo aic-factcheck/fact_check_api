@@ -2,6 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
 import { Expose, Transform } from 'class-transformer';
 import { User } from '../../users/schemas/user.schema';
+import { ReportStatusEnum } from '../enums/status.enum';
 
 export type ReportDocument = HydratedDocument<Report>;
 
@@ -34,10 +35,12 @@ export class Report {
   details: string;
 
   @Prop({
-    default: 'submitted',
-    enum: ['submitted', 'in_review', 'action_taken', 'dismissed'],
+    default: ReportStatusEnum.SUBMITTED,
+    required: true,
+    index: true,
+    enum: ReportStatusEnum,
   })
-  status: boolean;
+  status: ReportStatusEnum;
 
   @Prop({ type: Date })
   createdAt: Date;

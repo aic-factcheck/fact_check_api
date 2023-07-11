@@ -15,6 +15,7 @@ import { Article } from '../articles/schemas/article.schema';
 import { Claim } from '../claims/schemas/claim.schema';
 import { Review } from '../reviews/schemas/review.schema';
 import { RefreshToken } from '../auth/schemas/refresh-token.schema';
+import { Report } from '../reports/schemas/report.schema';
 
 @Injectable()
 export class UsersService {
@@ -24,6 +25,7 @@ export class UsersService {
     @InjectModel(Article.name) private articleModel: Model<Article>,
     @InjectModel(Claim.name) private claimModel: Model<Claim>,
     @InjectModel(Review.name) private reviewModel: Model<Review>,
+    @InjectModel(Report.name) private reportModel: Model<Report>,
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
@@ -135,6 +137,17 @@ export class UsersService {
   ): Promise<Review[]> {
     return this.reviewModel
       .find({ author: authorId })
+      .limit(perPage)
+      .skip(perPage * (page - 1));
+  }
+
+  async findReportsWithPagination(
+    page = 1,
+    perPage = 20,
+    userId: Types.ObjectId,
+  ): Promise<Report[]> {
+    return this.reportModel
+      .find({ reportedUser: userId })
       .limit(perPage)
       .skip(perPage * (page - 1));
   }

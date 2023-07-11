@@ -7,6 +7,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { User } from '../users/schemas/user.schema';
 import { NullableType } from '../common/types/nullable.type';
+import { ReportStatusEnum } from './enums/status.enum';
 
 @Injectable()
 export class ReportsService {
@@ -29,7 +30,11 @@ export class ReportsService {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async findAll(page = 1, perPage = 20, openedOnly = true): Promise<Report[]> {
+  async findAll(
+    page = 1,
+    perPage = 20,
+    status: ReportStatusEnum,
+  ): Promise<Report[]> {
     // const mostReportedUsers = await this.reportModel
     //   .aggregate([{ $match: { isOpen: true } }])
     //   .group({
@@ -40,14 +45,18 @@ export class ReportsService {
     //   .limit(perPage); // TODO ?
 
     return this.reportModel
-      .find({ isOpen: true })
+      .find({ status: status })
       .sort({ createdAt: 'desc' })
       .skip(perPage * (page - 1))
       .limit(perPage);
   }
 
-  findOne(_id: Types.ObjectId): Promise<NullableType<Report>> {
-    return this.reportModel.findOne({ _id });
+  async findOne(_id: Types.ObjectId): Promise<NullableType<Report>> {
+    const report = await this.reportModel.findById({ _id });
+    if (!report) {
+      throw new NotFoundException(`Report ${_id} not found`);
+    }
+    return report;
   }
 
   async update(

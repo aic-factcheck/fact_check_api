@@ -4,10 +4,10 @@ import {
   MaxLength,
   IsString,
   IsOptional,
-  IsMongoId,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { User } from '../../users/schemas/user.schema';
+import { Types } from 'mongoose';
+import { IsObjectId } from 'class-validator-mongo-object-id';
 
 export class CreateReportDto {
   @ApiProperty({ example: 'Spam' })
@@ -24,8 +24,8 @@ export class CreateReportDto {
   @IsString()
   details: string;
 
-  @ApiProperty()
+  @ApiProperty({ example: '64ad235b2c3d0ba3d7373e71' })
   @IsNotEmpty()
-  @IsMongoId()
-  reportedUser: User;
+  @IsObjectId()
+  reportedUser: Types.ObjectId;
 }

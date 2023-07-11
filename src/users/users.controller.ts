@@ -37,6 +37,7 @@ import { Public } from '../auth/decorators/public-route.decorator';
 import { Article } from '../articles/schemas/article.schema';
 import { Claim } from '../claims/schemas/claim.schema';
 import { Review } from '../reviews/schemas/review.schema';
+import { Report } from '../reports/schemas/report.schema';
 import { SelfOrAdminGuard } from '../common/guards/self-or-admin.guard';
 
 @ApiTags('Users')
@@ -172,6 +173,22 @@ export class UsersController {
       perPage = 50;
     }
     return this.usersService.findReviewsWithPagination(page, perPage, userId);
+  }
+
+  @Get(':userId/reports')
+  @Roles('admin')
+  @HttpCode(HttpStatus.OK)
+  @ApiParam({ name: 'userId', type: String })
+  @ApiQuery({ name: 'page', required: false, type: Number, example: 1 })
+  @ApiQuery({ name: 'perPage', required: false, type: Number, example: 20 })
+  async listUserReports(
+    @Query() { page, perPage }: PaginationParams,
+    @Param('userId', new ParseObjectIdPipe()) userId: Types.ObjectId,
+  ): Promise<Report[]> {
+    if (perPage > 50) {
+      perPage = 50;
+    }
+    return this.usersService.findReportsWithPagination(page, perPage, userId);
   }
 
   @Post(':userId/ban')

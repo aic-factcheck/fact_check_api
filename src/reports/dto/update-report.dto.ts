@@ -1,9 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsNotEmpty } from 'class-validator';
+import { IsEnum, IsNotEmpty } from 'class-validator';
+import { ReportStatusEnum } from '../enums/status.enum';
 
 export class UpdateReportDto {
+  @ApiProperty({ example: 'SUBMITTED' })
   @ApiProperty()
   @IsNotEmpty()
-  @IsBoolean()
-  isOpen: boolean;
+  @IsEnum(ReportStatusEnum)
+  status: ReportStatusEnum;
 }
