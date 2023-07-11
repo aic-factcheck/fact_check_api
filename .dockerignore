@@ -1,5 +1,11 @@
 /node_modules
+node_modules
 /.data
 /dist
+dist
 /files
+
 .env
+Dockerfile
+.dockerignore
+npm-debug.log
