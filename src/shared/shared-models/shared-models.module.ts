@@ -18,6 +18,10 @@ import {
   SavedArticleSchema,
 } from '../../saved-articles/schemas/saved-article.schema';
 import { Report, ReportSchema } from '../../reports/schemas/report.schema';
+import {
+  Invitation,
+  InvitationSchema,
+} from '../../invitations/schemas/invitation.schema';
 
 @Module({
   imports: [
@@ -32,6 +36,7 @@ import { Report, ReportSchema } from '../../reports/schemas/report.schema';
       { name: Reputation.name, schema: ReputationSchema },
       { name: Vote.name, schema: VoteSchema },
 
+      { name: Invitation.name, schema: InvitationSchema },
       { name: SavedArticle.name, schema: SavedArticleSchema },
       { name: Report.name, schema: ReportSchema },
       { name: Reputation.name, schema: ReputationSchema },

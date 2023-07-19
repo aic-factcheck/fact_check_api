@@ -47,10 +47,10 @@ entity "SavedArticles" as saved {
 entity "Invitation" as inv {
   *_id : string <<generated>>
   --
-  *invitedBy : text <<FK>>
+  *author : text <<FK>>
   *invitedEmail: text
   *createdAt: date
-  *verificationCode: Number
+  *code: Number
   *isValid: Boolean
   --
   - TTL 48 hours

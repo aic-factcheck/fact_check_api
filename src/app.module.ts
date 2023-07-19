@@ -22,6 +22,8 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { TasksModule } from './tasks/tasks.module';
 import { SharedModelsModule } from './shared/shared-models/shared-models.module';
 import { MorganModule } from './shared/logger/logger.module';
+import { InvitationsModule } from './invitations/invitations.module';
+import { UniqueInvitationValidator } from './common/validators/unique-invitation.validator';
 
 @Module({
   imports: [
@@ -65,8 +67,9 @@ import { MorganModule } from './shared/logger/logger.module';
     TasksModule,
     SharedModelsModule,
     MorganModule,
+    InvitationsModule,
   ],
   controllers: [],
-  providers: [UniqueValidator],
+  providers: [UniqueValidator, UniqueInvitationValidator],
 })
 export class AppModule {}
