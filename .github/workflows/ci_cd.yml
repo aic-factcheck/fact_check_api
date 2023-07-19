@@ -18,7 +18,6 @@ env:
   MONGO_URI: mongodb://localhost/fact_checking_api
   MONGO_URI_TEST: mongodb://localhost/fact_checking_api_test
   MONGO_DB_NAME: fact_checking_api_test
-  EMAIL_PORT: 587
   EMAIL_HOST: smtp-relay.sendinblue.com
   EMAIL_USERNAME: smtp-username
   EMAIL_PASSWORD: smtp-password
@@ -67,6 +66,7 @@ jobs:
       AUTH_JWT_SECRET: ${{ secrets.JWT_SECRET }}
       MONGO_URI: ${{ secrets.MONGO_DEPLOY_URI }}
       AUTH_JWT_TOKEN_EXPIRES_IN: ${{ secrets.AUTH_JWT_TOKEN_EXPIRES_IN }}
+      EMAIL_PORT: ${{ secrets.EMAIL_PORT }}
       EMAIL_HOST: ${{ secrets.EMAIL_HOST }}
       EMAIL_USERNAME: ${{ secrets.EMAIL_USERNAME }}
       EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}

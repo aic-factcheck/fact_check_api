@@ -12,14 +12,15 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       useFactory: async (configService: ConfigService) => ({
         transport: {
           host: configService.get('mail.host'),
-          secure: false,
+          port: configService.get('mail.port'),
+          secure: true,
           auth: {
             user: configService.get('mail.user'),
             pass: configService.get('mail.password'),
           },
         },
         defaults: {
-          from: `"No Reply" <info@factcheck.fel.cvut.cz>`,
+          from: 'kopalras@fel.cvut.cz',
         },
         template: {
           dir: join(__dirname, 'templates'),
