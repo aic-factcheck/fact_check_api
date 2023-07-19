@@ -9,15 +9,14 @@ on:
     branches: [main]
 
 env:
-  NODE_ENV: test
-  APP_NAME:
+  APP_NAME: FACT_CHECK_API
   APP_PORT: 3000
-  API_PREFIX: api
+  API_PREFIX: api/v1
   APP_FALLBACK_LANGUAGE: en
   APP_HEADER_LANGUAGE: x-custom-lang
   FRONTEND_DOMAIN: http://localhost:3000
   BACKEND_DOMAIN: http://localhost:3000
-  AUTH_JWT_SECRET: bA2xcjpf8y5aSUFsNB2qN5yymUBSs6es3qHoFpGkec75RCeBb8cpKauGefw5qy4
+  AUTH_JWT_SECRET: bA2xcjpf8y5aSUFsNB2qN5yymUBS
   AUTH_JWT_TOKEN_EXPIRES_IN: 15
   MONGO_URI: mongodb://localhost/fact_checking_api
   MONGO_URI_TEST: mongodb://localhost/fact_checking_api_test
@@ -29,6 +28,8 @@ env:
 
 jobs:
   tests:
+    env:
+      NODE_ENV: test
     runs-on: ubuntu-latest
 
     strategy:
@@ -62,25 +63,30 @@ jobs:
 
       - run: npm run test:e2e
 
-  # deploy:
-  #   needs: tests
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v2
+  deploy:
+    needs: tests
+    env:
+      NODE_ENV: production
+      AUTH_JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      MONGO_URI: ${{ secrets.MONGO_DEPLOY_URI }}
+      AUTH_JWT_TOKEN_EXPIRES_IN: ${{ secrets.AUTH_JWT_TOKEN_EXPIRES_IN }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
 
-  #     - name: Build and push Docker images
-  #       run: |
-  #         docker build -t rastokopal/fact-checking-api:${{ github.sha }} .
-  #         echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
-  #         docker push rastokopal/fact-checking-api:${{ github.sha }}
+      - name: Build and push Docker images
+        run: |
+          docker build -t rastokopal/fact-checking-api:${{ github.sha }} .
+          echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+          docker push rastokopal/fact-checking-api:${{ github.sha }}
 
-  #     - name: SSH and deploy
-  #       uses: appleboy/ssh-action@master
-  #       with:
-  #         host: ${{ secrets.SERVER_HOST }}
-  #         username: ${{ secrets.SERVER_USERNAME }}
-  #         key: ${{ secrets.SERVER_SSH_KEY }}
-  #         script: |
-  #           docker pull rastokopal/fact-checking-api:${{ github.sha }}
-  #           docker-compose up -d --no-deps --build api
+      - name: SSH and deploy
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            docker pull rastokopal/fact-checking-api:${{ github.sha }}
+            docker-compose up -d --no-deps --build api
