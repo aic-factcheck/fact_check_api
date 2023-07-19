@@ -2,8 +2,6 @@ export type AppConfig = {
   nodeEnv: string;
   name: string;
   workingDirectory: string;
-  frontendDomain?: string;
-  backendDomain: string;
   port: number;
   apiPrefix: string;
   fallbackLanguage: string;
@@ -21,14 +19,9 @@ export type MongoConfig = {
 
 export type MailConfig = {
   port: number;
-  host?: string;
-  user?: string;
-  password?: string;
-  defaultEmail?: string;
-  defaultName?: string;
-  ignoreTLS: boolean;
-  secure: boolean;
-  requireTLS: boolean;
+  host: string;
+  user: string;
+  password: string;
 };
 
 export type AllConfigType = {

@@ -8,6 +8,7 @@ import { ArticlesModule } from './articles/articles.module';
 import mongoConfig from './shared/config/mongo.config';
 import authConfig from './shared/config/auth.config';
 import appConfig from './shared/config/app.config';
+import mailConfig from './shared/config/mail.config';
 import { RouterModule } from '@nestjs/core';
 import { SavedArticlesModule } from './saved-articles/saved-articles.module';
 import { ClaimsModule } from './claims/claims.module';
@@ -47,7 +48,7 @@ import { UniqueInvitationValidator } from './common/validators/unique-invitation
     ]),
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [appConfig, authConfig, mongoConfig],
+      load: [appConfig, authConfig, mongoConfig, mailConfig],
       envFilePath: ['.env'],
     }),
     AuthModule,

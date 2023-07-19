@@ -4,7 +4,7 @@
 
 # Fact checking API
 
-[![users_service CI](https://github.com/rastislavkopal/fact_checking_ts/actions/workflows/users_service.yml/badge.svg)](https://github.com/rastislavkopal/fact_checking_ts/actions/workflows/users_service.yml)
+[![users_service CI](https://github.com/aic-factcheck/fact_check_api/actions/workflows/ci_cd.yml/badge.svg)](https://github.com/aic-factcheck/fact_check_api/actions/workflows/ci_cd.yml)
 
 ## Features
 

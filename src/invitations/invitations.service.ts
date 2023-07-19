@@ -7,12 +7,14 @@ import { User } from '../users/schemas/user.schema';
 import { randomBytes } from 'crypto';
 import { CreateInvitationDto } from './dto/create-invititation.dto';
 import { NullableType } from '../common/types/nullable.type';
+import { MailService } from '../shared/mail/mail.service';
 
 @Injectable()
 export class InvitationsService {
   constructor(
     @InjectModel(User.name) private userModel: Model<User>,
     @InjectModel(Invitation.name) private invModel: Model<Invitation>,
+    private mailService: MailService,
   ) {}
 
   async create(
@@ -23,6 +25,7 @@ export class InvitationsService {
     const newInv: InvitationDocument = new this.invModel(
       _.assign(createDto, { author: loggedUser._id, code }),
     );
+    await this.mailService.sendUserInvitation(createDto.invitedEmail, code);
     return newInv.save();
   }
 
