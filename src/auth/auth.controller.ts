@@ -6,6 +6,7 @@ import {
   HttpStatus,
   Post,
   Request,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
@@ -17,6 +18,8 @@ import MongooseClassSerializerInterceptor from '../common/interceptors/mongoose-
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { Public } from './decorators/public-route.decorator';
+import { RegisterWithCodeDto } from './dto/register-code.dto';
+import { InvitationExistsGuard } from '../common/guards/invitation-exists.guard';
 
 @ApiTags('Auth')
 @Controller({
@@ -31,6 +34,16 @@ export class AuthController {
   @HttpCode(HttpStatus.CREATED)
   register(@Body() createUserDto: CreateUserDto): Promise<AuthResponseType> {
     return this.authService.register(createUserDto);
+  }
+
+  @Public()
+  @Post('register-code')
+  @HttpCode(HttpStatus.CREATED)
+  @UseGuards(InvitationExistsGuard)
+  registerWithCode(
+    @Body() createDto: RegisterWithCodeDto,
+  ): Promise<AuthResponseType> {
+    return this.authService.registerWithCode(createDto);
   }
 
   @Public()

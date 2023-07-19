@@ -1,4 +1,5 @@
 import {
+  ForbiddenException,
   HttpException,
   HttpStatus,
   Injectable,
@@ -21,6 +22,11 @@ import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from '../users/schemas/user.schema';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
+import { RegisterWithCodeDto } from './dto/register-code.dto';
+import {
+  Invitation,
+  InvitationDocument,
+} from '../invitations/schemas/invitation.schema';
 
 @Injectable()
 export class AuthService {
@@ -31,6 +37,7 @@ export class AuthService {
     private usersService: UsersService,
     private configService: ConfigService,
     @InjectModel(RefreshToken.name) private tokenModel: Model<RefreshToken>,
+    @InjectModel(Invitation.name) private invModel: Model<Invitation>,
   ) {
     this.jwtExpires = this.configService.getOrThrow<number>('auth.expires');
   }
@@ -119,6 +126,22 @@ export class AuthService {
 
   async register(createUserDto: CreateUserDto): Promise<AuthResponseType> {
     const user: User = await this.usersService.create(createUserDto);
+    await this.createRefreshToken(user);
+    return this.authTokenResponse(user);
+  }
+
+  async registerWithCode(
+    createDto: RegisterWithCodeDto,
+  ): Promise<AuthResponseType> {
+    const inv: InvitationDocument | null = await this.invModel.findOne({
+      invitedEmail: createDto.email,
+    });
+    if (inv?.code !== createDto.code) {
+      throw new ForbiddenException('Incorrect verification code');
+    }
+    await this.invModel.findOneAndDelete({ invitedEmail: createDto.email });
+
+    const user: User = await this.usersService.create(createDto);
     await this.createRefreshToken(user);
     return this.authTokenResponse(user);
   }
