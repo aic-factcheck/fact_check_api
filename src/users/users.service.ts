@@ -112,7 +112,6 @@ export class UsersService {
     perPage = 20,
     authorId: Types.ObjectId,
   ): Promise<Article[]> {
-    console.log(await this.articleModel.find());
     return this.articleModel
       .find({ author: authorId })
       .limit(perPage)

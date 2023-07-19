@@ -17,7 +17,6 @@ export class InvitationExistsGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
     const body = request.body;
-    console.log(body);
 
     const inv = await this.invModel.findOne({ invitedEmail: body.email });
     if (inv) {

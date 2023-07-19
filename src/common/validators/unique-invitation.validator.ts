@@ -20,7 +20,6 @@ export class UniqueInvitationValidator implements ValidatorConstraintInterface {
     if (!args) return false;
 
     filter[args.property] = value;
-    console.log(filter);
     const count = await this.invModel.count(filter);
     return !count;
   }
