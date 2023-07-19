@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - dev
   pull_request:
     branches: [main]
 
@@ -77,9 +76,9 @@ jobs:
 
       - name: Build and push Docker images
         run: |
-          docker build -t rastokopal/fact-checking-api:${{ github.sha }} .
+          docker build -t rastokopal/fact-checking-api:latest .
           echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
-          docker push rastokopal/fact-checking-api:${{ github.sha }}
+          docker push rastokopal/fact-checking-api:latest
 
       - name: SSH and deploy
         uses: appleboy/ssh-action@master
@@ -88,5 +87,6 @@ jobs:
           username: ${{ secrets.SERVER_USERNAME }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
-            docker pull rastokopal/fact-checking-api:${{ github.sha }}
-            docker-compose up -d --no-deps --build api
+            docker pull rastokopal/fact-checking-api:latest
+            cd ${{ secrets.DEPLOY_FOLDER }}
+            docker-compose up -d --no-deps api
