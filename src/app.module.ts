@@ -25,9 +25,11 @@ import { SharedModelsModule } from './shared/shared-models/shared-models.module'
 import { MorganModule } from './shared/logger/logger.module';
 import { InvitationsModule } from './invitations/invitations.module';
 import { UniqueInvitationValidator } from './common/validators/unique-invitation.validator';
+import { CacheModule } from '@nestjs/cache-manager';
 
 @Module({
   imports: [
+    CacheModule.register(),
     RouterModule.register([
       {
         path: 'articles',

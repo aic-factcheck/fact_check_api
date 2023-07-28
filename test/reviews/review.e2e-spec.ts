@@ -63,6 +63,8 @@ describe('Reviews API', () => {
     lang: 'en',
   };
 
+  let review1Id: string;
+
   beforeAll(async () => {
     await dbConnection.collection('refreshtokens').deleteMany({});
     await dbConnection.collection('reviews').deleteMany({});
@@ -122,14 +124,15 @@ describe('Reviews API', () => {
     });
   });
 
-  describe('POST /articles/:articleId/claims', () => {
-    it('should create a new article', () => {
+  describe('POST /articles/:articleId/claims/reviews', () => {
+    it('should create a new review', () => {
       return request(httpServer)
         .post(`/articles/${article1Id}/claims/${claimId}/reviews`)
         .auth(user1AccessToken, { type: 'bearer' })
         .send(review1)
         .expect(HttpStatus.CREATED)
         .then((res) => {
+          review1Id = res.body._id;
           expect(res.body).toHaveProperty('_id');
           expect(res.body).toHaveProperty('createdAt');
           // expect(res.body.author._id).toEqual(user1Id);
@@ -141,7 +144,7 @@ describe('Reviews API', () => {
         });
     });
 
-    it('should create a new article', () => {
+    it('should create a new review', () => {
       return request(httpServer)
         .post(`/articles/${article1Id}/claims/${claimId}/reviews`)
         .auth(user2AccessToken, { type: 'bearer' })
@@ -178,6 +181,50 @@ describe('Reviews API', () => {
         .set('Authorization', 'Bearer ')
         .send(_.omit(review1, ['lang']))
         .expect(HttpStatus.UNAUTHORIZED);
+    });
+  });
+
+  describe('GET /articles/:articleId/claims/reviews', () => {
+    it('should list reviews', () => {
+      return request(httpServer)
+        .get(
+          `/articles/${article1Id}/claims/${claimId}/reviews?page=1&perPage=100`,
+        )
+        .auth(user1AccessToken, { type: 'bearer' })
+        .expect(HttpStatus.OK)
+        .then(async (res) => {
+          expect(res.body).toBeInstanceOf(Array);
+          expect(res.body.length).toEqual(2);
+
+          expect(res.body[0].nPositiveVotes).toEqual(0);
+          expect(res.body[0].nNeutralVotes).toEqual(0);
+          expect(res.body[0].nNegativeVotes).toEqual(0);
+
+          expect(res.body[0].author).toHaveProperty('email');
+          expect(res.body[0].author).toHaveProperty('_id');
+          expect(res.body[0].author).not.toHaveProperty('password');
+        });
+    });
+  });
+
+  describe('GET /articles/:articleId/claims/reviews/:reviewId', () => {
+    it('should get selected review', () => {
+      return request(httpServer)
+        .get(`/articles/${article1Id}/claims/${claimId}/reviews/${review1Id}`)
+        .auth(user1AccessToken, { type: 'bearer' })
+        .expect(HttpStatus.OK)
+        .then(async (res) => {
+          expect(res.body).toBeInstanceOf(Object);
+          expect(res.body).toHaveProperty('text');
+
+          expect(res.body.nPositiveVotes).toEqual(0);
+          expect(res.body.nNeutralVotes).toEqual(0);
+          expect(res.body.nNegativeVotes).toEqual(0);
+
+          expect(res.body.author).toHaveProperty('email');
+          expect(res.body.author).toHaveProperty('_id');
+          expect(res.body.author).not.toHaveProperty('password');
+        });
     });
   });
 });

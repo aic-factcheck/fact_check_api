@@ -139,7 +139,7 @@ export class ClaimsService {
     if (!currentClaim) {
       throw new NotFoundException('Claim not found');
     }
-    if (currentClaim.history.length >= 3) {
+    if (currentClaim.history.length >= 10) {
       throw new BadRequestException('Claim can be updated up to 3 times');
     }
 

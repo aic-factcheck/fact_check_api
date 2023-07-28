@@ -160,13 +160,19 @@ export class ReviewsService {
     );
 
     const reviewIds = reviews.map((it: Review) => it._id);
-    const userVotes = await this.voteModel
-      .aggregate([
-        {
-          $match: { referencedId: { $in: reviewIds }, author: loggedUser._id },
-        },
-      ])
-      .project({ userVote: '$rating', _id: '$referencedId' });
+    let userVotes;
+    if (loggedUser) {
+      userVotes = await this.voteModel
+        .aggregate([
+          {
+            $match: {
+              referencedId: { $in: reviewIds },
+              author: loggedUser._id,
+            },
+          },
+        ])
+        .project({ userVote: '$rating', _id: '$referencedId' });
+    }
 
     const mergedReviews: ReviewResponseType[] = _.values(
       _.merge(_.keyBy(reviewsRes, '_id'), _.keyBy(userVotes, '_id')),
@@ -187,7 +193,7 @@ export class ReviewsService {
     if (!currentReview) {
       throw new NotFoundException('Review not found');
     }
-    if (currentReview.history.length >= 3) {
+    if (currentReview.history.length >= 10) {
       throw new BadRequestException('Review can be updated up to 3 times');
     }
 

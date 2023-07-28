@@ -18,12 +18,9 @@ package "Fact checking system" {
 
   usecase UC1 as "1. List hottest claims"
   note right of UC1
-    User can choose search condidition
-    for opened claims
-    - Hottest claims - all time
-    - Hottest claims - today
-    - Hottest claims - last week
-    - Hottest claims - last month
+    User can filter among claims
+    - time (today, last week, last month)
+    - sort option (asc/dec of Date or number of votes)
   end note
 
   usecase UC2 as "2. List hottest articles"
@@ -49,6 +46,8 @@ package "Fact checking system" {
   usecase UC5_1 as "5.1 Submit new review"
   note right of UC5_1
     Review should be in-depth analysis of a claim.
+    Review contains a final verdict:
+    - True, Partially true, Inconclusive, Non-verifiable, False
     Participant should add relevant links, proofs
   end note
   
@@ -56,9 +55,7 @@ package "Fact checking system" {
   note right of UC5_2
     Participant choose a value:
     - True
-    - Partially true
-    - inconclusive
-    - Non-verifiable
+    - Not enough inf
     - False
   end note
 
@@ -78,10 +75,12 @@ package "Fact checking system" {
 
   usecase UC12 as "12. Save article"
   usecase UC12_1 as "12.1 List 'my' saved articles"
+  usecase UC14 as "14 Report user"
 
   usecase UC13 as "13. Expert analysis"
-  usecase UC14 as "14. Mark review as a result"
   
+  usecase UC25 as "25. List reports"
+  usecase UC26 as "26 List reports for user"
   usecase UC20 as "20. Ban user"
   note right of UC20
     - Resources of banned user should be
@@ -111,11 +110,13 @@ package "Fact checking system" {
     User -- UC11_1
     User -- UC12
     User -- UC12_1
+    User -- UC14
 
     Expert -- UC13
-    Expert -- UC14
 
     Admin -- UC20
     Admin -- UC21
+    Admin -- UC25
+    Admin -- UC26
 }
 @enduml

@@ -83,4 +83,25 @@ export class SearchService {
     );
     return articles;
   }
+
+  async findClaimsByCategories(
+    page = 1,
+    perPage = 20,
+    categories: string[],
+    loggedUser: User | null,
+  ): Promise<NullableType<ClaimResponseType[]>> {
+    let userReviews;
+    if (loggedUser) {
+      userReviews = await this.reviewModel
+        .find({ author: loggedUser._id })
+        .lean();
+    }
+
+    const claims = await this.claimModel
+      .find({ categories: { $in: categories } })
+      .limit(perPage)
+      .skip(perPage * (page - 1));
+
+    return mergeClaimsWithReviews(claims, userReviews);
+  }
 }
