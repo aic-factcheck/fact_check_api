@@ -16,6 +16,7 @@ import { PaginationParams } from '../common/types/pagination-params';
 import MongooseClassSerializerInterceptor from '../common/interceptors/mongoose-class-serializer.interceptor';
 import { SortByEnum } from './enums/sort-by.enum';
 import { DurationLimitEnum } from './enums/duration.enum';
+import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
 
 @ApiTags('Hot')
 @Controller({
@@ -23,6 +24,8 @@ import { DurationLimitEnum } from './enums/duration.enum';
   version: '1',
 })
 @ApiBearerAuth()
+@UseInterceptors(CacheInterceptor)
+@CacheTTL(60)
 export class HotController {
   constructor(private readonly hotService: HotService) {}
 

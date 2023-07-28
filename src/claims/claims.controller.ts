@@ -9,6 +9,7 @@ import {
   Patch,
   Delete,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { Controller } from '@nestjs/common';
 import {
@@ -31,12 +32,14 @@ import { CreateClaimDto } from './dto/create-claim.dto';
 import { Public } from '../auth/decorators/public-route.decorator';
 import { ClaimResponseType } from './types/claim-response.type';
 import { DoesArticleExist } from '../common/guards/article-exists.guard';
+import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
 
 @ApiTags('Claims')
 @Controller({
   version: '1',
 })
 @ApiBearerAuth()
+@UseInterceptors(CacheInterceptor)
 export class ClaimsController {
   constructor(private readonly claimService: ClaimsService) {}
 
@@ -58,6 +61,7 @@ export class ClaimsController {
   @HttpCode(HttpStatus.OK)
   @ApiQuery({ name: 'page', required: false, type: Number, example: 1 })
   @ApiQuery({ name: 'perPage', required: false, type: Number, example: 20 })
+  @CacheTTL(5)
   async list(
     @Query() { page, perPage }: PaginationParams,
     @LoggedUser() user: User,
@@ -79,6 +83,7 @@ export class ClaimsController {
   @ApiParam({ name: 'articleId', type: String })
   @ApiParam({ name: 'claimId', type: String })
   @HttpCode(HttpStatus.OK)
+  @CacheTTL(60)
   async findOne(
     @Param('claimId', new ParseObjectIdPipe()) claimId: Types.ObjectId,
     @LoggedUser() user: User,

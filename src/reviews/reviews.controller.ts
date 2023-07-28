@@ -9,6 +9,7 @@ import {
   Delete,
   Patch,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { Controller } from '@nestjs/common';
 import {
@@ -31,12 +32,14 @@ import { DoesArticleExist } from '../common/guards/article-exists.guard';
 import { DoesClaimExist } from '../common/guards/claim-exists.guard';
 import { Types } from 'mongoose';
 import { ParseObjectIdPipe } from '../common/pipes/parse-object-id.pipe';
+import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
 
 @ApiTags('Reviews')
 @Controller({
   version: '1',
 })
 @ApiBearerAuth()
+@UseInterceptors(CacheInterceptor)
 export class ReviewsController {
   constructor(private readonly reviewsService: ReviewsService) {}
 
@@ -66,6 +69,7 @@ export class ReviewsController {
   @HttpCode(HttpStatus.OK)
   @ApiQuery({ name: 'page', required: false, type: Number, example: 1 })
   @ApiQuery({ name: 'perPage', required: false, type: Number, example: 20 })
+  @CacheTTL(5)
   async list(
     @Query() { page, perPage }: PaginationParams,
     @LoggedUser() user: User,
@@ -90,6 +94,7 @@ export class ReviewsController {
   @ApiParam({ name: 'claimId', type: String })
   @ApiParam({ name: 'reviewId', type: String })
   @HttpCode(HttpStatus.OK)
+  @CacheTTL(60)
   async findOne(
     @LoggedUser() user: User | null,
     @Param('articleId', new ParseObjectIdPipe()) articleId: Types.ObjectId,

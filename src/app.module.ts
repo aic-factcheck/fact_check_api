@@ -29,7 +29,11 @@ import { CacheModule } from '@nestjs/cache-manager';
 
 @Module({
   imports: [
-    CacheModule.register(),
+    CacheModule.register({
+      ttl: 5, // seconds
+      max: 10, // maximum number of items in cache
+      isGlobal: true,
+    }),
     RouterModule.register([
       {
         path: 'articles',

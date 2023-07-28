@@ -1,0 +1,71 @@
+@startuml Proces overenia
+
+actor "Crowd" as crowd #lightCyan
+
+actor "Client" as client
+participant "FactCheckAPI" as api
+participant "WebScrappingAPI" as scrap
+
+== Login ==
+
+client->api: :POST /auth/register (data)
+api->client: ""ok, {authRes}""
+
+client->api: :POST /auth/login (data)
+api->client: ""ok, {authRes}""
+
+== Submit article, claims ==
+
+client->scrap: :GET /extract?json=url
+scrap->client: ""ok, {data}""
+
+client->api: :POST /article (data)
+api->client: ""ok, {data}""
+
+loop ""add claim?""
+  client->api: :POST /article/:articleId/claim/ (data)
+  api->client: ""ok, created""
+end
+
+== List claims and reviews, vote claims ==
+
+hnote over crowd,scrap
+  Many users at the same time
+endhnote
+crowd->api: :GET /hot/claims?sortBy=SORT_OPTION&duration=DURATION
+api->crowd: ""ok, {data}""
+
+alt ""Decides to vote for claim""
+  crowd->api: :POST /vote?id=claimId&type=CLAIM (data)
+  api->crowd: ""Ok, created""
+end
+
+crowd->api: :GET /articles/:articleId/claims/:claimId/reviews
+api->crowd: ""ok, {data}""
+crowd->api: :POST /articles/:articleId/claims/:claimId/reviews (data)
+api->crowd: ""ok, created""
+
+
+== Create a review, vote reviews ==
+
+crowd->api: :POST /articles/:articleId/claims/:claimId/reviews (data)
+api->crowd: ""ok, created""
+
+alt ""Decides to vote for existing review""
+  crowd->api: :POST /vote?id=reviewId&type=REVIEW (data)
+  api->crowd: ""Ok, created""
+end
+
+== Find a fact-check ==
+
+hnote over client
+  User want to find a checked fact
+endhnote
+client->api: :GET /articles/:articleId/claims/:claimId/reviews
+api->client: ""ok, {{data}}""
+hnote over client
+  A review with the most positive votes is  \n
+  classified as the most probably to be true.
+endhnote
+
+@enduml

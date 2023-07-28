@@ -8,6 +8,7 @@ import {
   Param,
   Patch,
   Delete,
+  UseInterceptors,
 } from '@nestjs/common';
 import { Controller } from '@nestjs/common';
 import {
@@ -31,12 +32,14 @@ import { ReplaceArticleDto } from './dto/replace-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
 import { Public } from '../auth/decorators/public-route.decorator';
 import { ArticleResponseType } from './types/article-response.type';
+import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
 
 @ApiTags('Articles')
 @Controller({
   version: '1',
 })
 @ApiBearerAuth()
+@UseInterceptors(CacheInterceptor)
 export class ArticlesController {
   constructor(private readonly articlesService: ArticlesService) {}
 
@@ -54,6 +57,7 @@ export class ArticlesController {
   @HttpCode(HttpStatus.OK)
   @ApiQuery({ name: 'page', required: false, type: Number, example: 1 })
   @ApiQuery({ name: 'perPage', required: false, type: Number, example: 20 })
+  @CacheTTL(5)
   async list(
     @Query() { page, perPage }: PaginationParams,
     @LoggedUser() loggedUser: User,
@@ -72,6 +76,7 @@ export class ArticlesController {
   @Public()
   @ApiParam({ name: 'articleId', type: String })
   @HttpCode(HttpStatus.OK)
+  @CacheTTL(60)
   async findOne(
     @Param('articleId', new ParseObjectIdPipe()) _id: Types.ObjectId,
     @LoggedUser() user: User,
