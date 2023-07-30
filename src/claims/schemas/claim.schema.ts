@@ -31,13 +31,6 @@ export class Claim {
   })
   article: Article;
 
-  @Prop({
-    type: [Types.ObjectId],
-    ref: 'Article',
-    required: true,
-  })
-  articles: Article[];
-
   @Prop({ required: true, maxlength: 512, index: 'text' })
   text: string;
 

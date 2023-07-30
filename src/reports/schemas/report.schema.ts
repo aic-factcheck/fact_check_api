@@ -38,9 +38,9 @@ export class Report {
     default: ReportStatusEnum.SUBMITTED,
     required: true,
     index: true,
-    enum: ReportStatusEnum,
+    enum: Object.values(ReportStatusEnum),
   })
-  status: ReportStatusEnum;
+  status: string;
 
   @Prop({ type: Date })
   createdAt: Date;

@@ -210,7 +210,6 @@ describe('Articles API', () => {
         .then(async (res) => {
           expect(res.body).toBeInstanceOf(Object);
           expect(res.body).toHaveProperty('title');
-          expect(res.body).toHaveProperty('claims');
           expect(res.body).toHaveProperty('sourceUrl');
           expect(res.body).toHaveProperty('sourceType');
           expect(res.body).toHaveProperty('lang');

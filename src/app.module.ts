@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { UsersModule } from './users/users.module';
 import { UniqueValidator } from './common/validators/unique-validator';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { DatabaseModule } from './shared/database/database.module';
 import { ArticlesModule } from './articles/articles.module';
@@ -22,13 +22,31 @@ import { ReportsModule } from './reports/reports.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TasksModule } from './tasks/tasks.module';
 import { SharedModelsModule } from './shared/shared-models/shared-models.module';
-import { MorganModule } from './shared/logger/logger.module';
 import { InvitationsModule } from './invitations/invitations.module';
 import { UniqueInvitationValidator } from './common/validators/unique-invitation.validator';
 import { CacheModule } from '@nestjs/cache-manager';
+import { LoggerModule } from 'nestjs-pino';
 
 @Module({
   imports: [
+    LoggerModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => {
+        return {
+          pinoHttp: {
+            level:
+              configService.getOrThrow<string>('app.nodeEnv') !== 'production'
+                ? 'debug'
+                : 'info',
+            transport:
+              configService.getOrThrow<string>('app.nodeEnv') !== 'production'
+                ? { target: 'pino-pretty' }
+                : undefined,
+          },
+        };
+      },
+    }),
     CacheModule.register({
       ttl: 5, // seconds
       max: 10, // maximum number of items in cache
@@ -73,7 +91,6 @@ import { CacheModule } from '@nestjs/cache-manager';
     ScheduleModule.forRoot(),
     TasksModule,
     SharedModelsModule,
-    MorganModule,
     InvitationsModule,
   ],
   controllers: [],

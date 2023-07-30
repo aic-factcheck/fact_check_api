@@ -36,9 +36,6 @@ export class Article {
   @Prop({ required: true, maxlength: 16448, index: 'text' })
   text: string;
 
-  @Prop({ type: [Types.ObjectId], default: [], ref: 'Claim' })
-  claims: Types.ObjectId[];
-
   @Prop({ type: [String], default: [], index: true })
   categories: string[];
 
