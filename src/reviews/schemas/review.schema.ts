@@ -28,6 +28,7 @@ export class Review {
     type: Types.ObjectId,
     ref: 'Article',
     required: true,
+    index: true,
   })
   @Transform((params) => params.obj._id.toString())
   article: Article;

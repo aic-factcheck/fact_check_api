@@ -26,6 +26,7 @@ export class Article {
     ref: 'User',
     required: true,
     autopopulate: { select: '-password' },
+    index: true,
   })
   author: User;
 

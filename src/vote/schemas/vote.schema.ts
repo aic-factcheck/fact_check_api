@@ -17,11 +17,12 @@ export class Vote {
     ref: 'User',
     required: true,
     autopopulate: { select: '-password' },
+    index: true,
   })
   author: User;
 
   @Expose()
-  @Prop({ required: true, type: Types.ObjectId })
+  @Prop({ required: true, type: Types.ObjectId, index: true })
   @Transform((params) => params.obj._id.toString())
   referencedId: Types.ObjectId;
 

@@ -17,6 +17,7 @@ export class Reputation {
     ref: 'User',
     required: true,
     index: true,
+    index: true,
   })
   user: User;
 

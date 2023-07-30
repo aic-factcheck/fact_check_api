@@ -18,6 +18,7 @@ export class Claim {
     ref: 'User',
     required: true,
     autopopulate: { select: '-password' },
+    index: true,
   })
   author: User;
 
@@ -26,6 +27,7 @@ export class Claim {
     ref: 'Article',
     required: true,
     autopopulate: { maxDepth: 1 },
+    index: true,
   })
   article: Article;
 
