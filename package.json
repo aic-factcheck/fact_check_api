@@ -51,6 +51,7 @@
     "handlebars": "^4.7.7",
     "helmet": "^7.0.0",
     "husky": "^8.0.3",
+    "ts-patch": "^3.0.2",
     "lodash": "^4.17.21",
     "mongoose": "^7.4.1",
     "mongoose-autopopulate": "^1.0.1",
@@ -92,7 +93,6 @@
     "ts-jest": "29.1.1",
     "ts-loader": "^9.4.4",
     "ts-node": "^10.9.1",
-    "ts-patch": "^3.0.2",
     "tsconfig-paths": "4.2.0",
     "typescript": "^5.1.6"
   },
