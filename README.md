@@ -23,7 +23,7 @@
 - Tests with [Jest](https://jestjs.io/docs/getting-started), [Supertest](https://github.com/ladjs/supertest)
 <!-- - Code coverage with [istanbul](https://istanbul.js.org) and [coveralls](https://coveralls.io) -->
 - Git hooks with [husky](https://github.com/typicode/husky)
-- Logging with [Morgan](https://github.com/expressjs/morgan)
+- Logging with [Pino & pino-http](https://github.com/iamolegga/nestjs-pino)
 - Authentication and Authorization with [passport](http://passportjs.org)
 - Automatic OpenAPI documentation generation with [Swagger](https://docs.nestjs.com/openapi/introduction)
 - Continuous integration support with Github Actions
