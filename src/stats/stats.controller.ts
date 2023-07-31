@@ -6,6 +6,7 @@ import { LoggedUser } from '../users/decorators/logged-user.decorator';
 import { User } from '../users/schemas/user.schema';
 import { PaginationParams } from '../common/types/pagination-params';
 import { Types } from 'mongoose';
+import { CacheTTL } from '@nestjs/cache-manager';
 
 @ApiTags('Stats')
 @Controller({
@@ -19,6 +20,7 @@ export class StatsController {
   @Get()
   @HttpCode(HttpStatus.OK)
   @ApiQuery({ name: 'userId', required: false, type: String })
+  @CacheTTL(20)
   userStats(
     @LoggedUser() loggedUser: User,
     @Query('userId') userId: Types.ObjectId | null,
@@ -31,6 +33,7 @@ export class StatsController {
   @HttpCode(HttpStatus.OK)
   @ApiQuery({ name: 'page', required: false, type: Number, example: 1 })
   @ApiQuery({ name: 'perPage', required: false, type: Number, example: 20 })
+  @CacheTTL(60)
   leaderboard(@Query() { page, perPage }: PaginationParams) {
     return this.statsService.leaderboard(page, perPage);
   }

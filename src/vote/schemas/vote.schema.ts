@@ -29,14 +29,8 @@ export class Vote {
   @Prop({ required: true, enum: VoteObjectEnum, index: true })
   type: string;
 
-  @Prop({ maxlength: 512 })
-  text: string;
-
   @Prop({ required: true, type: Number, min: -1, max: 10 })
   rating: number;
-
-  @Prop({ default: 'en' })
-  lang: string;
 
   @Prop({ type: Date })
   createdAt: Date;
