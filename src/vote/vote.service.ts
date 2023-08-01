@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateVoteDto } from './dto/create-vote.dto';
 import { Model, Types } from 'mongoose';
 import { VoteObjectEnum } from './enums/vote.enum';
@@ -49,7 +49,7 @@ export class VoteService {
       nNegativeVotes: oldVote.rating === -1 ? -1 : 0,
     };
 
-    this.modelMapping[type].findOneAndUpdate(
+    await this.modelMapping[type].findOneAndUpdate(
       { _id: referencedId },
       { $inc: voteUpdate },
       { returnDocument: 'after' },
@@ -91,6 +91,14 @@ export class VoteService {
     createDto: CreateVoteDto,
     loggedUser: User,
   ): Promise<Vote> {
+    const countRef = await this.modelMapping[type].countDocuments({
+      _id: referencedId,
+    });
+
+    if (countRef === 0) {
+      throw new NotFoundException('Referenced object not found');
+    }
+
     await this.unvote(referencedId, type, loggedUser);
     return this.vote(referencedId, type, loggedUser, createDto.rating);
   }

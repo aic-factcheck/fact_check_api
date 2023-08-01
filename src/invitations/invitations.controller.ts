@@ -30,7 +30,6 @@ export class InvitationsController {
   constructor(private readonly invService: InvitationsService) {}
 
   @Post()
-  @Roles('admin')
   @HttpCode(HttpStatus.CREATED)
   create(
     @Body() createDto: CreateInvitationDto,
