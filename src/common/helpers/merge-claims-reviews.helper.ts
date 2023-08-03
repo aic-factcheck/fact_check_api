@@ -1,4 +1,3 @@
-import { _ } from 'lodash';
 import { ClaimDocument } from '../../claims/schemas/claim.schema';
 import { ClaimResponseType } from '../../claims/types/claim-response.type';
 import { ReviewDocument } from '../../reviews/schemas/review.schema';
@@ -11,13 +10,13 @@ export async function mergeClaimsWithReviews(
   claims: ClaimDocument[],
   reviews: ReviewDocument[],
 ): Promise<ClaimResponseType[]> {
+  const reviewsMap = new Map(
+    reviews.map((review) => [String(review.claim._id), review]),
+  );
+
   const mergedClaims: ClaimResponseType[] = claims.map((claim) => {
-    let userReview: ReviewDocument | null = null;
-    userReview = _.find(reviews, { claim: claim._id });
-    return {
-      ...claim.toObject(),
-      userReview,
-    } as ClaimResponseType;
+    const userReview = reviewsMap.get(String(claim._id)) || null;
+    return { ...claim.toObject(), userReview };
   });
 
   return mergedClaims;

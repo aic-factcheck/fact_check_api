@@ -88,23 +88,29 @@ export class ClaimsService {
     claimId: Types.ObjectId,
     loggedUser: User,
   ): Promise<NullableType<ClaimResponseType>> {
-    const claim: ClaimDocument | null = await this.claimModel.findOneAndUpdate(
-      {
-        _id: claimId,
-        article: articleId,
-      },
-      { $inc: { nViews: 1 } },
-    );
+    const res = await Promise.all([
+      this.claimModel.findOneAndUpdate(
+        {
+          _id: claimId,
+          article: articleId,
+        },
+        { $inc: { nViews: 1 } },
+        { new: true },
+      ),
+      this.reviewModel
+        .findOne({
+          author: loggedUser._id,
+          claim: claimId,
+        })
+        .lean(),
+    ]);
+
+    const claim = res[0] as ClaimDocument | null;
+    const userReview = res[1] as ReviewDocument | null;
+
     if (!claim) {
       throw new NotFoundException(`Claim not found`);
     }
-
-    const userReview: ReviewDocument | null = await this.reviewModel
-      .findOne({
-        author: loggedUser._id,
-        claim: claimId,
-      })
-      .lean();
 
     return {
       ...claim.toObject(),
@@ -118,17 +124,19 @@ export class ClaimsService {
     perPage = 20,
     loggedUser: User | null,
   ): Promise<ClaimResponseType[]> {
-    let userReviews;
-    if (loggedUser) {
-      userReviews = await this.reviewModel
-        .find({ author: loggedUser._id })
-        .lean();
-    }
-
-    const claims: ClaimDocument[] = await this.claimModel
+    const claimsPromise = this.claimModel
       .find({ article: articleId })
       .skip(perPage * (page - 1))
       .limit(perPage);
+
+    const userReviewsPromise = loggedUser
+      ? this.reviewModel.find({ author: loggedUser._id }).lean()
+      : Promise.resolve(null);
+
+    const res = await Promise.all([claimsPromise, userReviewsPromise]);
+
+    const claims = res[0] as ClaimDocument[];
+    const userReviews = res[1] as ReviewDocument[];
 
     return mergeClaimsWithReviews(claims, userReviews);
   }
