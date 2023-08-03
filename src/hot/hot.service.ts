@@ -1,14 +1,16 @@
-import { _ } from 'lodash';
 import { Injectable } from '@nestjs/common';
 import { User } from '../users/schemas/user.schema';
 import { InjectModel } from '@nestjs/mongoose';
-import { Article } from '../articles/schemas/article.schema';
+import { Article, ArticleDocument } from '../articles/schemas/article.schema';
 import { Claim, ClaimDocument } from '../claims/schemas/claim.schema';
 import { Model } from 'mongoose';
-import { SavedArticle } from '../saved-articles/schemas/saved-article.schema';
+import {
+  SavedArticle,
+  SavedArticleDocument,
+} from '../saved-articles/schemas/saved-article.schema';
 import { SortByEnum, getSortByObject } from './enums/sort-by.enum';
 import { DurationLimitEnum, getDurationQuery } from './enums/duration.enum';
-import { Review } from '../reviews/schemas/review.schema';
+import { Review, ReviewDocument } from '../reviews/schemas/review.schema';
 import { mergeClaimsWithReviews } from '../common/helpers/merge-claims-reviews.helper';
 
 @Injectable()
@@ -32,27 +34,34 @@ export class HotService {
   async findArticles(
     page = 1,
     perPage = 20,
-    user: User | null,
+    loggedUser: User | null,
   ): Promise<Article[]> {
-    const articles = await this.articleModel
+    const articlesPromise: Promise<ArticleDocument[]> = this.articleModel
       .find({})
       .sort({ nPositiveVotes: 'desc' })
       .skip(perPage * (page - 1))
       .limit(perPage);
 
-    let savedArticles = [];
+    const savedArticlesPromise: Promise<SavedArticleDocument[]> = loggedUser
+      ? this.savedModel
+          .find({
+            author: loggedUser._id,
+          })
+          .distinct('articleId')
+      : Promise.resolve([]);
 
-    if (user) {
-      savedArticles = await this.savedModel
-        .find({
-          author: user._id,
-        })
-        .distinct('articleId');
-    }
+    const [articles, savedArticles] = await Promise.all([
+      articlesPromise,
+      savedArticlesPromise,
+    ]);
 
-    return articles.map((it) => {
-      return _.assign(it, { isSavedByUser: _.some(savedArticles, it._id) });
-    });
+    // convert savedArticles array into set for searching in O(1) instead O(n)
+    const savedArticlesSet = new Set(savedArticles.map(String));
+
+    return articles.map((article) => ({
+      ...article.toObject(),
+      isSavedByUser: savedArticlesSet.has(String(article._id)),
+    }));
   }
 
   async findClaims(
@@ -62,18 +71,20 @@ export class HotService {
     sortBy: SortByEnum,
     duration: DurationLimitEnum,
   ) {
-    let userReviews;
-    if (loggedUser) {
-      userReviews = await this.reviewModel
-        .find({ author: loggedUser._id })
-        .lean();
-    }
-
-    const claims: ClaimDocument[] = await this.claimModel
-      .find(_.merge({}, getDurationQuery(duration)))
+    const claimsPromise: Promise<ClaimDocument[]> = this.claimModel
+      .find(getDurationQuery(duration))
       .sort(getSortByObject(sortBy))
       .skip(perPage * (page - 1))
       .limit(perPage);
+
+    const userReviewPromise: Promise<ReviewDocument[]> = loggedUser
+      ? this.reviewModel.find({ author: loggedUser._id }).lean()
+      : Promise.resolve([]);
+
+    const [claims, userReviews] = await Promise.all([
+      claimsPromise,
+      userReviewPromise,
+    ]);
 
     return mergeClaimsWithReviews(claims, userReviews);
   }
