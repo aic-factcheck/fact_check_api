@@ -18,10 +18,10 @@ export class CreateArticleDto {
   @IsString()
   title: string;
 
-  @ApiProperty({ example: 'This is any text of the article up to 16448 char.' })
+  @ApiProperty({ example: 'This is any text of the article up to 32896 char.' })
   @IsNotEmpty()
   @MinLength(6)
-  @MaxLength(16448)
+  @MaxLength(32896)
   @IsString()
   text: string;
 

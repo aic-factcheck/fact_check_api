@@ -8,12 +8,15 @@ import { randomBytes } from 'crypto';
 import { CreateInvitationDto } from './dto/create-invititation.dto';
 import { NullableType } from '../common/types/nullable.type';
 import { MailService } from '../shared/mail/mail.service';
+import { GameService } from '../game/game.service';
+import { GameAtionEnum } from '../game/enums/reputation.enum';
 
 @Injectable()
 export class InvitationsService {
   constructor(
     @InjectModel(User.name) private userModel: Model<User>,
     @InjectModel(Invitation.name) private invModel: Model<Invitation>,
+    private readonly gameService: GameService,
     private mailService: MailService,
   ) {}
 
@@ -25,6 +28,7 @@ export class InvitationsService {
     const newInv: InvitationDocument = new this.invModel(
       _.assign(createDto, { author: loggedUser._id, code }),
     );
+    this.gameService.addReputation(loggedUser, GameAtionEnum.INVITE);
     await this.mailService.sendUserInvitation(createDto.invitedEmail, code);
     return newInv.save();
   }

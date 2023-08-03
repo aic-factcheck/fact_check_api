@@ -33,7 +33,7 @@ export class Article {
   @Prop({ required: true, maxlength: 512, index: 'text' })
   title: string;
 
-  @Prop({ required: true, maxlength: 16448, index: 'text' })
+  @Prop({ required: true, maxlength: 32896, index: 'text' })
   text: string;
 
   @Prop({ type: [String], default: [], index: true })
