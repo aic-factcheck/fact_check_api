@@ -88,34 +88,29 @@ export class ClaimsService {
     claimId: Types.ObjectId,
     loggedUser: User,
   ): Promise<NullableType<ClaimResponseType>> {
-    const res = await Promise.all([
-      this.claimModel.findOneAndUpdate(
-        {
-          _id: claimId,
-          article: articleId,
-        },
-        { $inc: { nViews: 1 } },
-        { new: true },
-      ),
-      this.reviewModel
-        .findOne({
-          author: loggedUser._id,
-          claim: claimId,
-        })
-        .lean(),
-    ]);
-
-    const claim = res[0] as ClaimDocument | null;
-    const userReview = res[1] as ReviewDocument | null;
+    const [claim, userReview]: [ClaimDocument | null, Review | null] =
+      await Promise.all([
+        this.claimModel.findOneAndUpdate(
+          {
+            _id: claimId,
+            article: articleId,
+          },
+          { $inc: { nViews: 1 } },
+          { new: true },
+        ),
+        this.reviewModel
+          .findOne({
+            author: loggedUser._id,
+            claim: claimId,
+          })
+          .lean(),
+      ]);
 
     if (!claim) {
       throw new NotFoundException(`Claim not found`);
     }
 
-    return {
-      ...claim.toObject(),
-      userReview,
-    } as ClaimResponseType;
+    return { ...claim.toObject(), userReview };
   }
 
   async findManyWithPagination(
@@ -124,19 +119,19 @@ export class ClaimsService {
     perPage = 20,
     loggedUser: User | null,
   ): Promise<ClaimResponseType[]> {
-    const claimsPromise = this.claimModel
+    const claimsPromise: Promise<ClaimDocument[]> = this.claimModel
       .find({ article: articleId })
       .skip(perPage * (page - 1))
       .limit(perPage);
 
-    const userReviewsPromise = loggedUser
+    const userReviewsPromise: Promise<ReviewDocument[]> = loggedUser
       ? this.reviewModel.find({ author: loggedUser._id }).lean()
-      : Promise.resolve(null);
+      : Promise.resolve([]);
 
-    const res = await Promise.all([claimsPromise, userReviewsPromise]);
-
-    const claims = res[0] as ClaimDocument[];
-    const userReviews = res[1] as ReviewDocument[];
+    const [claims, userReviews] = await Promise.all([
+      claimsPromise,
+      userReviewsPromise,
+    ]);
 
     return mergeClaimsWithReviews(claims, userReviews);
   }
@@ -152,7 +147,7 @@ export class ClaimsService {
       throw new NotFoundException('Claim not found');
     }
     if (currentClaim.history.length >= 10) {
-      throw new BadRequestException('Claim can be updated up to 3 times');
+      throw new BadRequestException('Claim can be updated up to 10 times');
     }
 
     const historyObj: ClaimHistoryType = {

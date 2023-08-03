@@ -14,7 +14,10 @@ import { UpdateArticleDto } from './dto/update-article.dto';
 // import { ReplaceArticleDto } from './dto/replace-article.dto';
 import { User } from '../users/schemas/user.schema';
 import { ArticleResponseType } from './types/article-response.type';
-import { SavedArticle } from '../saved-articles/schemas/saved-article.schema';
+import {
+  SavedArticle,
+  SavedArticleDocument,
+} from '../saved-articles/schemas/saved-article.schema';
 import { GameService } from '../game/game.service';
 import { GameAtionEnum } from '../game/enums/reputation.enum';
 
@@ -77,17 +80,20 @@ export class ArticlesService {
     user: User,
     articleId: Types.ObjectId,
   ): Promise<ArticleResponseType> {
-    const savedArticleCnt = await this.savedArticleModel
-      .find({
+    const savedArticlePromise: Promise<SavedArticleDocument | null> =
+      this.savedArticleModel.findOne({
         author: user._id,
         articleId,
-      })
-      .countDocuments();
-    const isSavedByUser: boolean = savedArticleCnt >= 1;
+      });
+    const articlePromise: Promise<ArticleDocument | null> =
+      this.articleModel.findById(articleId);
 
-    const article: ArticleDocument | null = await this.articleModel.findById(
-      articleId,
-    );
+    const [savedArticle, article] = await Promise.all([
+      savedArticlePromise,
+      articlePromise,
+    ]);
+    const isSavedByUser: boolean = Boolean(savedArticle);
+
     if (!article) {
       throw new NotFoundException(`Article not found`);
     }
@@ -105,21 +111,22 @@ export class ArticlesService {
       .limit(perPage)
       .skip(perPage * (page - 1));
 
-    let savedArticles: Types.ObjectId[] = [];
+    let savedArticles: Set<string> = new Set();
 
     if (loggedUser) {
-      savedArticles = await this.savedArticleModel
+      const savedArticleIds: Types.ObjectId[] = await this.savedArticleModel
         .find({ author: loggedUser._id })
         .distinct('articleId');
+      savedArticles = new Set(savedArticleIds.map((id) => id.toString()));
     }
 
-    const savedArticlesStr = savedArticles.toString();
     const articlesRes: ArticleResponseType[] = articles.map(
-      (it: ArticleDocument) => {
-        const isSavedByUser = _.includes(savedArticlesStr, it._id.toString());
-        return { ...it.toObject(), isSavedByUser } as ArticleResponseType;
+      (article: ArticleDocument): ArticleResponseType => {
+        const isSavedByUser = savedArticles.has(article._id.toString());
+        return { ...article.toObject(), isSavedByUser };
       },
     );
+
     return articlesRes;
   }
 
@@ -129,10 +136,12 @@ export class ArticlesService {
     updateArticleDto: UpdateArticleDto,
   ): Promise<Article> {
     await this.checkResourceAccess(loggedUser, _id);
-    const updatedArticle: Article | null =
-      await this.articleModel.findByIdAndUpdate(_id, updateArticleDto, {
-        returnOriginal: false,
-      });
+    const updatedArticle = await this.articleModel.findByIdAndUpdate(
+      _id,
+      updateArticleDto,
+      { returnOriginal: false },
+    );
+
     if (!updatedArticle) {
       throw new NotFoundException(`Article not found`);
     }
