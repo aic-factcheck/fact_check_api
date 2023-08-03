@@ -89,7 +89,11 @@ export class ReviewsService {
       }),
     );
 
-    this.gameService.addReputation(loggedUser, GameAtionEnum.CREATE_REVIEW);
+    this.gameService.addReputation(
+      loggedUser,
+      GameAtionEnum.CREATE_REVIEW,
+      createdReview._id,
+    );
     await this.userModel.findOneAndUpdate(
       { _id: loggedUser._id },
       { $inc: { nReviews: 1 } },

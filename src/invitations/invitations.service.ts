@@ -28,7 +28,11 @@ export class InvitationsService {
     const newInv: InvitationDocument = new this.invModel(
       _.assign(createDto, { author: loggedUser._id, code }),
     );
-    this.gameService.addReputation(loggedUser, GameAtionEnum.INVITE);
+    this.gameService.addReputation(
+      loggedUser,
+      GameAtionEnum.INVITE,
+      newInv._id,
+    );
     await this.mailService.sendUserInvitation(createDto.invitedEmail, code);
     return newInv.save();
   }

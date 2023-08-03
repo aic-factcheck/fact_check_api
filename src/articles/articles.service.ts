@@ -56,7 +56,11 @@ export class ArticlesService {
     const createdArticle: ArticleDocument = new this.articleModel(
       _.assign(createArticleDto, { author: loggedUser._id }),
     );
-    this.gameService.addReputation(loggedUser, GameAtionEnum.CREATE_ARTICLE);
+    this.gameService.addReputation(
+      loggedUser,
+      GameAtionEnum.CREATE_ARTICLE,
+      createdArticle._id,
+    );
     return createdArticle.save();
   }
 

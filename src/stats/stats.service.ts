@@ -1,9 +1,8 @@
-import { _ } from 'lodash';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { User, UserDocument } from '../users/schemas/user.schema';
 import { InjectModel } from '@nestjs/mongoose';
-import { Article, ArticleDocument } from '../articles/schemas/article.schema';
-import { Claim, ClaimDocument } from '../claims/schemas/claim.schema';
+import { Article } from '../articles/schemas/article.schema';
+import { Claim } from '../claims/schemas/claim.schema';
 import { Model, Types } from 'mongoose';
 import { SavedArticle } from '../saved-articles/schemas/saved-article.schema';
 import { UserStatType } from './types/user-stat.type';
@@ -21,83 +20,71 @@ export class StatsService {
     @InjectModel(Reputation.name) private repModel: Model<Reputation>,
   ) {}
 
+  private async getStats(
+    model: Model<any>,
+    match: any,
+    group: any,
+    defaults: any,
+  ) {
+    const stats = await model.aggregate([{ $match: match }]).group(group);
+    if (stats.length === 0) {
+      return defaults;
+    }
+    return { ...defaults, ...stats[0] };
+  }
+
   async getClaimsStats(user: User) {
-    const claims = await this.claimModel
-      .aggregate([{ $match: { author: user._id } }])
-      .group({
+    return this.getStats(
+      this.claimModel,
+      { author: user._id },
+      {
         _id: null,
         nPos: { $sum: '$nPositiveVotes' },
         nNeg: { $sum: '$nNegativeVotes' },
         total: { $sum: 1 },
-      });
-
-    if (
-      claims.length <= 0 ||
-      !_.has(claims[0], 'nPos') ||
-      !_.has(claims[0], 'nNeg') ||
-      !_.has(claims[0], 'total')
-    ) {
-      return {
+      },
+      {
         nNegativeVotes: 0,
         nPositiveVotes: 0,
         total: 0,
-      };
-    }
-
-    return {
-      nNegativeVotes: claims[0].nNeg,
-      nPositiveVotes: claims[0].nPos,
-      total: claims[0].total,
-    };
+      },
+    );
   }
 
   async getReviewsStats(user: User) {
-    const rev = await this.reviewModel
-      .aggregate([{ $match: { author: user._id } }])
-      .group({
+    return this.getStats(
+      this.reviewModel,
+      { author: user._id },
+      {
         _id: null,
         nPos: { $sum: '$nPositiveVotes' },
         nNeg: { $sum: '$nNegativeVotes' },
         nNeut: { $sum: '$nNeutralVotes' },
         total: { $sum: 1 },
-      });
-
-    if (
-      rev.length <= 0 ||
-      !_.has(rev[0], 'nPos') ||
-      !_.has(rev[0], 'nNeg') ||
-      !_.has(rev[0], 'total') ||
-      !_.has(rev[0], 'nNeut')
-    ) {
-      return {
+      },
+      {
         nNeutralVotes: 0,
         nNegativeVotes: 0,
         nPositiveVotes: 0,
         total: 0,
-      };
-    }
-
-    return {
-      nNeutralVotes: rev[0].nNeut,
-      nNegativeVotes: rev[0].nNeg,
-      nPositiveVotes: rev[0].nPos,
-      total: rev[0].total,
-    };
+      },
+    );
   }
 
   async getSavedArticles(user: User) {
-    const articles = await this.articleModel
-      .aggregate([{ $match: { author: user._id } }])
-      .group({ _id: null, nSaved: { $sum: '$nSaved' }, total: { $sum: 1 } });
-
-    if (
-      articles.length <= 0 ||
-      !_.has(articles[0], 'total') ||
-      !_.has(articles[0], 'nSaved')
-    )
-      return { total: 0, nSaved: 0 };
-
-    return { total: articles[0].total, nSaved: articles[0].nSaved };
+    return this.getStats(
+      this.articleModel,
+      { author: user._id },
+      {
+        _id: null,
+        nSaved: { $sum: '$nSaved' },
+        total: { $sum: 1 },
+      },
+      {
+        total: 0,
+        nSaved: 0,
+      },
+    );
   }
 
   async getUserStats(userId: Types.ObjectId | null, loggedUser: User) {
@@ -113,55 +100,52 @@ export class StatsService {
 
     const userStats = {
       user,
-      claims: {},
-      reviews: {},
-      articles: {},
-      history: [],
+      claims: await this.getClaimsStats(user),
+      reviews: await this.getReviewsStats(user),
+      articles: await this.getSavedArticles(user),
+      history: loggedUser
+        ? await this.repModel.find({ user: loggedUser._id })
+        : [],
     };
-
-    if (loggedUser) {
-      const repHistory = await this.repModel.find({ user: loggedUser._id });
-      _.assign(userStats.history, repHistory);
-    }
-
-    _.assign(userStats.articles, await this.getSavedArticles(user));
-    _.assign(userStats.claims, await this.getClaimsStats(user));
-    _.assign(userStats.reviews, await this.getReviewsStats(user));
-
     return userStats;
   }
 
-  async leaderboard(page = 1, perPage = 20) {
+  async leaderboard(page = 1, perPage = 20): Promise<UserStatType[]> {
     const users: UserDocument[] = await this.userModel
       .find()
       .sort({ reputation: -1 })
       .limit(perPage)
-      .skip(perPage * (page - 1))
-      .select('-password');
-    const userIds = users.map((el) => el._id);
+      .skip(perPage * (page - 1));
 
-    const articles: ArticleDocument[] = await this.articleModel
-      .aggregate([{ $match: { author: { $in: userIds } } }])
-      .group({ _id: '$author', nArticles: { $sum: 1 } });
+    const userIds = users.map((user) => user._id);
 
-    const claims: ClaimDocument[] = await this.claimModel
-      .aggregate([{ $match: { author: { $in: userIds } } }])
-      .group({ _id: '$author', nClaims: { $sum: 1 } });
-
-    const transformedUsers = users.map((x: UserDocument) => {
-      return {
-        ...x.toObject(),
-        nArticles: 0,
-        nClaims: 0,
-      } as UserStatType;
-    });
-    const merged = _.merge(
-      _.keyBy(transformedUsers, '_id'),
-      _.keyBy(articles, '_id'),
-      _.keyBy(claims, '_id'),
+    const userMap = new Map<string, UserStatType>(
+      users.map((user) => [
+        user._id.toString(),
+        { ...user.toObject(), nArticles: 0, nClaims: 0 } as UserStatType,
+      ]),
     );
-    const values = _.values(merged);
 
-    return values;
+    const [articles, claims] = await Promise.all([
+      this.articleModel
+        .aggregate([{ $match: { author: { $in: userIds } } }])
+        .group({ _id: '$author', nArticles: { $sum: 1 } }),
+
+      this.claimModel
+        .aggregate([{ $match: { author: { $in: userIds } } }])
+        .group({ _id: '$author', nClaims: { $sum: 1 } }),
+    ]);
+
+    articles.forEach(({ _id, nArticles }) => {
+      const user = userMap.get(_id.toString());
+      if (user) user.nArticles = nArticles;
+    });
+
+    claims.forEach(({ _id, nClaims }) => {
+      const user = userMap.get(_id.toString());
+      if (user) user.nClaims = nClaims;
+    });
+
+    return Array.from(userMap.values());
   }
 }

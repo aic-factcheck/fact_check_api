@@ -7,6 +7,7 @@ import { User } from '../users/schemas/user.schema';
 import { PaginationParams } from '../common/types/pagination-params';
 import { Types } from 'mongoose';
 import { CacheTTL } from '@nestjs/cache-manager';
+import { UserStatType } from './types/user-stat.type';
 
 @ApiTags('Stats')
 @Controller({
@@ -34,7 +35,9 @@ export class StatsController {
   @ApiQuery({ name: 'page', required: false, type: Number, example: 1 })
   @ApiQuery({ name: 'perPage', required: false, type: Number, example: 20 })
   @CacheTTL(60)
-  leaderboard(@Query() { page, perPage }: PaginationParams) {
+  leaderboard(
+    @Query() { page, perPage }: PaginationParams,
+  ): Promise<UserStatType[]> {
     return this.statsService.leaderboard(page, perPage);
   }
 }

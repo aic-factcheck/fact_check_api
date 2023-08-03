@@ -63,7 +63,11 @@ export class ClaimsService {
         articles: [articleId],
       }),
     );
-    this.gameService.addReputation(loggedUser, GameAtionEnum.CREATE_CLAIM);
+    this.gameService.addReputation(
+      loggedUser,
+      GameAtionEnum.CREATE_CLAIM,
+      createdClaim._id,
+    );
     this.articleModel.findByIdAndUpdate(articleId, {
       $push: { savedArticles: createdClaim._id },
     });
