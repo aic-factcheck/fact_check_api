@@ -81,27 +81,29 @@ export class ReviewsService {
   ): Promise<Review> {
     await this.checkCurrentUserReview(loggedUser, claimId);
 
-    const createdReview: ReviewDocument = new this.reviewModel(
-      _.assign(createDto, {
-        author: loggedUser._id,
-        article: articleId,
-        claim: claimId,
-      }),
-    );
+    const createdReview: ReviewDocument = new this.reviewModel({
+      ...createDto,
+      author: loggedUser._id,
+      article: articleId,
+      claim: claimId,
+    });
 
-    this.gameService.addReputation(
-      loggedUser,
-      GameAtionEnum.CREATE_REVIEW,
-      createdReview._id,
-    );
-    await this.userModel.findOneAndUpdate(
-      { _id: loggedUser._id },
-      { $inc: { nReviews: 1 } },
-    );
-    await this.claimModel.findOneAndUpdate(
-      { _id: claimId },
-      { $inc: { nReviews: 1 } },
-    );
+    await Promise.all([
+      this.gameService.addReputation(
+        loggedUser,
+        GameAtionEnum.CREATE_REVIEW,
+        createdReview._id,
+      ),
+      this.userModel.findOneAndUpdate(
+        { _id: loggedUser._id },
+        { $inc: { nReviews: 1 } },
+      ),
+      this.claimModel.findOneAndUpdate(
+        { _id: claimId },
+        { $inc: { nReviews: 1 } },
+      ),
+    ]);
+
     return createdReview.save();
   }
 
@@ -198,7 +200,7 @@ export class ReviewsService {
       throw new NotFoundException('Review not found');
     }
     if (currentReview.history.length >= 10) {
-      throw new BadRequestException('Review can be updated up to 3 times');
+      throw new BadRequestException('Review can be updated up to 10 times');
     }
 
     const historyObj: ReviewHistoryType = {
@@ -210,23 +212,19 @@ export class ReviewsService {
       author: loggedUser._id,
     };
 
-    return this.reviewModel.findByIdAndUpdate(
-      reviewId,
-      _.assign(
-        reviewDto,
-        {
-          author: loggedUser._id,
-          article: articleId,
-          claim: claimId,
-          $push: { history: historyObj },
-        },
-        {
-          override: true,
-          upsert: true,
-          returnOriginal: false,
-        },
-      ),
-    );
+    const updateObject = {
+      ...reviewDto,
+      author: loggedUser._id,
+      article: articleId,
+      claim: claimId,
+      $push: { history: historyObj },
+    };
+
+    return this.reviewModel.findByIdAndUpdate(reviewId, updateObject, {
+      override: true,
+      upsert: true,
+      returnOriginal: false,
+    });
   }
 
   async delete(
