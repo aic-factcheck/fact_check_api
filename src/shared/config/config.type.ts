@@ -13,6 +13,12 @@ export type AuthConfig = {
   expires?: string;
 };
 
+export type RedisConfig = {
+  host: string;
+  port: number;
+  password: string;
+};
+
 export type MongoConfig = {
   uri?: string;
 };
@@ -29,4 +35,5 @@ export type AllConfigType = {
   auth: AuthConfig;
   mongo: MongoConfig;
   mail: MailConfig;
+  redis: RedisConfig;
 };

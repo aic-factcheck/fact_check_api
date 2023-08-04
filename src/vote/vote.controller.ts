@@ -15,7 +15,7 @@ import { User } from '../users/schemas/user.schema';
 import { Types } from 'mongoose';
 import { ParseObjectIdPipe } from '../common/pipes/parse-object-id.pipe';
 import { VoteObjectEnum } from './enums/vote.enum';
-import { Vote } from './schemas/vote.schema';
+import { VoteJobResponseType } from './types/vote-job-response.type';
 
 @ApiTags('Votes')
 @Controller({
@@ -40,7 +40,7 @@ export class VoteController {
     @LoggedUser() user: User,
     @Query('id', ParseObjectIdPipe) id: Types.ObjectId,
     @Query('type', new ParseEnumPipe(VoteObjectEnum)) type: VoteObjectEnum,
-  ): Promise<Vote> {
+  ): Promise<VoteJobResponseType> {
     return this.voteService.create(id, type, createVoteDto, user);
   }
 }

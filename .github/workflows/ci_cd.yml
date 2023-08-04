@@ -21,6 +21,9 @@ env:
   EMAIL_HOST: smtp-relay.sendinblue.com
   EMAIL_USERNAME: smtp-username
   EMAIL_PASSWORD: smtp-password
+  REDIS_HOST: localhost
+  REDIS_PORT: 6379
+  REDIS_PASSWORD: redistest
 
 jobs:
   tests:
@@ -56,6 +59,11 @@ jobs:
         uses: supercharge/mongodb-github-action@1.8.0
         with:
           mongodb-version: ${{ matrix.mongodb-version }}
+
+      - name: Start Redis
+        uses: shogo82148/actions-setup-redis@v1
+        with:
+          redis-version: '6.x'
 
       - run: npm run test:e2e
 
