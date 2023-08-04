@@ -9,6 +9,7 @@ import mongoConfig from './shared/config/mongo.config';
 import authConfig from './shared/config/auth.config';
 import appConfig from './shared/config/app.config';
 import mailConfig from './shared/config/mail.config';
+import redisConfig from './shared/config/redis.config';
 import { RouterModule } from '@nestjs/core';
 import { SavedArticlesModule } from './saved-articles/saved-articles.module';
 import { ClaimsModule } from './claims/claims.module';
@@ -26,9 +27,23 @@ import { InvitationsModule } from './invitations/invitations.module';
 import { UniqueInvitationValidator } from './common/validators/unique-invitation.validator';
 import { CacheModule } from '@nestjs/cache-manager';
 import { LoggerModule } from 'nestjs-pino';
+import { BullModule } from '@nestjs/bull';
 
 @Module({
   imports: [
+    BullModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        redis: {
+          host: configService.getOrThrow<string>('redis.host'),
+          port: configService.getOrThrow<number>('redis.port'),
+          ...(configService.get<string>('app.nodeEnv') === 'production'
+            ? { password: configService.getOrThrow<string>('redis.password') }
+            : {}),
+        },
+      }),
+      inject: [ConfigService],
+    }),
     LoggerModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -37,8 +52,8 @@ import { LoggerModule } from 'nestjs-pino';
           pinoHttp: {
             level:
               configService.getOrThrow<string>('app.nodeEnv') !== 'production'
-                ? 'debug'
-                : 'info',
+                ? 'info'
+                : 'warn',
             transport:
               configService.getOrThrow<string>('app.nodeEnv') !== 'production'
                 ? { target: 'pino-pretty' }
@@ -49,7 +64,7 @@ import { LoggerModule } from 'nestjs-pino';
     }),
     CacheModule.register({
       ttl: 5, // seconds
-      max: 10, // maximum number of items in cache
+      max: 20, // maximum number of items in cache
       isGlobal: true,
     }),
     RouterModule.register([
@@ -72,7 +87,7 @@ import { LoggerModule } from 'nestjs-pino';
     ]),
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [appConfig, authConfig, mongoConfig, mailConfig],
+      load: [appConfig, authConfig, mongoConfig, mailConfig, redisConfig],
       envFilePath: ['.env'],
     }),
     AuthModule,

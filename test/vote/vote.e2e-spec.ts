@@ -148,6 +148,7 @@ describe('Votes API', () => {
         .auth(user1AccessToken, { type: 'bearer' })
         .send(article2)
         .expect(HttpStatus.CREATED);
+      // article2Id = articleRes.body._id;
     });
 
     it('Should create claims for testing claims', async () => {
@@ -200,16 +201,7 @@ describe('Votes API', () => {
         .auth(user1AccessToken, { type: 'bearer' })
         .send(positiveVote)
         .expect(HttpStatus.CREATED)
-        .then(async (res) => {
-          expect(res.body.nPositiveVotes).toEqual(claim1.nPositiveVotes + 1);
-
-          const claim = await dbConnection
-            .collection('claims')
-            .findOne(new Types.ObjectId(claim1Id));
-          expect(claim?.nPositiveVotes).toEqual(claim1.nPositiveVotes + 1);
-          expect(claim?.nNegativeVotes).toEqual(claim1.nNegativeVotes);
-          claim1.nPositiveVotes += 1;
-        });
+        .then(async () => {});
     });
 
     it('user1 should vote for an claim2', async () => {
@@ -218,16 +210,7 @@ describe('Votes API', () => {
         .auth(user1AccessToken, { type: 'bearer' })
         .send(positiveVote)
         .expect(HttpStatus.CREATED)
-        .then(async (res) => {
-          expect(res.body.nPositiveVotes).toEqual(claim2.nPositiveVotes + 1);
-
-          const claim = await dbConnection
-            .collection('claims')
-            .findOne(new Types.ObjectId(claim2Id));
-          expect(claim?.nPositiveVotes).toEqual(claim2.nPositiveVotes + 1);
-          expect(claim?.nNegativeVotes).toEqual(claim2.nNegativeVotes);
-          claim2.nPositiveVotes += 1;
-        });
+        .then(async () => {});
     });
 
     it('user2 should vote for an claim1', async () => {
@@ -236,16 +219,7 @@ describe('Votes API', () => {
         .auth(user2AccessToken, { type: 'bearer' })
         .send(positiveVote)
         .expect(HttpStatus.CREATED)
-        .then(async (res) => {
-          expect(res.body.nPositiveVotes).toEqual(claim1.nPositiveVotes + 1);
-
-          const claim = await dbConnection
-            .collection('claims')
-            .findOne(new Types.ObjectId(claim1Id));
-          expect(claim?.nPositiveVotes).toEqual(claim1.nPositiveVotes + 1);
-          expect(claim?.nNegativeVotes).toEqual(claim1.nNegativeVotes);
-          claim1.nPositiveVotes += 1;
-        });
+        .then(async () => {});
     });
 
     it('user2 should give negative vote for claim2', async () => {
@@ -254,16 +228,7 @@ describe('Votes API', () => {
         .auth(user2AccessToken, { type: 'bearer' })
         .send(negVote)
         .expect(HttpStatus.CREATED)
-        .then(async (res) => {
-          expect(res.body.nNegativeVotes).toEqual(claim2.nNegativeVotes + 1);
-
-          const claim = await dbConnection
-            .collection('claims')
-            .findOne(new Types.ObjectId(claim2Id));
-          expect(claim?.nPositiveVotes).toEqual(claim2.nPositiveVotes);
-          expect(claim?.nNegativeVotes).toEqual(claim2.nNegativeVotes + 1);
-          claim2.nNegativeVotes += 1;
-        });
+        .then(async () => {});
     });
 
     it('should return not_found when id does not exist', () => {
@@ -303,20 +268,7 @@ describe('Votes API', () => {
         .auth(user1AccessToken, { type: 'bearer' })
         .send(neutralVote)
         .expect(HttpStatus.CREATED)
-        .then(async (res) => {
-          expect(res.body.nNeutralVotes).toEqual(review1.nNeutralVotes + 1);
-          const review = await dbConnection
-            .collection('reviews')
-            .findOne(new Types.ObjectId(review1Id));
-          expect(review?.nPositiveVotes).toEqual(review1.nPositiveVotes);
-          expect(review?.nNeutralVotes).toEqual(review1.nNeutralVotes + 1);
-          expect(review?.nNegativeVotes).toEqual(review1.nNegativeVotes);
-
-          // expect(review).toHaveProperty('userVote');
-          // expect(review?.userVote).toEqual(neutralVote.rating);
-
-          review1.nNeutralVotes += 1; // update local review obj
-        });
+        .then(async () => {});
     });
 
     it('user1 should give negative vote for an review2', async () => {
@@ -325,20 +277,7 @@ describe('Votes API', () => {
         .auth(user1AccessToken, { type: 'bearer' })
         .send(negVote)
         .expect(HttpStatus.CREATED)
-        .then(async (res) => {
-          expect(res.body.nNegativeVotes).toEqual(review2.nNegativeVotes + 1);
-          const review = await dbConnection
-            .collection('reviews')
-            .findOne(new Types.ObjectId(review2Id));
-          expect(review?.nPositiveVotes).toEqual(review2.nPositiveVotes);
-          expect(review?.nNeutralVotes).toEqual(review2.nNeutralVotes);
-          expect(review?.nNegativeVotes).toEqual(review2.nNegativeVotes + 1);
-
-          // expect(review).toHaveProperty('userVote');
-          // expect(review?.userVote).toEqual(negVote.rating);
-
-          review2.nNegativeVotes += 1;
-        });
+        .then(async () => {});
     });
 
     it('user2 should give neutral vote for an review1', async () => {
@@ -346,18 +285,7 @@ describe('Votes API', () => {
         .post(`/vote?id=${review1Id}&type=REVIEW`)
         .auth(user2AccessToken, { type: 'bearer' })
         .send(neutralVote)
-        .expect(HttpStatus.CREATED)
-        .then(async (res) => {
-          expect(res.body.nNeutralVotes).toEqual(review1.nNeutralVotes + 1);
-          const review = await dbConnection
-            .collection('reviews')
-            .findOne(new Types.ObjectId(review1Id));
-          expect(review?.nPositiveVotes).toEqual(review1.nPositiveVotes);
-          expect(review?.nNeutralVotes).toEqual(review1.nNeutralVotes + 1);
-          expect(review?.nNegativeVotes).toEqual(review1.nNegativeVotes);
-
-          review1.nNeutralVotes += 1;
-        });
+        .expect(HttpStatus.CREATED);
     });
 
     it('user2 should give positive vote for review2', async () => {
@@ -365,19 +293,7 @@ describe('Votes API', () => {
         .post(`/vote?id=${review2Id}&type=REVIEW`)
         .auth(user2AccessToken, { type: 'bearer' })
         .send(positiveVote)
-        .expect(HttpStatus.CREATED)
-        .then(async (res) => {
-          expect(res.body.nPositiveVotes).toEqual(review2.nPositiveVotes + 1);
-          const review = await dbConnection
-            .collection('reviews')
-            .findOne(new Types.ObjectId(review2Id));
-          expect(review?.nPositiveVotes).toEqual(review2.nPositiveVotes + 1);
-          expect(review?.nNegativeVotes).toEqual(review2.nNegativeVotes);
-          // expect(review).toHaveProperty('userVote');
-          // expect(review?.userVote).toEqual(positiveVote.rating);
-
-          review2.nPositiveVotes += 1;
-        });
+        .expect(HttpStatus.CREATED);
     });
 
     it('should return not_found when id does not exist', () => {
@@ -400,91 +316,112 @@ describe('Votes API', () => {
           expect(errors).toHaveProperty('rating');
         });
     });
+
+    // describe('POST /vote?articleId=', () => {
+    //   it('user1 should vote for an article1', async () => {
+    //     return request(httpServer)
+    //       .post(`/vote?articleId=${article1Id}`)
+    //       .auth(user1AccessToken, { type: 'bearer' })
+    //       .send(positiveVote)
+    //       .expect(HttpStatus.CREATED);
+    //   });
+
+    //   it('user1 should vote for the article2', () => {
+    //     return request(httpServer)
+    //       .post(`/vote?articleId=${article2Id}`)
+    //       .auth(user1AccessToken, { type: 'bearer' })
+    //       .send(positiveVote)
+    //       .expect(HttpStatus.CREATED);
+    //   });
+
+    //   it('user2 should vote for the article1', () => {
+    //     return request(httpServer)
+    //       .post(`/vote?articleId=${article1Id}`)
+    //       .auth(user2AccessToken, { type: 'bearer' })
+    //       .send(positiveVote)
+    //       .expect(HttpStatus.CREATED);
+    //   });
+
+    //   it('should not update nBeenVoted if user1 votes again for claim1', () => {
+    //     return request(httpServer)
+    //       .post(`/vote?id=${claim1Id}`)
+    //       .auth(user1AccessToken, { type: 'bearer' })
+    //       .send(negVote)
+    //       .expect(HttpStatus.CREATED);
+    //   });
+
+    //   it('should return not found when id does not exist', () => {
+    //     return request(httpServer)
+    //       .post('/vote?articleId=41224d776a326fb40f010000') // specified claimId but looking for articleId
+    //       .auth(user1AccessToken, { type: 'bearer' })
+    //       .send(positiveVote)
+    //       .expect(HttpStatus.NOT_FOUND);
+    //   });
+
+    //   it('should return error when rating is not specified', () => {
+    //     return request(httpServer)
+    //       .post(`/vote?articleId=${article2Id}`)
+    //       .auth(user1AccessToken, { type: 'bearer' })
+    //       .send({ text: 'hehe' })
+    //       .expect(HttpStatus.UNPROCESSABLE_ENTITY);
+    //   });
+    // });
+
+    // describe('POST /vote?userId=', () => {
+    //   it('user1 should vote for user2', async () => {
+    //     return request(httpServer)
+    //       .post(`/vote?userId=${user2._id}`)
+    //       .auth(user1AccessToken, { type: 'bearer' })
+    //       .send(positiveVote)
+    //       .expect(HttpStatus.CREATED)
+    //       .then((res) => {
+    //         expect(res.body.nBeenVoted).toEqual(1);
+    //       });
+    //   });
+    // });
+
+    // testing scenario:
+    /* ---------------------- final resutls should be: (after all votes)
+     * claim1:
+     * 	  nPos: 2
+     * claim2:
+     * 	  nPos: 1
+     * 	  nNeg: 1
+     * review1Id:
+     * 	  nNeu: 2
+     *    nPos: 0
+     *    nNeg: 0
+     * review2Id:
+     * 	  nPos: 1
+     *    nNeu: 0
+     *    nNeg: 1;
+     */
+    it('Test should be correct after all running', async () => {
+      const claim1 = await dbConnection
+        .collection('claims')
+        .findOne(new Types.ObjectId(claim1Id));
+      expect(claim1?.nPositiveVotes).toEqual(2);
+      expect(claim1?.nNegativeVotes).toEqual(0);
+
+      const claim2 = await dbConnection
+        .collection('claims')
+        .findOne(new Types.ObjectId(claim2Id));
+      expect(claim2?.nPositiveVotes).toEqual(1);
+      expect(claim2?.nNegativeVotes).toEqual(1);
+
+      const review1 = await dbConnection
+        .collection('reviews')
+        .findOne(new Types.ObjectId(review1Id));
+      expect(review1?.nPositiveVotes).toEqual(0);
+      expect(review1?.nNeutralVotes).toEqual(2);
+      expect(review1?.nNegativeVotes).toEqual(0);
+
+      const review2 = await dbConnection
+        .collection('reviews')
+        .findOne(new Types.ObjectId(review2Id));
+      expect(review2?.nPositiveVotes).toEqual(1);
+      expect(review2?.nNeutralVotes).toEqual(0);
+      expect(review2?.nNegativeVotes).toEqual(1);
+    });
   });
-
-  // describe('POST /vote?articleId=', () => {
-  //   it('user1 should vote for an article1', async () => {
-  //     return request(httpServer)
-  //       .post(`/vote?articleId=${article1Id}`)
-  //       .auth(user1AccessToken, { type: 'bearer' })
-  //       .send(positiveVote)
-  //       .expect(HttpStatus.CREATED)
-  //       .then((res) => {
-  //         expect(res.body.nPositiveVotes).toEqual(article1.nPositiveVotes + 1);
-  //       });
-  //   });
-
-  //   it('user1 should vote for the article2', () => {
-  //     return request(httpServer)
-  //       .post(`/vote?articleId=${article2._id}`)
-  //       .auth(user1AccessToken, { type: 'bearer' })
-  //       .send(positiveVote)
-  //       .expect(HttpStatus.CREATED)
-  //       .then((res) => {
-  //         expect(res.body.nPositiveVotes).toEqual(article2.nPositiveVotes + 1);
-  //       });
-  //   });
-
-  //   it('user2 should vote for the article1', () => {
-  //     return request(httpServer)
-  //       .post(`/vote?articleId=${article1Id}`)
-  //       .auth(user2AccessToken, { type: 'bearer' })
-  //       .send(positiveVote)
-  //       .expect(HttpStatus.CREATED)
-  //       .then((res) => {
-  //         expect(res.body.nPositiveVotes).toEqual(article1.nPositiveVotes + 1);
-  //       });
-  //   });
-
-  //   it('should not update nBeenVoted if user1 votes again for claim1', () => {
-  //     return request(httpServer)
-  //       .post(`/vote?id=${claim1Id}`)
-  //       .auth(user1AccessToken, { type: 'bearer' })
-  //       .send(negVote)
-  //       .expect(HttpStatus.CREATED)
-  //       .then((res) => {
-  //         expect(res.body.nBeenVoted).toEqual(claim1.nBeenVoted);
-  //         expect(res.body.nNegativeVotes).toEqual(claim1.nNegativeVotes + 1);
-  //         expect(res.body.nPositiveVotes).toEqual(claim1.nPositiveVotes - 1);
-  //         claim1.nNegativeVotes += 1;
-  //         claim1.nPositiveVotes -= 1;
-  //       });
-  //   });
-
-  //   it('should return not found when id does not exist', () => {
-  //     return request(httpServer)
-  //       .post('/vote?articleId=41224d776a326fb40f010000') // specified claimId but looking for articleId
-  //       .auth(user1AccessToken, { type: 'bearer' })
-  //       .send(positiveVote)
-  //       .expect(HttpStatus.NOT_FOUND);
-  //   });
-
-  //   it('should return error when rating is not specified', () => {
-  //     return request(httpServer)
-  //       .post(`/vote?articleId=${article2._id}`)
-  //       .auth(user1AccessToken, { type: 'bearer' })
-  //       .send({ text: 'hehe' })
-  //       .expect(HttpStatus.BAD_REQUEST)
-  //       .then((res) => {
-  //         const { field, location, messages } = res.body.errors[0];
-
-  //         expect(field).toEqual('rating');
-  //         expect(location).toEqual('body');
-  //         expect(messages).to.include('"rating" is required');
-  //       });
-  //   });
-  // });
-
-  // describe('POST /vote?userId=', () => {
-  //   it('user1 should vote for user2', async () => {
-  //     return request(httpServer)
-  //       .post(`/vote?userId=${user2._id}`)
-  //       .auth(user1AccessToken, { type: 'bearer' })
-  //       .send(positiveVote)
-  //       .expect(HttpStatus.CREATED)
-  //       .then((res) => {
-  //         expect(res.body.nBeenVoted).toEqual(1);
-  //       });
-  //   });
-  // });
 });

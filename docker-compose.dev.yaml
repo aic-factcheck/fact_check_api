@@ -31,5 +31,12 @@ services:
     volumes:
       - mongodb_data:/data/db
 
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
 volumes:
   mongodb_data:
