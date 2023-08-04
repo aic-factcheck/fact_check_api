@@ -52,8 +52,8 @@ import { BullModule } from '@nestjs/bull';
           pinoHttp: {
             level:
               configService.getOrThrow<string>('app.nodeEnv') !== 'production'
-                ? 'info'
-                : 'warn',
+                ? 'debug'
+                : 'info',
             transport:
               configService.getOrThrow<string>('app.nodeEnv') !== 'production'
                 ? { target: 'pino-pretty' }
