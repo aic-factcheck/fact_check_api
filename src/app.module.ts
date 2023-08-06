@@ -33,13 +33,19 @@ import { BullModule } from '@nestjs/bull';
   imports: [
     BullModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        redis: {
+      useFactory: async (configService: ConfigService) => {
+        const redisConfig = {
           host: configService.getOrThrow<string>('redis.host'),
           port: configService.getOrThrow<number>('redis.port'),
           password: configService.getOrThrow<string>('redis.password'),
-        },
-      }),
+        };
+
+        console.log('Redis config:', redisConfig);
+
+        return {
+          redis: redisConfig,
+        };
+      },
       inject: [ConfigService],
     }),
     LoggerModule.forRootAsync({
@@ -50,7 +56,7 @@ import { BullModule } from '@nestjs/bull';
           pinoHttp: {
             level:
               configService.getOrThrow<string>('app.nodeEnv') !== 'production'
-                ? 'debug'
+                ? 'info' // TODO update
                 : 'info',
             transport:
               configService.getOrThrow<string>('app.nodeEnv') !== 'production'
