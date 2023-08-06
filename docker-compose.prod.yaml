@@ -34,15 +34,20 @@ services:
       - mongodb_data:/data/db
     networks:
       - nesjs-network
+
   redis:
     image: redis:latest
     ports:
       - "6379:6379"
     volumes:
       - redis_data:/data
+    command: redis-server --requirepass ${REDIS_PASSWORD}
+    networks:
+      - nesjs-network
 
 volumes:
   mongodb_data:
+  redis_data:
 
 networks:
     nesjs-network:

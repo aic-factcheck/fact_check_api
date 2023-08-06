@@ -37,9 +37,7 @@ import { BullModule } from '@nestjs/bull';
         redis: {
           host: configService.getOrThrow<string>('redis.host'),
           port: configService.getOrThrow<number>('redis.port'),
-          ...(configService.get<string>('app.nodeEnv') === 'production'
-            ? { password: configService.getOrThrow<string>('redis.password') }
-            : {}),
+          password: configService.getOrThrow<string>('redis.password'),
         },
       }),
       inject: [ConfigService],
