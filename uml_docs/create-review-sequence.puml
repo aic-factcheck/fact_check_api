@@ -1,0 +1,30 @@
+@startuml
+
+participant Client as "Client App"
+participant ReviewsService as "ReviewsService"
+participant BackgroundArticleService as "BgArticleService"
+participant BgArticleQueue as "BullMQ (redis-queue)"
+participant BgArticleQueueProcessor as "QueueProcessor"
+participant MongoDB as "MongoDB"
+participant ExtractService as "Extract Service"
+participant DetectLanguage as "Detect Language API"
+
+Client -> ReviewsService : Add review
+ReviewsService -> ReviewsService : Normalize submited links
+ReviewsService -> BackgroundArticleService : Send normalized links[]
+BackgroundArticleService -> BgArticleQueue : Adds Job per each link 
+BgArticleQueue -> BgArticleQueueProcessor : handleJob(sourceUrl, author)
+BgArticleQueueProcessor -> MongoDB : findArticle(sourceUrl)
+MongoDB -> BgArticleQueueProcessor : article
+alt article is null
+    BgArticleQueueProcessor -> ExtractService : GET /extract/json?url=sourceUrl
+    ExtractService -> BgArticleQueueProcessor : ""text, title, categories, ...""
+    BgArticleQueueProcessor -> DetectLanguage : detect language (text)
+    DetectLanguage -> BgArticleQueueProcessor : ""language""
+    BgArticleQueueProcessor -> MongoDB : create Article \n (text, title, language, author)
+    MongoDB -> BgArticleQueueProcessor : ""article created""
+else
+    BgArticleQueueProcessor -> Client : Article already exists
+end
+
+@enduml

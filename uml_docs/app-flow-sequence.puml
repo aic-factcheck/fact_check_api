@@ -5,6 +5,7 @@ actor "Crowd" as crowd #lightCyan
 actor "Client" as client
 participant "FactCheckAPI" as api
 participant "WebScrappingAPI" as scrap
+participant "ArticlesProcessor" as bullmq
 
 == Login ==
 
@@ -43,6 +44,8 @@ end
 crowd->api: :GET /articles/:articleId/claims/:claimId/reviews
 api->crowd: ""ok, {data}""
 crowd->api: :POST /articles/:articleId/claims/:claimId/reviews (data)
+api->bullmq: ""Per data.links, add job to queue""
+bullmq->api: ""ok, jobId""
 api->crowd: ""ok, created""
 
 
