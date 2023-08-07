@@ -42,9 +42,7 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document);
 
-  // app.useLogger(app.get(Logger));
   mongoose.set(
-    // setup mongoose logger for dev mode only
     'debug',
     configService.getOrThrow<string>('app.nodeEnv', { infer: true }) ===
       'development',

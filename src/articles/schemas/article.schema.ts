@@ -39,7 +39,7 @@ export class Article {
   @Prop({ type: [String], default: [], index: true })
   categories: string[];
 
-  @Prop({ required: true, maxlength: 512, index: 'text' })
+  @Prop({ required: true, maxlength: 512, index: 'text', unique: true })
   sourceUrl: string;
 
   @Prop({ default: 'article', enum: articleTypes })

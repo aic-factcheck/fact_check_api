@@ -1,21 +1,23 @@
 @startuml
 
-package "Some Group" {
-  [Another Component]
-}
-
 cloud {
-  [Example 1]
+
+  frame "Foo" {
+    [Frame 4]
+  }
+
+  package "Some Group" {
+    [Another Component]
+  }
 }
 
 
 database "MySql" {
-  folder "This is my folder" {
-    [Folder 3]
-  }
-  frame "Foo" {
-    [Frame 4]
-  }
+
+}
+
+database "Redis" {
+
 }
 
 

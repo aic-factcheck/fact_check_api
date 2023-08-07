@@ -37,7 +37,7 @@ api->crowd: ""ok, {data}""
 
 alt ""Decides to vote for claim""
   crowd->api: :POST /vote?id=claimId&type=CLAIM (data)
-  api->crowd: ""Ok, created""
+  api->crowd: ""Ok, queued, jobId""
 end
 
 crowd->api: :GET /articles/:articleId/claims/:claimId/reviews
@@ -53,7 +53,7 @@ api->crowd: ""ok, created""
 
 alt ""Decides to vote for existing review""
   crowd->api: :POST /vote?id=reviewId&type=REVIEW (data)
-  api->crowd: ""Ok, created""
+  api->crowd: ""Ok, queued, jobId""
 end
 
 == Find a fact-check ==

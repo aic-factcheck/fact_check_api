@@ -20,6 +20,7 @@ import {
 } from '../saved-articles/schemas/saved-article.schema';
 import { GameService } from '../game/game.service';
 import { GameAtionEnum } from '../game/enums/reputation.enum';
+import { normalizeArticleUrl } from '../common/helpers/normalize-article-url.helper';
 
 @Injectable()
 export class ArticlesService {
@@ -54,10 +55,19 @@ export class ArticlesService {
 
   async create(
     loggedUser: User,
-    createArticleDto: CreateArticleDto,
+    createDto: CreateArticleDto,
   ): Promise<Article> {
+    const normUrl = normalizeArticleUrl(createDto.sourceUrl);
+    createDto.sourceUrl = normUrl;
+
+    const article = await this.articleModel.findOne({ sourceUrl: normUrl });
+
+    if (article) {
+      return article;
+    }
+
     const createdArticle: ArticleDocument = new this.articleModel(
-      _.assign(createArticleDto, { author: loggedUser._id }),
+      _.assign(createDto, { author: loggedUser._id }),
     );
     this.gameService.addReputation(
       loggedUser,

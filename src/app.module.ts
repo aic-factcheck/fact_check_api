@@ -26,8 +26,8 @@ import { SharedModelsModule } from './shared/shared-models/shared-models.module'
 import { InvitationsModule } from './invitations/invitations.module';
 import { UniqueInvitationValidator } from './common/validators/unique-invitation.validator';
 import { CacheModule } from '@nestjs/cache-manager';
-import { LoggerModule } from 'nestjs-pino';
 import { BullModule } from '@nestjs/bull';
+import { LoggerConfigModule } from './shared/logger-config/logger-config.module';
 
 @Module({
   imports: [
@@ -44,24 +44,7 @@ import { BullModule } from '@nestjs/bull';
       }),
       inject: [ConfigService],
     }),
-    LoggerModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: async (configService: ConfigService) => {
-        return {
-          pinoHttp: {
-            level:
-              configService.getOrThrow<string>('app.nodeEnv') !== 'production'
-                ? 'debug'
-                : 'info',
-            transport:
-              configService.getOrThrow<string>('app.nodeEnv') !== 'production'
-                ? { target: 'pino-pretty' }
-                : undefined,
-          },
-        };
-      },
-    }),
+    LoggerConfigModule,
     CacheModule.register({
       ttl: 5, // seconds
       max: 20, // maximum number of items in cache
