@@ -11,7 +11,13 @@ import { VoteQueueProcessor } from './vote.processor';
   imports: [
     SharedModelsModule,
     GameModule,
-    BullModule.registerQueue({ name: VOTES_QUEUE_NAME }),
+    BullModule.registerQueue({
+      name: VOTES_QUEUE_NAME,
+      limiter: {
+        max: 20,
+        duration: 1000,
+      }, // max 20 per second
+    }),
   ],
   controllers: [VoteController],
   providers: [VoteService, VoteQueueProcessor],

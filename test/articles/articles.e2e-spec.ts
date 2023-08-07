@@ -1,4 +1,4 @@
-import * as request from 'supertest';
+import request from 'supertest';
 import { HttpStatus } from '@nestjs/common';
 import { _, some } from 'lodash';
 
@@ -48,7 +48,7 @@ describe('Articles API', () => {
   const article2 = {
     title: 'SECOND title',
     text: 'Druhy clanok hh nejaky nahodny text. Nema to ziadny zmysel, ale vsak to nie je podsatatne..',
-    sourceUrl: 'https://xyzabc.com',
+    sourceUrl: 'https://xyzabc.com/',
     sourceType: 'article',
     lang: 'cz',
   };

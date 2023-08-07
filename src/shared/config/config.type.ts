@@ -6,6 +6,8 @@ export type AppConfig = {
   apiPrefix: string;
   fallbackLanguage: string;
   headerLanguage: string;
+  extractServiceHost: string;
+  langDetectionApiKey: string;
 };
 
 export type AuthConfig = {

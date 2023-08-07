@@ -1,4 +1,4 @@
-import * as request from 'supertest';
+import request from 'supertest';
 import { HttpStatus } from '@nestjs/common';
 
 import { dbConnection, httpServer } from '../utils/setup';

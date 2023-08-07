@@ -1,4 +1,4 @@
-import * as request from 'supertest';
+import request from 'supertest';
 import { HttpStatus } from '@nestjs/common';
 import { _, some } from 'lodash';
 
@@ -38,14 +38,14 @@ describe('HOT API', () => {
   const article1 = {
     title: 'first title',
     text: 'Lorem Ipsum is simply dummg industry. Lorem Ipsum has been the industry',
-    sourceUrl: 'https://www.lipsum.com/',
+    sourceUrl: 'https://www.lipsum.com/abc/',
     sourceType: 'article',
     lang: 'en',
   };
   const article2 = {
     title: 'Second article',
     text: 'Lorem Ipsum is second article. Lorem Ipsum has been the industry',
-    sourceUrl: 'https://www.lipsum.sk/',
+    sourceUrl: 'https://www.lipsum.sk/xyz/',
     sourceType: 'article',
     lang: 'cz',
   };
@@ -60,13 +60,13 @@ describe('HOT API', () => {
   const review1 = {
     text: 'Prvy review hh nejaky nahodny text. Nema to ziadny zmysel, ale vsak to nie je podsatatne..',
     vote: 'TRUE',
-    links: ['www.google.com'],
+    links: ['https://www.lipsum.sk/xyz/'],
     lang: 'en',
   };
   const review2 = {
     text: 'Second review with random text.',
     vote: 'PARTIALLY_TRUE',
-    links: ['www.google.com', 'www.bing.sk'],
+    links: ['https://www.lipsum.sk/xyz/', 'https://www.lipsum.com/abc/'],
     lang: 'cz',
   };
 

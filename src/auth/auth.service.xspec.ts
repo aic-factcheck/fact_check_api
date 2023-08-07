@@ -8,7 +8,7 @@ import { RefreshToken } from './schemas/refresh-token.schema';
 import { Model, Types } from 'mongoose';
 import { User } from '../users/schemas/user.schema';
 import { HttpException, UnauthorizedException } from '@nestjs/common';
-import * as bcrypt from 'bcrypt';
+import bcrypt from 'bcrypt';
 
 describe('AuthService', () => {
   let service: AuthService;

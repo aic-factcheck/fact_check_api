@@ -22,6 +22,7 @@ import { VoteObjectEnum } from '../vote/enums/vote.enum';
 import { ReviewHistoryType } from './types/review-history.type';
 import { VoteTypes } from './enums/vote.types';
 import { UpdateReviewDto } from './dto/update-review.dto';
+import { BackgroundArticleService } from '../background-article/background-article.service';
 
 @Injectable()
 export class ReviewsService {
@@ -31,6 +32,7 @@ export class ReviewsService {
     @InjectModel(User.name) private userModel: Model<User>,
     @InjectModel(Vote.name) private voteModel: Model<Vote>,
     private readonly gameService: GameService,
+    private bgArticleService: BackgroundArticleService,
   ) {}
 
   async checkResourceAccess(user: User, _id: Types.ObjectId): Promise<boolean> {
@@ -103,6 +105,11 @@ export class ReviewsService {
         { $inc: { nReviews: 1 } },
       ),
     ]);
+
+    await this.bgArticleService.saveReferencedArticles(
+      createDto.links,
+      loggedUser._id,
+    );
 
     return createdReview.save();
   }
