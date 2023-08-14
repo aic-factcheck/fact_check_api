@@ -39,7 +39,7 @@ import pinoElastic from 'pino-elasticsearch';
             'es-version': 8,
             'flush-bytes': 1000,
             auth: {
-              username: configService.getOrThrow<string>('elastic.username'),
+              username: 'elastic', // configService.getOrThrow<string>('elastic.username'),
               password: configService.getOrThrow<string>('elastic.password'),
             },
           });
