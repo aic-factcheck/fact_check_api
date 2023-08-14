@@ -10,6 +10,7 @@ import authConfig from './shared/config/auth.config';
 import appConfig from './shared/config/app.config';
 import mailConfig from './shared/config/mail.config';
 import redisConfig from './shared/config/redis.config';
+import elasticConfig from './shared/config/elastic.config';
 import { RouterModule } from '@nestjs/core';
 import { SavedArticlesModule } from './saved-articles/saved-articles.module';
 import { ClaimsModule } from './claims/claims.module';
@@ -70,7 +71,14 @@ import { LoggerConfigModule } from './shared/logger-config/logger-config.module'
     ]),
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [appConfig, authConfig, mongoConfig, mailConfig, redisConfig],
+      load: [
+        appConfig,
+        authConfig,
+        mongoConfig,
+        mailConfig,
+        redisConfig,
+        elasticConfig,
+      ],
       envFilePath: ['.env'],
     }),
     AuthModule,

@@ -32,10 +32,17 @@ export type MailConfig = {
   password: string;
 };
 
+export type ElasticConfig = {
+  host: string;
+  username: string;
+  password: string;
+};
+
 export type AllConfigType = {
   app: AppConfig;
   auth: AuthConfig;
   mongo: MongoConfig;
   mail: MailConfig;
   redis: RedisConfig;
+  elastic: ElasticConfig;
 };
