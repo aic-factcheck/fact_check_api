@@ -2,20 +2,20 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { LoggerModule } from 'nestjs-pino';
 import pinoElastic from 'pino-elasticsearch';
-import { JwtPayloadType } from '../../common/types/auth/jwt-payload.type';
-import { Types } from 'mongoose';
+// import { JwtPayloadType } from '../../common/types/auth/jwt-payload.type';
+// import { Types } from 'mongoose';
 
-function getUserIdFromAuthHeader(authHeader: string): Types.ObjectId | null {
-  if (!authHeader) return null;
+// function getUserIdFromAuthHeader(authHeader: string): Types.ObjectId | null {
+//   if (!authHeader) return null;
 
-  const signedToken = authHeader.split(' ')[1];
-  const base64payload = signedToken.split('.')[1];
-  const payloadBuffer = Buffer.from(base64payload, 'base64');
-  const updatedJwtPayload = JSON.parse(
-    payloadBuffer.toString(),
-  ) as JwtPayloadType;
-  return updatedJwtPayload._id;
-}
+//   const signedToken = authHeader.split(' ')[1];
+//   const base64payload = signedToken.split('.')[1];
+//   const payloadBuffer = Buffer.from(base64payload, 'base64');
+//   const updatedJwtPayload = JSON.parse(
+//     payloadBuffer.toString(),
+//   ) as JwtPayloadType;
+//   return updatedJwtPayload._id;
+// }
 
 @Module({
   imports: [
@@ -86,14 +86,14 @@ function getUserIdFromAuthHeader(authHeader: string): Types.ObjectId | null {
               },
               'http.request': (object: any) => {
                 const { method, url, query, headers } = object;
-                const userId = getUserIdFromAuthHeader(headers.authorization);
+                // const userId = getUserIdFromAuthHeader(headers.authorization);
 
                 return {
                   method,
                   url,
                   query,
                   headers,
-                  userId,
+                  // userId,
                 };
               },
             },
