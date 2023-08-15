@@ -2,6 +2,20 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { LoggerModule } from 'nestjs-pino';
 import pinoElastic from 'pino-elasticsearch';
+import { JwtPayloadType } from '../../common/types/auth/jwt-payload.type';
+import { Types } from 'mongoose';
+
+function getUserIdFromAuthHeader(authHeader: string): Types.ObjectId | null {
+  if (!authHeader) return null;
+
+  const signedToken = authHeader.split(' ')[1];
+  const base64payload = signedToken.split('.')[1];
+  const payloadBuffer = Buffer.from(base64payload, 'base64');
+  const updatedJwtPayload = JSON.parse(
+    payloadBuffer.toString(),
+  ) as JwtPayloadType;
+  return updatedJwtPayload._id;
+}
 
 @Module({
   imports: [
@@ -15,7 +29,6 @@ import pinoElastic from 'pino-elasticsearch';
           pinoHttpOptions = {
             level: 'debug',
             transport: { target: 'pino-pretty' },
-            stream: { target: 'pino-pretty' },
             serializers: {
               req: (req) => {
                 return {
@@ -39,7 +52,7 @@ import pinoElastic from 'pino-elasticsearch';
             'es-version': 8,
             'flush-bytes': 1000,
             auth: {
-              username: 'elastic', // configService.getOrThrow<string>('elastic.username'),
+              username: 'elastic',
               password: configService.getOrThrow<string>('elastic.password'),
             },
           });
@@ -73,12 +86,14 @@ import pinoElastic from 'pino-elasticsearch';
               },
               'http.request': (object: any) => {
                 const { method, url, query, headers } = object;
-                // headers transformation ..
+                const userId = getUserIdFromAuthHeader(headers.authorization);
+
                 return {
                   method,
                   url,
                   query,
                   headers,
+                  userId,
                 };
               },
             },
