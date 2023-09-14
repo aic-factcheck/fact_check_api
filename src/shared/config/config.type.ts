@@ -5,7 +5,6 @@ export type AppConfig = {
   port: number;
   apiPrefix: string;
   fallbackLanguage: string;
-  headerLanguage: string;
   extractServiceHost: string;
   langDetectionApiKey: string;
 };

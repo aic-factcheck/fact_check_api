@@ -21,6 +21,7 @@ import {
 import { GameService } from '../game/game.service';
 import { GameAtionEnum } from '../game/enums/reputation.enum';
 import { normalizeArticleUrl } from '../common/helpers/normalize-article-url.helper';
+import { I18nContext, I18nService } from 'nestjs-i18n';
 
 @Injectable()
 export class ArticlesService {
@@ -29,24 +30,31 @@ export class ArticlesService {
     @InjectModel(SavedArticle.name)
     private savedArticleModel: Model<SavedArticle>,
     private readonly gameService: GameService,
+    private readonly i18nService: I18nService,
   ) {}
+
+  private throwArticleNotFoundException(): never {
+    throw new NotFoundException({
+      statusCode: HttpStatus.NOT_FOUND,
+      message: this.i18nService.t('errors.article_not_found', {
+        lang: I18nContext.current()?.lang,
+      }),
+    });
+  }
 
   async checkResourceAccess(user: User, _id: Types.ObjectId): Promise<boolean> {
     if (_.includes(user.roles, 'admin')) return true;
 
     const article: Article | null = await this.articleModel.findOne({ _id });
 
-    if (!article) {
-      throw new NotFoundException({
-        statusCode: HttpStatus.NOT_FOUND,
-        message: 'Article not found',
-      });
-    }
+    if (!article) this.throwArticleNotFoundException();
 
     if (!_.isEqual(article.author._id, user._id)) {
       throw new ForbiddenException({
         statusCode: HttpStatus.FORBIDDEN,
-        message: 'Forbidden',
+        message: this.i18nService.t('errors.forbidden', {
+          lang: I18nContext.current()?.lang,
+        }),
       });
     }
 
@@ -79,12 +87,7 @@ export class ArticlesService {
 
   async findByQuery(query: object): Promise<NullableType<Article>> {
     const article = await this.articleModel.findById(query);
-    if (!article) {
-      throw new NotFoundException({
-        statusCode: HttpStatus.NOT_FOUND,
-        message: 'Article not found',
-      });
-    }
+    if (!article) this.throwArticleNotFoundException();
 
     return article;
   }
@@ -107,12 +110,7 @@ export class ArticlesService {
     ]);
     const isSavedByUser: boolean = Boolean(savedArticle);
 
-    if (!article) {
-      throw new NotFoundException({
-        statusCode: HttpStatus.NOT_FOUND,
-        message: 'Article not found',
-      });
-    }
+    if (!article) this.throwArticleNotFoundException();
 
     return { ...article.toObject(), isSavedByUser };
   }
@@ -158,12 +156,7 @@ export class ArticlesService {
       { returnOriginal: false },
     );
 
-    if (!updatedArticle) {
-      throw new NotFoundException({
-        statusCode: HttpStatus.NOT_FOUND,
-        message: 'Article not found',
-      });
-    }
+    if (!updatedArticle) this.throwArticleNotFoundException();
     return updatedArticle;
   }
 
@@ -171,12 +164,7 @@ export class ArticlesService {
     await this.checkResourceAccess(loggedUser, _id);
 
     const deletedArticle = await this.articleModel.findByIdAndDelete(_id);
-    if (!deletedArticle) {
-      throw new NotFoundException({
-        statusCode: HttpStatus.NOT_FOUND,
-        message: 'Article not found',
-      });
-    }
+    if (!deletedArticle) this.throwArticleNotFoundException();
     return deletedArticle;
   }
 }

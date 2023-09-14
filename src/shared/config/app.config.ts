@@ -8,7 +8,6 @@ export default registerAs<AppConfig>('app', () => ({
   port: parseInt(process.env.APP_PORT || '3000', 10),
   apiPrefix: process.env.API_PREFIX || 'api',
   fallbackLanguage: process.env.APP_FALLBACK_LANGUAGE || 'en',
-  headerLanguage: process.env.APP_HEADER_LANGUAGE || 'x-custom-lang',
   extractServiceHost: process.env.EXTRACT_SERVICE_HOST || 'extract-service',
   langDetectionApiKey: process.env.DETECT_LANGUAGE_API_KEY || '',
 }));

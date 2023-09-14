@@ -1,3 +1,4 @@
+import * as path from 'path';
 import { Module } from '@nestjs/common';
 import { UsersModule } from './users/users.module';
 import { UniqueValidator } from './common/validators/unique-validator';
@@ -29,9 +30,21 @@ import { UniqueInvitationValidator } from './common/validators/unique-invitation
 import { CacheModule } from '@nestjs/cache-manager';
 import { BullModule } from '@nestjs/bull';
 import { LoggerConfigModule } from './shared/logger-config/logger-config.module';
+import { I18nModule, HeaderResolver } from 'nestjs-i18n';
 
 @Module({
   imports: [
+    I18nModule.forRootAsync({
+      inject: [ConfigService],
+      resolvers: [new HeaderResolver(['x-custom-lang'])],
+      useFactory: async (config: ConfigService) => ({
+        fallbackLanguage: config.getOrThrow<string>('app.fallbackLanguage'),
+        loaderOptions: {
+          path: path.join(__dirname, '/common/i18n/'),
+          watch: true,
+        },
+      }),
+    }),
     BullModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({

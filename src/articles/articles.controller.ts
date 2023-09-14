@@ -14,7 +14,6 @@ import { Controller } from '@nestjs/common';
 import {
   ApiTags,
   ApiQuery,
-  ApiBearerAuth,
   ApiParam,
   ApiOperation,
   ApiBody,
@@ -33,15 +32,17 @@ import { UpdateArticleDto } from './dto/update-article.dto';
 import { Public } from '../auth/decorators/public-route.decorator';
 import { ArticleResponseType } from './types/article-response.type';
 import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
+import { BaseController } from '../common/helpers/base-controller';
 
 @ApiTags('Articles')
 @Controller({
   version: '1',
 })
-@ApiBearerAuth()
 @UseInterceptors(CacheInterceptor)
-export class ArticlesController {
-  constructor(private readonly articlesService: ArticlesService) {}
+export class ArticlesController extends BaseController {
+  constructor(private readonly articlesService: ArticlesService) {
+    super();
+  }
 
   @Post()
   @HttpCode(HttpStatus.CREATED)

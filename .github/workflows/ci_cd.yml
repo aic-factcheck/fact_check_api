@@ -12,7 +12,6 @@ env:
   APP_PORT: 3000
   API_PREFIX: api/v1
   APP_FALLBACK_LANGUAGE: en
-  APP_HEADER_LANGUAGE: x-custom-lang
   AUTH_JWT_SECRET: bA2xcjpf8y5aSUFsNB2qN5yymUBS
   AUTH_JWT_TOKEN_EXPIRES_IN: 15
   MONGO_URI: mongodb://localhost/fact_checking_api
