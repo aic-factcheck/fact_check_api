@@ -2,6 +2,7 @@ import {
   PipeTransform,
   Injectable,
   UnprocessableEntityException,
+  HttpStatus,
 } from '@nestjs/common';
 import { ObjectId } from 'mongodb';
 
@@ -24,9 +25,10 @@ export class ParseObjectIdPipe implements PipeTransform<any, ObjectId> {
       const transformedObjectId: ObjectId = ObjectId.createFromHexString(value);
       return transformedObjectId;
     } catch (error) {
-      throw new UnprocessableEntityException(
-        'Validation failed (ObjectId is expected)',
-      );
+      throw new UnprocessableEntityException({
+        statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+        message: 'Validation failed (ObjectId is expected)',
+      });
     }
   }
 }

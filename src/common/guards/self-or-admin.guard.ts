@@ -2,9 +2,9 @@ import { _ } from 'lodash';
 import {
   CanActivate,
   ExecutionContext,
-  HttpException,
   HttpStatus,
   Injectable,
+  UnprocessableEntityException,
 } from '@nestjs/common';
 import mongoose from 'mongoose';
 
@@ -15,13 +15,10 @@ export class SelfOrAdminGuard implements CanActivate {
     const userId = request.params.userId;
 
     if (!mongoose.Types.ObjectId.isValid(userId)) {
-      throw new HttpException(
-        {
-          statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
-          message: 'Invalid ObjectId',
-        },
-        HttpStatus.UNPROCESSABLE_ENTITY,
-      );
+      throw new UnprocessableEntityException({
+        statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+        message: 'Invalid ObjectId',
+      });
     }
 
     if (_.includes(request.user.roles, 'admin')) return true;

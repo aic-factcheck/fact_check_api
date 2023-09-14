@@ -35,7 +35,10 @@ export class ClaimsService {
     const claim: Claim | null = await this.claimModel.findOne({ _id });
 
     if (!claim) {
-      throw new NotFoundException('Claim not found');
+      throw new NotFoundException({
+        statusCode: HttpStatus.NOT_FOUND,
+        message: 'Claim not found',
+      });
     }
 
     if (!_.isEqual(claim.author._id, user._id)) {
@@ -77,7 +80,10 @@ export class ClaimsService {
   async findByQuery(query: object): Promise<NullableType<Claim>> {
     const claim = await this.claimModel.findById(query);
     if (!claim) {
-      throw new NotFoundException(`Claim not found`);
+      throw new NotFoundException({
+        statusCode: HttpStatus.NOT_FOUND,
+        message: 'Claim not found',
+      });
     }
 
     return claim;
@@ -107,7 +113,10 @@ export class ClaimsService {
       ]);
 
     if (!claim) {
-      throw new NotFoundException(`Claim not found`);
+      throw new NotFoundException({
+        statusCode: HttpStatus.NOT_FOUND,
+        message: 'Claim not found',
+      });
     }
 
     return { ...claim.toObject(), userReview };
@@ -144,10 +153,16 @@ export class ClaimsService {
     await this.checkResourceAccess(loggedUser, _id);
     const currentClaim = await this.claimModel.findById(_id);
     if (!currentClaim) {
-      throw new NotFoundException('Claim not found');
+      throw new NotFoundException({
+        statusCode: HttpStatus.NOT_FOUND,
+        message: 'Claim not found',
+      });
     }
     if (currentClaim.history.length >= 10) {
-      throw new BadRequestException('Claim can be updated up to 10 times');
+      throw new BadRequestException({
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: 'Claim can be updated up to 10 times',
+      });
     }
 
     const historyObj: ClaimHistoryType = {
@@ -184,7 +199,10 @@ export class ClaimsService {
       _id: claimId,
     });
     if (!deleterClaim) {
-      throw new NotFoundException(`Claim #${claimId} not found`);
+      throw new NotFoundException({
+        statusCode: HttpStatus.NOT_FOUND,
+        message: 'Claim not found',
+      });
     }
     return deleterClaim;
   }

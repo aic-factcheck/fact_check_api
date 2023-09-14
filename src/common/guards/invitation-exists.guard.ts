@@ -1,6 +1,7 @@
 import {
   CanActivate,
   ExecutionContext,
+  HttpStatus,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -22,6 +23,9 @@ export class InvitationExistsGuard implements CanActivate {
     if (inv) {
       return true;
     }
-    throw new NotFoundException('Invitation for user does not exists');
+    throw new NotFoundException({
+      statusCode: HttpStatus.NOT_FOUND,
+      message: 'Invitation for user does not exists',
+    });
   }
 }

@@ -2,10 +2,10 @@ import { _ } from 'lodash';
 import {
   CanActivate,
   ExecutionContext,
-  HttpException,
   HttpStatus,
   Inject,
   Injectable,
+  UnprocessableEntityException,
   mixin,
 } from '@nestjs/common';
 import { Article } from '../../articles/schemas/article.schema';
@@ -30,13 +30,10 @@ export const IsResourceOwnerGuard = (paramId: string) => {
       const _id: string = request.params[paramId];
 
       if (!mongoose.Types.ObjectId.isValid(_id)) {
-        throw new HttpException(
-          {
-            statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
-            message: 'Invalid ObjectId',
-          },
-          HttpStatus.UNPROCESSABLE_ENTITY,
-        );
+        throw new UnprocessableEntityException({
+          statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+          message: 'Invalid ObjectId',
+        });
       }
 
       if (_.includes(request.user.roles, 'admin')) return true;

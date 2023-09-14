@@ -2,7 +2,7 @@ import { _ } from 'lodash';
 import {
   BadRequestException,
   ConflictException,
-  HttpException,
+  ForbiddenException,
   HttpStatus,
   Injectable,
   NotFoundException,
@@ -41,17 +41,17 @@ export class ReviewsService {
     const review: Review | null = await this.reviewModel.findOne({ _id });
 
     if (!review) {
-      throw new NotFoundException('Review not found');
+      throw new NotFoundException({
+        statusCode: HttpStatus.NOT_FOUND,
+        message: 'Review not found',
+      });
     }
 
     if (!_.isEqual(review.author._id, user._id)) {
-      throw new HttpException(
-        {
-          statusCode: HttpStatus.FORBIDDEN,
-          message: 'Forbidden',
-        },
-        HttpStatus.FORBIDDEN,
-      );
+      throw new ForbiddenException({
+        statusCode: HttpStatus.FORBIDDEN,
+        message: 'Forbidden',
+      });
     }
 
     return true;
@@ -118,7 +118,10 @@ export class ReviewsService {
     const review = await this.reviewModel.findOne(query);
     // TODO add user's vote
     if (!review) {
-      throw new NotFoundException(`Review not found`);
+      throw new NotFoundException({
+        statusCode: HttpStatus.NOT_FOUND,
+        message: 'Review not found',
+      });
     }
     return review;
   }
@@ -136,7 +139,10 @@ export class ReviewsService {
     });
 
     if (!review) {
-      throw new NotFoundException(`Review not found`);
+      throw new NotFoundException({
+        statusCode: HttpStatus.NOT_FOUND,
+        message: 'Review not found',
+      });
     }
 
     let userVote: number | null = null;
@@ -204,10 +210,16 @@ export class ReviewsService {
 
     const currentReview = await this.reviewModel.findById(reviewId);
     if (!currentReview) {
-      throw new NotFoundException('Review not found');
+      throw new NotFoundException({
+        statusCode: HttpStatus.NOT_FOUND,
+        message: 'Review not found',
+      });
     }
     if (currentReview.history.length >= 10) {
-      throw new BadRequestException('Review can be updated up to 10 times');
+      throw new BadRequestException({
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: 'Review can be updated up to 10 times',
+      });
     }
 
     const historyObj: ReviewHistoryType = {
@@ -248,7 +260,10 @@ export class ReviewsService {
       _id: reviewId,
     });
     if (!deletedClaim) {
-      throw new NotFoundException(`Review #${reviewId} not found`);
+      throw new NotFoundException({
+        statusCode: HttpStatus.NOT_FOUND,
+        message: 'Review not found',
+      });
     }
     return deletedClaim;
   }

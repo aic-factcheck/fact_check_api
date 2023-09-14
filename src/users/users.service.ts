@@ -1,6 +1,7 @@
 import { _, omit } from 'lodash';
 import { Model, Types } from 'mongoose';
 import {
+  HttpStatus,
   Injectable,
   NotFoundException,
   NotImplementedException,
@@ -65,7 +66,10 @@ export class UsersService {
     const user: UserDocument | null = await this.userModel.findById(_id);
 
     if (!user) {
-      throw new NotFoundException(`User #${_id} not found`);
+      throw new NotFoundException({
+        statusCode: HttpStatus.NOT_FOUND,
+        message: `User #${_id} not found`,
+      });
     }
 
     _.assign(user, updateUserDto);
@@ -91,7 +95,10 @@ export class UsersService {
     const deletedUser = await this.userModel.findByIdAndDelete(userId);
 
     if (!deletedUser) {
-      throw new NotFoundException(`User #${userId} not found`);
+      throw new NotFoundException({
+        statusCode: HttpStatus.NOT_FOUND,
+        message: `User #${userId} not found`,
+      });
     }
     return {};
   }
@@ -100,9 +107,15 @@ export class UsersService {
   async ban(idToBeBanned: Types.ObjectId, loggedUser: User): Promise<User> {
     const bannedUser = await this.userModel.findById(idToBeBanned);
     if (!bannedUser) {
-      throw new NotFoundException(`User #${idToBeBanned} not found`);
+      throw new NotFoundException({
+        statusCode: HttpStatus.NOT_FOUND,
+        message: `User #${idToBeBanned} not found`,
+      });
     }
-    throw new NotImplementedException('Ban not yet implemented');
+    throw new NotImplementedException({
+      statusCode: HttpStatus.NOT_IMPLEMENTED,
+      message: 'Ban not yet implemented',
+    });
     // TODO ban all his resources
     // return bannedUser;
   }

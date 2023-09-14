@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { User, UserDocument } from '../users/schemas/user.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { Article } from '../articles/schemas/article.schema';
@@ -94,7 +94,12 @@ export class StatsService {
       const foundUser = await this.userModel
         .findById(userId)
         .select('-password');
-      if (!foundUser) throw new NotFoundException('User not found');
+      if (!foundUser) {
+        throw new NotFoundException({
+          statusCode: HttpStatus.NOT_FOUND,
+          message: 'User not found',
+        });
+      }
       user = foundUser;
     }
 

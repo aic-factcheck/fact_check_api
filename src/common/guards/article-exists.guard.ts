@@ -1,10 +1,10 @@
 import {
   CanActivate,
   ExecutionContext,
-  HttpException,
   HttpStatus,
   Injectable,
   NotFoundException,
+  UnprocessableEntityException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model } from 'mongoose';
@@ -21,19 +21,19 @@ export class DoesArticleExist implements CanActivate {
     const params = request.params;
 
     if (!mongoose.Types.ObjectId.isValid(params.articleId)) {
-      throw new HttpException(
-        {
-          statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
-          message: 'Invalid ObjectId',
-        },
-        HttpStatus.UNPROCESSABLE_ENTITY,
-      );
+      throw new UnprocessableEntityException({
+        statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+        message: 'Invalid ObjectId',
+      });
     }
 
     const article = await this.articleModel.findOne({ _id: params.articleId });
     if (article) {
       return true;
     }
-    throw new NotFoundException('Article not found');
+    throw new NotFoundException({
+      statusCode: HttpStatus.NOT_FOUND,
+      message: 'Article not found',
+    });
   }
 }

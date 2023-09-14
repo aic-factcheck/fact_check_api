@@ -3,6 +3,7 @@ import {
   ExecutionContext,
   ForbiddenException,
   UnauthorizedException,
+  HttpStatus,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
@@ -26,10 +27,16 @@ export class RolesGuard extends AuthGuard('jwt') {
     }
     const hasRole = () => user.roles.some((role) => roles.includes(role));
     if (!user) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException({
+        statusCode: HttpStatus.UNAUTHORIZED,
+        message: 'Unauthorized user',
+      });
     }
     if (!(user.roles && hasRole())) {
-      throw new ForbiddenException('Forbidden');
+      throw new ForbiddenException({
+        statusCode: HttpStatus.FORBIDDEN,
+        message: 'Forbidden',
+      });
     }
 
     if (user && user.roles && hasRole()) {

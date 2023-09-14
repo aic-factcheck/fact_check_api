@@ -1,7 +1,7 @@
 import { _ } from 'lodash';
 import { Model, Types } from 'mongoose';
 import {
-  HttpException,
+  ForbiddenException,
   HttpStatus,
   Injectable,
   NotFoundException,
@@ -37,17 +37,17 @@ export class ArticlesService {
     const article: Article | null = await this.articleModel.findOne({ _id });
 
     if (!article) {
-      throw new NotFoundException('Article not found');
+      throw new NotFoundException({
+        statusCode: HttpStatus.NOT_FOUND,
+        message: 'Article not found',
+      });
     }
 
     if (!_.isEqual(article.author._id, user._id)) {
-      throw new HttpException(
-        {
-          statusCode: HttpStatus.FORBIDDEN,
-          message: 'Forbidden',
-        },
-        HttpStatus.FORBIDDEN,
-      );
+      throw new ForbiddenException({
+        statusCode: HttpStatus.FORBIDDEN,
+        message: 'Forbidden',
+      });
     }
 
     return true;
@@ -80,7 +80,10 @@ export class ArticlesService {
   async findByQuery(query: object): Promise<NullableType<Article>> {
     const article = await this.articleModel.findById(query);
     if (!article) {
-      throw new NotFoundException(`Article not found`);
+      throw new NotFoundException({
+        statusCode: HttpStatus.NOT_FOUND,
+        message: 'Article not found',
+      });
     }
 
     return article;
@@ -105,7 +108,10 @@ export class ArticlesService {
     const isSavedByUser: boolean = Boolean(savedArticle);
 
     if (!article) {
-      throw new NotFoundException(`Article not found`);
+      throw new NotFoundException({
+        statusCode: HttpStatus.NOT_FOUND,
+        message: 'Article not found',
+      });
     }
 
     return { ...article.toObject(), isSavedByUser };
@@ -153,7 +159,10 @@ export class ArticlesService {
     );
 
     if (!updatedArticle) {
-      throw new NotFoundException(`Article not found`);
+      throw new NotFoundException({
+        statusCode: HttpStatus.NOT_FOUND,
+        message: 'Article not found',
+      });
     }
     return updatedArticle;
   }
@@ -163,7 +172,10 @@ export class ArticlesService {
 
     const deletedArticle = await this.articleModel.findByIdAndDelete(_id);
     if (!deletedArticle) {
-      throw new NotFoundException(`Article #${_id} not found`);
+      throw new NotFoundException({
+        statusCode: HttpStatus.NOT_FOUND,
+        message: 'Article not found',
+      });
     }
     return deletedArticle;
   }

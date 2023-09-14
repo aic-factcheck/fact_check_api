@@ -1,5 +1,6 @@
 import {
   ArgumentMetadata,
+  HttpStatus,
   NotFoundException,
   PipeTransform,
 } from '@nestjs/common';
@@ -15,7 +16,10 @@ export class ArticleByIdPipe
   async transform(value: string, metadata: ArgumentMetadata): Promise<Article> {
     const article = await this.articlesService.findByQuery({ _id: value });
     if (!article) {
-      throw new NotFoundException(`Article #${value} not found`);
+      throw new NotFoundException({
+        statusCode: HttpStatus.NOT_FOUND,
+        message: `Article #${value} not found`,
+      });
     }
     return article;
   }

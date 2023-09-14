@@ -1,10 +1,10 @@
 import {
   CanActivate,
   ExecutionContext,
-  HttpException,
   HttpStatus,
   Injectable,
   NotFoundException,
+  UnprocessableEntityException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model } from 'mongoose';
@@ -19,19 +19,19 @@ export class DoesReviewExist implements CanActivate {
     const params = request.params;
 
     if (!mongoose.Types.ObjectId.isValid(params.reviewId)) {
-      throw new HttpException(
-        {
-          statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
-          message: 'Invalid ObjectId',
-        },
-        HttpStatus.UNPROCESSABLE_ENTITY,
-      );
+      throw new UnprocessableEntityException({
+        statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+        message: 'Invalid ObjectId',
+      });
     }
 
     const review = await this.reviewModel.findOne({ _id: params.reviewId });
     if (review) {
       return true;
     }
-    throw new NotFoundException('Review not found');
+    throw new NotFoundException({
+      statusCode: HttpStatus.NOT_FOUND,
+      message: 'Review not found',
+    });
   }
 }

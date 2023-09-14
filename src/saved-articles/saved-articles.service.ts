@@ -1,5 +1,5 @@
 import { Model, Types } from 'mongoose';
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Article } from '../articles/schemas/article.schema';
 import { User } from '../users/schemas/user.schema';
@@ -29,7 +29,10 @@ export class SavedArticlesService {
       .countDocuments();
 
     if (alreadySaved !== 0 || articleCnt < 1) {
-      throw new BadRequestException('Saving article failed');
+      throw new BadRequestException({
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: 'Saving article failed',
+      });
     }
 
     await this.articleModel.findOneAndUpdate(

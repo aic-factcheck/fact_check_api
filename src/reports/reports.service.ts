@@ -1,5 +1,5 @@
 import { _ } from 'lodash';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateReportDto } from './dto/create-report.dto';
 import { UpdateReportDto } from './dto/update-report.dto';
 import { Report, ReportDocument } from './schemas/report.schema';
@@ -19,7 +19,10 @@ export class ReportsService {
   async create(createDto: CreateReportDto, loggedUser: User): Promise<Report> {
     const user = await this.userModel.findById(createDto.reportedUser);
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException({
+        statusCode: HttpStatus.NOT_FOUND,
+        message: 'User not found',
+      });
     }
     const report: ReportDocument = new this.reportModel(
       _.assign(createDto, {
@@ -54,7 +57,10 @@ export class ReportsService {
   async findOne(_id: Types.ObjectId): Promise<NullableType<Report>> {
     const report = await this.reportModel.findById({ _id });
     if (!report) {
-      throw new NotFoundException(`Report ${_id} not found`);
+      throw new NotFoundException({
+        statusCode: HttpStatus.NOT_FOUND,
+        message: `Report ${_id} not found`,
+      });
     }
     return report;
   }
@@ -71,7 +77,10 @@ export class ReportsService {
       },
     );
     if (!updated) {
-      throw new NotFoundException(`Report not found`);
+      throw new NotFoundException({
+        statusCode: HttpStatus.NOT_FOUND,
+        message: `Report not found`,
+      });
     }
     return updated;
   }

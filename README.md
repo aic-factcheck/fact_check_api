@@ -18,16 +18,16 @@
 - [Docker](https://www.docker.com/) support
 - Uses [helmet](https://docs.nestjs.com/security/helmet) to set some HTTP headers for security
 - Load environment variables from .env files with [dotenv](https://github.com/rolodato/dotenv-safe)
-- Request validation with [joi](https://github.com/hapijs/joi)
+- Request validation with [class-validator](https://github.com/typestack/class-validator)
 - Linting with [eslint](http://eslint.org)
-- Tests with [Jest](https://jestjs.io/docs/getting-started), [Supertest](https://github.com/ladjs/supertest)
-<!-- - Code coverage with [istanbul](https://istanbul.js.org) and [coveralls](https://coveralls.io) -->
+- Tests with [Jest](https://jestjs.io/docs/getting-started)
+- Code coverage with [istanbul](https://istanbul.js.org)
 - Git hooks with [husky](https://github.com/typicode/husky)
 - Logging with [Pino & pino-http](https://github.com/iamolegga/nestjs-pino)
 - Authentication and Authorization with [passport](http://passportjs.org)
 - Automatic OpenAPI documentation generation with [Swagger](https://docs.nestjs.com/openapi/introduction)
-- Continuous integration support with Github Actions
-<!-- - Monitoring with [pm2](https://github.com/Unitech/pm2) -->
+- Continuous integration & CD support with Github Actions
+- Monitoring with [ElasticSearch and Kibana](https://www.elastic.co/elastic-stack)
 
 ## Requirements
 

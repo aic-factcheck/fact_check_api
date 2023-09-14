@@ -67,7 +67,10 @@ export class AuthService {
       email: user.email,
     });
     if (!refreshToken) {
-      throw new UnauthorizedException('User has been logged out.');
+      throw new UnauthorizedException({
+        statusCode: HttpStatus.UNAUTHORIZED,
+        message: 'User has been logged out.',
+      });
     }
     return refreshToken.refreshToken;
   }
@@ -103,7 +106,10 @@ export class AuthService {
     );
 
     if (!user) {
-      throw new NotFoundException('Email not found');
+      throw new NotFoundException({
+        statusCode: HttpStatus.NOT_FOUND,
+        message: 'Email not found',
+      });
     }
 
     const isValidPassword: boolean = await bcrypt.compare(
@@ -137,7 +143,10 @@ export class AuthService {
       invitedEmail: createDto.email,
     });
     if (inv?.code !== createDto.code) {
-      throw new ForbiddenException('Incorrect verification code');
+      throw new ForbiddenException({
+        statusCode: HttpStatus.FORBIDDEN,
+        message: 'Incorrect verification code',
+      });
     }
     await this.invModel.findOneAndDelete({ invitedEmail: createDto.email });
 

@@ -1,5 +1,5 @@
 import { _ } from 'lodash';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { Invitation, InvitationDocument } from './schemas/invitation.schema';
 import { Model, Types } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
@@ -52,7 +52,10 @@ export class InvitationsService {
     const deletedInv = await this.invModel.findByIdAndDelete(_id);
 
     if (!deletedInv) {
-      throw new NotFoundException(`Invitation  #${_id} not found`);
+      throw new NotFoundException({
+        statusCode: HttpStatus.NOT_FOUND,
+        message: `Invitation  #${_id} not found`,
+      });
     }
   }
 }

@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateVoteDto } from './dto/create-vote.dto';
 import { Model, Types } from 'mongoose';
 import { VoteObjectEnum } from './enums/vote.enum';
@@ -43,7 +43,10 @@ export class VoteService {
     });
 
     if (countRef === 0) {
-      throw new NotFoundException('Referenced object not found');
+      throw new NotFoundException({
+        statusCode: HttpStatus.NOT_FOUND,
+        message: 'Referenced object not found',
+      });
     }
 
     const queueData: VoteQueueType = {
