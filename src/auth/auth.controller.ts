@@ -20,14 +20,17 @@ import { CreateUserDto } from '../users/dto/create-user.dto';
 import { Public } from './decorators/public-route.decorator';
 import { RegisterWithCodeDto } from './dto/register-code.dto';
 import { InvitationExistsGuard } from '../common/guards/invitation-exists.guard';
+import { BaseController } from '../common/helpers/base-controller';
 
 @ApiTags('Auth')
 @Controller({
   path: 'auth',
   version: '1',
 })
-export class AuthController {
-  constructor(private authService: AuthService) {}
+export class AuthController extends BaseController {
+  constructor(private authService: AuthService) {
+    super();
+  }
 
   @Public()
   @Post('register')

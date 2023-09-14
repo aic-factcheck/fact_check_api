@@ -8,10 +8,12 @@ import { Model, Types } from 'mongoose';
 import { User } from '../users/schemas/user.schema';
 import { NullableType } from '../common/types/nullable.type';
 import { ReportStatusEnum } from './enums/status.enum';
+import { I18nContext, I18nService } from 'nestjs-i18n';
 
 @Injectable()
 export class ReportsService {
   constructor(
+    private readonly i18nService: I18nService,
     @InjectModel(Report.name) private reportModel: Model<Report>,
     @InjectModel(User.name) private userModel: Model<User>,
   ) {}
@@ -21,7 +23,9 @@ export class ReportsService {
     if (!user) {
       throw new NotFoundException({
         statusCode: HttpStatus.NOT_FOUND,
-        message: 'User not found',
+        message: this.i18nService.t('errors.user_not_found', {
+          lang: I18nContext.current()?.lang,
+        }),
       });
     }
     const report: ReportDocument = new this.reportModel(
@@ -59,7 +63,9 @@ export class ReportsService {
     if (!report) {
       throw new NotFoundException({
         statusCode: HttpStatus.NOT_FOUND,
-        message: `Report ${_id} not found`,
+        message: this.i18nService.t('errors.report_not_found', {
+          lang: I18nContext.current()?.lang,
+        }),
       });
     }
     return report;
@@ -79,7 +85,9 @@ export class ReportsService {
     if (!updated) {
       throw new NotFoundException({
         statusCode: HttpStatus.NOT_FOUND,
-        message: `Report not found`,
+        message: this.i18nService.t('errors.report_not_found', {
+          lang: I18nContext.current()?.lang,
+        }),
       });
     }
     return updated;

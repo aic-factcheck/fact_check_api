@@ -150,7 +150,7 @@ describe('Auth API', () => {
         .then((res) => {
           const { statusCode, message } = res.body;
           expect(statusCode).toEqual(HttpStatus.UNAUTHORIZED);
-          expect(message).toEqual('incorrectPassword');
+          expect(message).toEqual('Incorrect password');
         });
     });
   });

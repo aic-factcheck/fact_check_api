@@ -27,12 +27,14 @@ import {
   Invitation,
   InvitationDocument,
 } from '../invitations/schemas/invitation.schema';
+import { I18nContext, I18nService } from 'nestjs-i18n';
 
 @Injectable()
 export class AuthService {
   private jwtExpires: number;
 
   constructor(
+    private readonly i18nService: I18nService,
     private jwtService: JwtService,
     private usersService: UsersService,
     private configService: ConfigService,
@@ -69,7 +71,9 @@ export class AuthService {
     if (!refreshToken) {
       throw new UnauthorizedException({
         statusCode: HttpStatus.UNAUTHORIZED,
-        message: 'User has been logged out.',
+        message: this.i18nService.t('errors.user_logged_out', {
+          lang: I18nContext.current()?.lang,
+        }),
       });
     }
     return refreshToken.refreshToken;
@@ -108,7 +112,9 @@ export class AuthService {
     if (!user) {
       throw new NotFoundException({
         statusCode: HttpStatus.NOT_FOUND,
-        message: 'Email not found',
+        message: this.i18nService.t('errors.email_not_found', {
+          lang: I18nContext.current()?.lang,
+        }),
       });
     }
 
@@ -121,7 +127,9 @@ export class AuthService {
       throw new HttpException(
         {
           statusCode: HttpStatus.UNAUTHORIZED,
-          message: 'incorrectPassword',
+          message: this.i18nService.t('errors.incorrect_password', {
+            lang: I18nContext.current()?.lang,
+          }),
         },
         HttpStatus.UNAUTHORIZED,
       );
@@ -145,7 +153,9 @@ export class AuthService {
     if (inv?.code !== createDto.code) {
       throw new ForbiddenException({
         statusCode: HttpStatus.FORBIDDEN,
-        message: 'Incorrect verification code',
+        message: this.i18nService.t('errors.incorrect_verification_code', {
+          lang: I18nContext.current()?.lang,
+        }),
       });
     }
     await this.invModel.findOneAndDelete({ invitedEmail: createDto.email });
@@ -166,7 +176,9 @@ export class AuthService {
       throw new HttpException(
         {
           statusCode: HttpStatus.UNAUTHORIZED,
-          message: 'Invalid refresh token',
+          message: this.i18nService.t('errors.invalid_refresh_token', {
+            lang: I18nContext.current()?.lang,
+          }),
         },
         HttpStatus.UNAUTHORIZED,
       );
@@ -178,7 +190,9 @@ export class AuthService {
       throw new HttpException(
         {
           statusCode: HttpStatus.UNAUTHORIZED,
-          message: 'Invalid refresh token',
+          message: this.i18nService.t('errors.invalid_refresh_token', {
+            lang: I18nContext.current()?.lang,
+          }),
         },
         HttpStatus.UNAUTHORIZED,
       );
@@ -186,29 +200,4 @@ export class AuthService {
 
     return this.authTokenResponse(user);
   }
-
-  // ***********************
-  // ╔╦╗╔═╗╔╦╗╦ ╦╔═╗╔╦╗╔═╗
-  // ║║║║╣  ║ ╠═╣║ ║ ║║╚═╗
-  // ╩ ╩╚═╝ ╩ ╩ ╩╚═╝═╩╝╚═╝
-  // ***********************
-  // returnJwtExtractor() {
-  //   return this.jwtExtractor;
-  // }
-
-  // getIp(req: Request): string {
-  //   return getClientIp(req);
-  // }
-
-  // getBrowserInfo(req: Request): string {
-  //   return req.header['user-agent'] || 'XX';
-  // }
-
-  // getCountry(req: Request): string {
-  //   return req.header['cf-ipcountry'] ? req.header['cf-ipcountry'] : 'XX';
-  // }
-
-  // encryptText(text: string): string {
-  //   return this.cryptr.encrypt(text);
-  // }
 }

@@ -8,10 +8,14 @@ import {
 import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
 import { ROLES_KEY } from '../decorators/roles.decorator';
+import { I18nContext, I18nService } from 'nestjs-i18n';
 
 @Injectable()
 export class RolesGuard extends AuthGuard('jwt') {
-  constructor(private readonly reflector: Reflector) {
+  constructor(
+    private readonly reflector: Reflector,
+    private readonly i18nService: I18nService,
+  ) {
     super();
   }
 
@@ -29,13 +33,17 @@ export class RolesGuard extends AuthGuard('jwt') {
     if (!user) {
       throw new UnauthorizedException({
         statusCode: HttpStatus.UNAUTHORIZED,
-        message: 'Unauthorized user',
+        message: this.i18nService.t('errors.unauthorized', {
+          lang: I18nContext.current()?.lang,
+        }),
       });
     }
     if (!(user.roles && hasRole())) {
       throw new ForbiddenException({
         statusCode: HttpStatus.FORBIDDEN,
-        message: 'Forbidden',
+        message: this.i18nService.t('errors.forbidden', {
+          lang: I18nContext.current()?.lang,
+        }),
       });
     }
 

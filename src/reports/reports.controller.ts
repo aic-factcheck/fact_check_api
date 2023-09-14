@@ -13,7 +13,7 @@ import {
 import { ReportsService } from './reports.service';
 import { CreateReportDto } from './dto/create-report.dto';
 import { UpdateReportDto } from './dto/update-report.dto';
-import { ApiBearerAuth, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { LoggedUser } from '../users/decorators/logged-user.decorator';
 import { User } from '../users/schemas/user.schema';
 import { Report } from './schemas/report.schema';
@@ -23,15 +23,17 @@ import { ParseObjectIdPipe } from '../common/pipes/parse-object-id.pipe';
 import { Types } from 'mongoose';
 import { ReportStatusEnum } from './enums/status.enum';
 import { NullableType } from '../common/types/nullable.type';
+import { BaseController } from '../common/helpers/base-controller';
 
 @ApiTags('Reports')
 @Controller({
   version: '1',
   path: 'reports',
 })
-@ApiBearerAuth()
-export class ReportsController {
-  constructor(private readonly reportsService: ReportsService) {}
+export class ReportsController extends BaseController {
+  constructor(private readonly reportsService: ReportsService) {
+    super();
+  }
 
   @Post()
   @HttpCode(HttpStatus.CREATED)

@@ -9,10 +9,14 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model } from 'mongoose';
 import { Review } from '../../reviews/schemas/review.schema';
+import { I18nContext, I18nService } from 'nestjs-i18n';
 
 @Injectable()
 export class DoesReviewExist implements CanActivate {
-  constructor(@InjectModel(Review.name) private reviewModel: Model<Review>) {}
+  constructor(
+    @InjectModel(Review.name) private reviewModel: Model<Review>,
+    private readonly i18nService: I18nService,
+  ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
@@ -21,7 +25,9 @@ export class DoesReviewExist implements CanActivate {
     if (!mongoose.Types.ObjectId.isValid(params.reviewId)) {
       throw new UnprocessableEntityException({
         statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
-        message: 'Invalid ObjectId',
+        message: this.i18nService.t('errors.invalid_objectid', {
+          lang: I18nContext.current()?.lang,
+        }),
       });
     }
 
@@ -31,7 +37,9 @@ export class DoesReviewExist implements CanActivate {
     }
     throw new NotFoundException({
       statusCode: HttpStatus.NOT_FOUND,
-      message: 'Review not found',
+      message: this.i18nService.t('errors.review_not_found', {
+        lang: I18nContext.current()?.lang,
+      }),
     });
   }
 }

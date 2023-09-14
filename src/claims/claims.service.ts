@@ -19,33 +19,41 @@ import { GameService } from '../game/game.service';
 import { GameAtionEnum } from '../game/enums/reputation.enum';
 import { Article } from '../articles/schemas/article.schema';
 import { ClaimHistoryType } from './types/claim-history.type';
+import { I18nContext, I18nService } from 'nestjs-i18n';
 
 @Injectable()
 export class ClaimsService {
   constructor(
+    private readonly i18nService: I18nService,
     @InjectModel(Article.name) private articleModel: Model<Article>,
     @InjectModel(Claim.name) private claimModel: Model<Claim>,
     @InjectModel(Review.name) private reviewModel: Model<Review>,
     private readonly gameService: GameService,
   ) {}
 
+  private throwClaimNotFoundExcpetion(): never {
+    throw new NotFoundException({
+      statusCode: HttpStatus.NOT_FOUND,
+      message: this.i18nService.t('errors.claim_not_found', {
+        lang: I18nContext.current()?.lang,
+      }),
+    });
+  }
+
   async checkResourceAccess(user: User, _id: Types.ObjectId): Promise<boolean> {
     if (_.includes(user.roles, 'admin')) return true;
 
     const claim: Claim | null = await this.claimModel.findOne({ _id });
 
-    if (!claim) {
-      throw new NotFoundException({
-        statusCode: HttpStatus.NOT_FOUND,
-        message: 'Claim not found',
-      });
-    }
+    if (!claim) this.throwClaimNotFoundExcpetion();
 
     if (!_.isEqual(claim.author._id, user._id)) {
       throw new HttpException(
         {
           statusCode: HttpStatus.FORBIDDEN,
-          message: 'Forbidden',
+          message: this.i18nService.t('errors.forbidden', {
+            lang: I18nContext.current()?.lang,
+          }),
         },
         HttpStatus.FORBIDDEN,
       );
@@ -79,12 +87,7 @@ export class ClaimsService {
 
   async findByQuery(query: object): Promise<NullableType<Claim>> {
     const claim = await this.claimModel.findById(query);
-    if (!claim) {
-      throw new NotFoundException({
-        statusCode: HttpStatus.NOT_FOUND,
-        message: 'Claim not found',
-      });
-    }
+    if (!claim) this.throwClaimNotFoundExcpetion();
 
     return claim;
   }
@@ -112,12 +115,7 @@ export class ClaimsService {
           .lean(),
       ]);
 
-    if (!claim) {
-      throw new NotFoundException({
-        statusCode: HttpStatus.NOT_FOUND,
-        message: 'Claim not found',
-      });
-    }
+    if (!claim) this.throwClaimNotFoundExcpetion();
 
     return { ...claim.toObject(), userReview };
   }
@@ -152,16 +150,13 @@ export class ClaimsService {
   ): Promise<Claim> {
     await this.checkResourceAccess(loggedUser, _id);
     const currentClaim = await this.claimModel.findById(_id);
-    if (!currentClaim) {
-      throw new NotFoundException({
-        statusCode: HttpStatus.NOT_FOUND,
-        message: 'Claim not found',
-      });
-    }
+    if (!currentClaim) this.throwClaimNotFoundExcpetion();
     if (currentClaim.history.length >= 10) {
       throw new BadRequestException({
         statusCode: HttpStatus.BAD_REQUEST,
-        message: 'Claim can be updated up to 10 times',
+        message: this.i18nService.t('errors.max_claim_update_requests', {
+          lang: I18nContext.current()?.lang,
+        }),
       });
     }
 
@@ -198,12 +193,7 @@ export class ClaimsService {
       article: articleId,
       _id: claimId,
     });
-    if (!deleterClaim) {
-      throw new NotFoundException({
-        statusCode: HttpStatus.NOT_FOUND,
-        message: 'Claim not found',
-      });
-    }
+    if (!deleterClaim) this.throwClaimNotFoundExcpetion();
     return deleterClaim;
   }
 }

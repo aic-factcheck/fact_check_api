@@ -8,6 +8,7 @@ import { SavedArticle } from '../saved-articles/schemas/saved-article.schema';
 import { UserStatType } from './types/user-stat.type';
 import { Review } from '../reviews/schemas/review.schema';
 import { Reputation } from '../game/schemas/reputation.schema';
+import { I18nContext, I18nService } from 'nestjs-i18n';
 
 @Injectable()
 export class StatsService {
@@ -18,6 +19,7 @@ export class StatsService {
     @InjectModel(Claim.name) private claimModel: Model<Claim>,
     @InjectModel(User.name) private userModel: Model<User>,
     @InjectModel(Reputation.name) private repModel: Model<Reputation>,
+    private readonly i18nService: I18nService,
   ) {}
 
   private async getStats(
@@ -97,7 +99,9 @@ export class StatsService {
       if (!foundUser) {
         throw new NotFoundException({
           statusCode: HttpStatus.NOT_FOUND,
-          message: 'User not found',
+          message: this.i18nService.t('errors.user_not_found', {
+            lang: I18nContext.current()?.lang,
+          }),
         });
       }
       user = foundUser;

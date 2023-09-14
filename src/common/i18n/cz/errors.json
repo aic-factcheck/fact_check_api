@@ -1,4 +1,23 @@
 {
-  "article_not_found": "",
-  "forbidden": ""
+  "article_not_found": "Článek nebyl nalezen",
+  "forbidden": "Přístup odepřen",
+  "user_logged_out": "Uživatel byl odhlášen",
+  "email_not_found": "E-mail nebyl nalezen",
+  "incorrect_password": "Nesprávné heslo",
+  "incorrect_verification_code": "Nesprávný ověřovací kód",
+  "invalid_refresh_token": "Neplatný token pro obnovení",
+  "claim_not_found": "Tvrdení nebyl nalezen",
+  "max_claim_update_requests": "Tvrdení může být aktualizováno nejvíc 10krát",
+  "invitation_not_found": "Pozvánka nebyla nalezena",
+  "report_not_found": "Report nebyl nalezen",
+  "user_not_found": "Uživatel nebyl nalezen",
+  "review_not_found": "Recenze nebyla nalezena",
+  "review_already_exists": "Uživatel již toto tvrdení recenzoval",
+  "max_review_update_requests": "Recenze může být aktualizována nejvíc 10krát",
+  "save_article_failed": "Při ukládání článku došlo k chybě",
+  "not_implemented": "Endpoint ještě nebyl implementován",
+  "referenced_object_not_found": "Referenční objekt nebyl nalezen",
+  "unauthorized": "Neoprávněný přístup",
+  "invalid_objectid": "Validace selhala (očekává se ObjectId)",
+  "user_not_invited": "Pozvánka pro uživatele neexistuje"
 }

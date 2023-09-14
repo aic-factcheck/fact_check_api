@@ -15,7 +15,6 @@ import { Controller } from '@nestjs/common';
 import {
   ApiTags,
   ApiQuery,
-  ApiBearerAuth,
   ApiParam,
   ApiOperation,
   ApiBody,
@@ -33,15 +32,17 @@ import { Public } from '../auth/decorators/public-route.decorator';
 import { ClaimResponseType } from './types/claim-response.type';
 import { DoesArticleExist } from '../common/guards/article-exists.guard';
 import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
+import { BaseController } from '../common/helpers/base-controller';
 
 @ApiTags('Claims')
 @Controller({
   version: '1',
 })
-@ApiBearerAuth()
 @UseInterceptors(CacheInterceptor)
-export class ClaimsController {
-  constructor(private readonly claimService: ClaimsService) {}
+export class ClaimsController extends BaseController {
+  constructor(private readonly claimService: ClaimsService) {
+    super();
+  }
 
   @Post()
   @ApiParam({ name: 'articleId', type: String })

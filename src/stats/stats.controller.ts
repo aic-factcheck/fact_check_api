@@ -1,6 +1,6 @@
 import { Controller, Get, HttpCode, HttpStatus, Query } from '@nestjs/common';
 import { StatsService } from './stats.service';
-import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiQuery, ApiTags } from '@nestjs/swagger';
 import { Public } from '../auth/decorators/public-route.decorator';
 import { LoggedUser } from '../users/decorators/logged-user.decorator';
 import { User } from '../users/schemas/user.schema';
@@ -8,15 +8,17 @@ import { PaginationParams } from '../common/types/pagination-params';
 import { Types } from 'mongoose';
 import { CacheTTL } from '@nestjs/cache-manager';
 import { UserStatType } from './types/user-stat.type';
+import { BaseController } from '../common/helpers/base-controller';
 
 @ApiTags('Stats')
 @Controller({
   version: '1',
   path: 'stats',
 })
-@ApiBearerAuth()
-export class StatsController {
-  constructor(private readonly statsService: StatsService) {}
+export class StatsController extends BaseController {
+  constructor(private readonly statsService: StatsService) {
+    super();
+  }
 
   @Get()
   @HttpCode(HttpStatus.OK)

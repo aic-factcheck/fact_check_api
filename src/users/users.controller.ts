@@ -16,7 +16,6 @@ import { Controller } from '@nestjs/common';
 import {
   ApiTags,
   ApiQuery,
-  ApiBearerAuth,
   ApiParam,
   ApiOperation,
   ApiBody,
@@ -39,15 +38,17 @@ import { Claim } from '../claims/schemas/claim.schema';
 import { Review } from '../reviews/schemas/review.schema';
 import { Report } from '../reports/schemas/report.schema';
 import { SelfOrAdminGuard } from '../common/guards/self-or-admin.guard';
+import { BaseController } from '../common/helpers/base-controller';
 
 @ApiTags('Users')
 @Controller({
   path: 'users',
   version: '1',
 })
-@ApiBearerAuth()
-export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+export class UsersController extends BaseController {
+  constructor(private readonly usersService: UsersService) {
+    super();
+  }
 
   @Post()
   @SerializeOptions({ groups: ['admin'] })

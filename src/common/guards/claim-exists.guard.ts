@@ -9,10 +9,14 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model } from 'mongoose';
 import { Claim } from '../../claims/schemas/claim.schema';
+import { I18nContext, I18nService } from 'nestjs-i18n';
 
 @Injectable()
 export class DoesClaimExist implements CanActivate {
-  constructor(@InjectModel(Claim.name) private claimModel: Model<Claim>) {}
+  constructor(
+    @InjectModel(Claim.name) private claimModel: Model<Claim>,
+    private readonly i18nService: I18nService,
+  ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
@@ -21,7 +25,9 @@ export class DoesClaimExist implements CanActivate {
     if (!mongoose.Types.ObjectId.isValid(params.claimId)) {
       throw new UnprocessableEntityException({
         statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
-        message: 'Invalid ObjectId',
+        message: this.i18nService.t('errors.invalid_objectid', {
+          lang: I18nContext.current()?.lang,
+        }),
       });
     }
 
@@ -31,7 +37,9 @@ export class DoesClaimExist implements CanActivate {
     }
     throw new NotFoundException({
       statusCode: HttpStatus.NOT_FOUND,
-      message: 'Claim not found',
+      message: this.i18nService.t('errors.claim_not_found', {
+        lang: I18nContext.current()?.lang,
+      }),
     });
   }
 }

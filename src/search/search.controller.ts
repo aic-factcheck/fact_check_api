@@ -11,22 +11,19 @@ import { LoggedUser } from '../users/decorators/logged-user.decorator';
 import { User } from '../users/schemas/user.schema';
 import { PaginationParams } from '../common/types/pagination-params';
 import { SearchService } from './search.service';
-import {
-  ApiBearerAuth,
-  ApiOperation,
-  ApiQuery,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { Public } from '../auth/decorators/public-route.decorator';
+import { BaseController } from '../common/helpers/base-controller';
 
 @ApiTags('Search')
 @Controller({
   path: 'search',
   version: '1',
 })
-@ApiBearerAuth()
-export class SearchController {
-  constructor(private readonly searchService: SearchService) {}
+export class SearchController extends BaseController {
+  constructor(private readonly searchService: SearchService) {
+    super();
+  }
 
   @Get('users')
   @Public()

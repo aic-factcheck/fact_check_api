@@ -7,6 +7,7 @@ import { JwtPayloadType } from '../../common/types/auth/jwt-payload.type';
 import { OrNeverType } from '../../common/types/or-never.type';
 import { UsersService } from '../../users/users.service';
 import { User } from '../../users/schemas/user.schema';
+import { I18nContext, I18nService } from 'nestjs-i18n';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -14,6 +15,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     private jwtService: JwtService,
     private configService: ConfigService,
     private usersService: UsersService,
+    private readonly i18nService: I18nService,
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -26,7 +28,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     if (!payload._id) {
       throw new UnauthorizedException({
         statusCode: HttpStatus.UNAUTHORIZED,
-        message: 'Unauthorized',
+        message: this.i18nService.t('errors.unauthorized', {
+          lang: I18nContext.current()?.lang,
+        }),
       });
     }
 
@@ -35,7 +39,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     if (!user) {
       throw new UnauthorizedException({
         statusCode: HttpStatus.UNAUTHORIZED,
-        message: 'Unauthorized',
+        message: this.i18nService.t('errors.unauthorized', {
+          lang: I18nContext.current()?.lang,
+        }),
       });
     }
 

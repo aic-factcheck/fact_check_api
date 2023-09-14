@@ -8,11 +8,13 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Invitation } from '../../invitations/schemas/invitation.schema';
+import { I18nContext, I18nService } from 'nestjs-i18n';
 
 @Injectable()
 export class InvitationExistsGuard implements CanActivate {
   constructor(
     @InjectModel(Invitation.name) private invModel: Model<Invitation>,
+    private readonly i18nService: I18nService,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -25,7 +27,9 @@ export class InvitationExistsGuard implements CanActivate {
     }
     throw new NotFoundException({
       statusCode: HttpStatus.NOT_FOUND,
-      message: 'Invitation for user does not exists',
+      message: this.i18nService.t('errors.user_not_invited', {
+        lang: I18nContext.current()?.lang,
+      }),
     });
   }
 }

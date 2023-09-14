@@ -12,6 +12,7 @@ import { Queue } from 'bull';
 import { VOTES_QUEUE_NAME } from './vote.constants';
 import { VoteQueueType } from './types/vote-queue.type';
 import { VoteJobResponseType } from './types/vote-job-response.type';
+import { I18nContext, I18nService } from 'nestjs-i18n';
 
 @Injectable()
 export class VoteService {
@@ -23,6 +24,7 @@ export class VoteService {
     @InjectModel(Review.name) private reviewModel: Model<Review>,
     @InjectModel(User.name) private userModel: Model<User>,
     @InjectQueue(VOTES_QUEUE_NAME) private votesQueue: Queue,
+    private readonly i18nService: I18nService,
   ) {
     this.modelMapping = {
       [VoteObjectEnum.ARTICLE]: this.articleModel,
@@ -45,7 +47,9 @@ export class VoteService {
     if (countRef === 0) {
       throw new NotFoundException({
         statusCode: HttpStatus.NOT_FOUND,
-        message: 'Referenced object not found',
+        message: this.i18nService.t('errors.referenced_object_not_found', {
+          lang: I18nContext.current()?.lang,
+        }),
       });
     }
 

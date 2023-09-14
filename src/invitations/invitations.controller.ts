@@ -14,20 +14,22 @@ import { Roles } from '../auth/decorators/roles.decorator';
 import { CreateInvitationDto } from './dto/create-invititation.dto';
 import { Invitation } from './schemas/invitation.schema';
 import { LoggedUser } from '../users/decorators/logged-user.decorator';
-import { ApiBearerAuth, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { PaginationParams } from '../common/types/pagination-params';
 import { ParseObjectIdPipe } from '../common/pipes/parse-object-id.pipe';
 import { NullableType } from '../common/types/nullable.type';
 import { Types } from 'mongoose';
+import { BaseController } from '../common/helpers/base-controller';
 
 @ApiTags('Invitations')
 @Controller({
   path: 'invitations',
   version: '1',
 })
-@ApiBearerAuth()
-export class InvitationsController {
-  constructor(private readonly invService: InvitationsService) {}
+export class InvitationsController extends BaseController {
+  constructor(private readonly invService: InvitationsService) {
+    super();
+  }
 
   @Post()
   @HttpCode(HttpStatus.CREATED)

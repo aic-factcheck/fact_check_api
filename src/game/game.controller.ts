@@ -1,13 +1,15 @@
 import { Controller } from '@nestjs/common';
 import { GameService } from './game.service';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
+import { BaseController } from '../common/helpers/base-controller';
 
 @ApiTags('Game')
 @Controller({
   version: '1',
   path: 'game',
 })
-@ApiBearerAuth()
-export class GameController {
-  constructor(private readonly gameService: GameService) {}
+export class GameController extends BaseController {
+  constructor(private readonly gameService: GameService) {
+    super();
+  }
 }

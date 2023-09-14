@@ -8,7 +8,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { HotService } from './hot.service';
-import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiQuery, ApiTags } from '@nestjs/swagger';
 import { Public } from '../auth/decorators/public-route.decorator';
 import { LoggedUser } from '../users/decorators/logged-user.decorator';
 import { User } from '../users/schemas/user.schema';
@@ -17,17 +17,19 @@ import MongooseClassSerializerInterceptor from '../common/interceptors/mongoose-
 import { SortByEnum } from './enums/sort-by.enum';
 import { DurationLimitEnum } from './enums/duration.enum';
 import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
+import { BaseController } from '../common/helpers/base-controller';
 
 @ApiTags('Hot')
 @Controller({
   path: 'hot',
   version: '1',
 })
-@ApiBearerAuth()
 @UseInterceptors(CacheInterceptor)
 @CacheTTL(60)
-export class HotController {
-  constructor(private readonly hotService: HotService) {}
+export class HotController extends BaseController {
+  constructor(private readonly hotService: HotService) {
+    super();
+  }
 
   @Get('articles')
   @Public()

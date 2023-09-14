@@ -1,4 +1,23 @@
 {
   "article_not_found": "Article not found",
-  "forbidden": "Forbidden"
+  "forbidden": "Forbidden",
+  "user_logged_out": "User has been logged out",
+  "email_not_found": "Email not found",
+  "incorrect_password": "Incorrect password",
+  "incorrect_verification_code": "Incorrect verification code",
+  "invalid_refresh_token": "Invalid refresh token",
+  "claim_not_found": "Claim not found",
+  "max_claim_update_requests": "Claim can be updated up to 10 times",
+  "invitation_not_found": "Invitation not found",
+  "report_not_found": "Report not found",
+  "user_not_found": "User not found",
+  "review_not_found": "Review not found",
+  "review_already_exists": "User already reviewed this claim.",
+  "max_review_update_requests": "Review can be updated up to 10 times",
+  "save_article_failed": "An error occurred while saving the article",
+  "not_implemented": "Route not yet implemented",
+  "referenced_object_not_found": "Referenced object not found",
+  "unauthorized": "Unauthorized",
+  "invalid_objectid": "Validation failed (ObjectId is expected)",
+  "user_not_invited": "Invitation for user does not exists"
 }

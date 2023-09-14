@@ -8,6 +8,7 @@ import {
   SavedArticleDocument,
 } from './schemas/saved-article.schema';
 import { NullableType } from '../common/types/nullable.type';
+import { I18nContext, I18nService } from 'nestjs-i18n';
 
 @Injectable()
 export class SavedArticlesService {
@@ -15,6 +16,7 @@ export class SavedArticlesService {
     @InjectModel(Article.name) private articleModel: Model<Article>,
     @InjectModel(SavedArticle.name)
     private readonly savedArticleModel: Model<SavedArticle>,
+    private readonly i18nService: I18nService,
   ) {}
 
   async save(user: User, articleId: Types.ObjectId): Promise<SavedArticle> {
@@ -31,7 +33,9 @@ export class SavedArticlesService {
     if (alreadySaved !== 0 || articleCnt < 1) {
       throw new BadRequestException({
         statusCode: HttpStatus.BAD_REQUEST,
-        message: 'Saving article failed',
+        message: this.i18nService.t('errors.save_article_failed', {
+          lang: I18nContext.current()?.lang,
+        }),
       });
     }
 

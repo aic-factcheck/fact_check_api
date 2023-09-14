@@ -8,7 +8,7 @@ import {
   Delete,
 } from '@nestjs/common';
 import { Controller } from '@nestjs/common';
-import { ApiTags, ApiQuery, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiTags, ApiQuery } from '@nestjs/swagger';
 import MongooseClassSerializerInterceptor from '../common/interceptors/mongoose-class-serializer.interceptor';
 import { PaginationParams } from '../common/types/pagination-params';
 import { ParseObjectIdPipe } from '../common/pipes/parse-object-id.pipe';
@@ -18,16 +18,18 @@ import { LoggedUser } from '../users/decorators/logged-user.decorator';
 import { User } from '../users/schemas/user.schema';
 import { SavedArticle } from './schemas/saved-article.schema';
 import { SavedArticlesService } from './saved-articles.service';
+import { BaseController } from '../common/helpers/base-controller';
 
 @ApiTags('Save')
 @Controller({
   path: 'save',
   version: '1',
 })
-@ApiBearerAuth()
 @UseInterceptors(MongooseClassSerializerInterceptor(SavedArticle))
-export class SavedArticlesController {
-  constructor(private readonly service: SavedArticlesService) {}
+export class SavedArticlesController extends BaseController {
+  constructor(private readonly service: SavedArticlesService) {
+    super();
+  }
 
   @Post()
   @HttpCode(HttpStatus.CREATED)

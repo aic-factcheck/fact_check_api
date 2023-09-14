@@ -10,10 +10,12 @@ import { NullableType } from '../common/types/nullable.type';
 import { MailService } from '../shared/mail/mail.service';
 import { GameService } from '../game/game.service';
 import { GameAtionEnum } from '../game/enums/reputation.enum';
+import { I18nContext, I18nService } from 'nestjs-i18n';
 
 @Injectable()
 export class InvitationsService {
   constructor(
+    private readonly i18nService: I18nService,
     @InjectModel(User.name) private userModel: Model<User>,
     @InjectModel(Invitation.name) private invModel: Model<Invitation>,
     private readonly gameService: GameService,
@@ -54,7 +56,9 @@ export class InvitationsService {
     if (!deletedInv) {
       throw new NotFoundException({
         statusCode: HttpStatus.NOT_FOUND,
-        message: `Invitation  #${_id} not found`,
+        message: this.i18nService.t('errors.invitation_not_found', {
+          lang: I18nContext.current()?.lang,
+        }),
       });
     }
   }

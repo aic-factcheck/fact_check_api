@@ -479,7 +479,9 @@ describe('Articles API', () => {
         .send({})
         .expect(HttpStatus.BAD_REQUEST)
         .then((res) => {
-          expect(res.body.message).toEqual('Saving article failed');
+          expect(res.body.message).toEqual(
+            'An error occurred while saving the article',
+          );
         })
         .then(async () => {
           await request(httpServer)
@@ -499,7 +501,9 @@ describe('Articles API', () => {
         .send({})
         .expect(HttpStatus.BAD_REQUEST)
         .then((res) => {
-          expect(res.body.message).toEqual('Saving article failed');
+          expect(res.body.message).toEqual(
+            'An error occurred while saving the article',
+          );
         })
         .then(async () => {
           await request(httpServer)

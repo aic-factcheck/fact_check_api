@@ -16,14 +16,17 @@ import { Types } from 'mongoose';
 import { ParseObjectIdPipe } from '../common/pipes/parse-object-id.pipe';
 import { VoteObjectEnum } from './enums/vote.enum';
 import { VoteJobResponseType } from './types/vote-job-response.type';
+import { BaseController } from '../common/helpers/base-controller';
 
 @ApiTags('Votes')
 @Controller({
   version: '1',
   path: 'vote',
 })
-export class VoteController {
-  constructor(private readonly voteService: VoteService) {}
+export class VoteController extends BaseController {
+  constructor(private readonly voteService: VoteService) {
+    super();
+  }
 
   @Post()
   @ApiBearerAuth()

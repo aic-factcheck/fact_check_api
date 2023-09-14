@@ -23,6 +23,7 @@ import { ReviewHistoryType } from './types/review-history.type';
 import { VoteTypes } from './enums/vote.types';
 import { UpdateReviewDto } from './dto/update-review.dto';
 import { BackgroundArticleService } from '../background-article/background-article.service';
+import { I18nContext, I18nService } from 'nestjs-i18n';
 
 @Injectable()
 export class ReviewsService {
@@ -33,24 +34,31 @@ export class ReviewsService {
     @InjectModel(Vote.name) private voteModel: Model<Vote>,
     private readonly gameService: GameService,
     private bgArticleService: BackgroundArticleService,
+    private readonly i18nService: I18nService,
   ) {}
+
+  private throwReviewNotFoundExcpetion(): never {
+    throw new NotFoundException({
+      statusCode: HttpStatus.NOT_FOUND,
+      message: this.i18nService.t('errors.review_not_found', {
+        lang: I18nContext.current()?.lang,
+      }),
+    });
+  }
 
   async checkResourceAccess(user: User, _id: Types.ObjectId): Promise<boolean> {
     if (_.includes(user.roles, 'admin')) return true;
 
     const review: Review | null = await this.reviewModel.findOne({ _id });
 
-    if (!review) {
-      throw new NotFoundException({
-        statusCode: HttpStatus.NOT_FOUND,
-        message: 'Review not found',
-      });
-    }
+    if (!review) this.throwReviewNotFoundExcpetion();
 
     if (!_.isEqual(review.author._id, user._id)) {
       throw new ForbiddenException({
         statusCode: HttpStatus.FORBIDDEN,
-        message: 'Forbidden',
+        message: this.i18nService.t('errors.forbidden', {
+          lang: I18nContext.current()?.lang,
+        }),
       });
     }
 
@@ -70,7 +78,9 @@ export class ReviewsService {
     if (review) {
       throw new ConflictException({
         statusCode: HttpStatus.CONFLICT,
-        message: 'User already reviewed this claim.',
+        message: this.i18nService.t('errors.review_already_exists', {
+          lang: I18nContext.current()?.lang,
+        }),
       });
     }
   };
@@ -117,12 +127,7 @@ export class ReviewsService {
   async findByQuery(query: object): Promise<NullableType<Review>> {
     const review = await this.reviewModel.findOne(query);
     // TODO add user's vote
-    if (!review) {
-      throw new NotFoundException({
-        statusCode: HttpStatus.NOT_FOUND,
-        message: 'Review not found',
-      });
-    }
+    if (!review) this.throwReviewNotFoundExcpetion();
     return review;
   }
 
@@ -138,12 +143,7 @@ export class ReviewsService {
       article: articleId,
     });
 
-    if (!review) {
-      throw new NotFoundException({
-        statusCode: HttpStatus.NOT_FOUND,
-        message: 'Review not found',
-      });
-    }
+    if (!review) this.throwReviewNotFoundExcpetion();
 
     let userVote: number | null = null;
     if (loggedUser) {
@@ -209,16 +209,13 @@ export class ReviewsService {
     await this.checkResourceAccess(loggedUser, reviewId);
 
     const currentReview = await this.reviewModel.findById(reviewId);
-    if (!currentReview) {
-      throw new NotFoundException({
-        statusCode: HttpStatus.NOT_FOUND,
-        message: 'Review not found',
-      });
-    }
+    if (!currentReview) this.throwReviewNotFoundExcpetion();
     if (currentReview.history.length >= 10) {
       throw new BadRequestException({
         statusCode: HttpStatus.BAD_REQUEST,
-        message: 'Review can be updated up to 10 times',
+        message: this.i18nService.t('errors.max_review_update_requests', {
+          lang: I18nContext.current()?.lang,
+        }),
       });
     }
 
@@ -259,12 +256,8 @@ export class ReviewsService {
       claim: claimId,
       _id: reviewId,
     });
-    if (!deletedClaim) {
-      throw new NotFoundException({
-        statusCode: HttpStatus.NOT_FOUND,
-        message: 'Review not found',
-      });
-    }
+    if (!deletedClaim) this.throwReviewNotFoundExcpetion();
+
     return deletedClaim;
   }
 }

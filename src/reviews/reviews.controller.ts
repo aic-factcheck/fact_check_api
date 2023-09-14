@@ -12,13 +12,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { Controller } from '@nestjs/common';
-import {
-  ApiTags,
-  ApiQuery,
-  ApiBearerAuth,
-  ApiParam,
-  ApiBody,
-} from '@nestjs/swagger';
+import { ApiTags, ApiQuery, ApiParam, ApiBody } from '@nestjs/swagger';
 import { NullableType } from '../common/types/nullable.type';
 import { PaginationParams } from '../common/types/pagination-params';
 import { LoggedUser } from '../users/decorators/logged-user.decorator';
@@ -33,15 +27,17 @@ import { DoesClaimExist } from '../common/guards/claim-exists.guard';
 import { Types } from 'mongoose';
 import { ParseObjectIdPipe } from '../common/pipes/parse-object-id.pipe';
 import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
+import { BaseController } from '../common/helpers/base-controller';
 
 @ApiTags('Reviews')
 @Controller({
   version: '1',
 })
-@ApiBearerAuth()
 @UseInterceptors(CacheInterceptor)
-export class ReviewsController {
-  constructor(private readonly reviewsService: ReviewsService) {}
+export class ReviewsController extends BaseController {
+  constructor(private readonly reviewsService: ReviewsService) {
+    super();
+  }
 
   @Post()
   @ApiParam({ name: 'articleId', type: String })

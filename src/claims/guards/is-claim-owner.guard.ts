@@ -11,11 +11,15 @@ import {
 import { Claim } from '../schemas/claim.schema';
 import { ClaimsService } from '../claims.service';
 import mongoose from 'mongoose';
+import { I18nContext, I18nService } from 'nestjs-i18n';
 
 export const IsClaimOwnerGuard = (paramId: string) => {
   @Injectable()
   class IsClaimOwnerMixin implements CanActivate {
-    constructor(@Inject(ClaimsService) public claimService: ClaimsService) {}
+    constructor(
+      @Inject(ClaimsService) public claimService: ClaimsService,
+      readonly i18nService: I18nService,
+    ) {}
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
       const request = context.switchToHttp().getRequest();
@@ -24,7 +28,9 @@ export const IsClaimOwnerGuard = (paramId: string) => {
       if (!mongoose.Types.ObjectId.isValid(_id)) {
         throw new UnprocessableEntityException({
           statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
-          message: 'Invalid ObjectId',
+          message: this.i18nService.t('errors.invalid_objectid', {
+            lang: I18nContext.current()?.lang,
+          }),
         });
       }
 
