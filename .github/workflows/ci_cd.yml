@@ -28,6 +28,7 @@ jobs:
   tests:
     env:
       NODE_ENV: test
+      API_LOG_LEVEL: test
     runs-on: ubuntu-latest
 
     strategy:
@@ -70,6 +71,7 @@ jobs:
     needs: tests
     env:
       NODE_ENV: production
+      API_LOG_LEVEL: production
       AUTH_JWT_SECRET: ${{ secrets.JWT_SECRET }}
       MONGO_URI: ${{ secrets.MONGO_DEPLOY_URI }}
       AUTH_JWT_TOKEN_EXPIRES_IN: ${{ secrets.AUTH_JWT_TOKEN_EXPIRES_IN }}
