@@ -1,6 +1,5 @@
 export type AppConfig = {
   nodeEnv: string;
-  logLevel: string;
   name: string;
   workingDirectory: string;
   port: number;

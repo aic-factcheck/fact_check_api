@@ -11,7 +11,7 @@ import pinoElastic from 'pino-elasticsearch';
       useFactory: async (configService: ConfigService) => {
         let pinoHttpOptions;
 
-        if (configService.getOrThrow<string>('app.logLevel') !== 'production') {
+        if (configService.getOrThrow<string>('app.nodeEnv') !== 'production') {
           pinoHttpOptions = {
             level: 'debug',
             transport: { target: 'pino-pretty' },
@@ -48,11 +48,11 @@ import pinoElastic from 'pino-elasticsearch';
 
           pinoHttpOptions = {
             level:
-              configService.getOrThrow<string>('app.logLevel') !== 'production'
+              configService.getOrThrow<string>('app.nodeEnv') !== 'production'
                 ? 'debug'
                 : 'info',
             transport:
-              configService.getOrThrow<string>('app.logLevel') !== 'production'
+              configService.getOrThrow<string>('app.nodeEnv') !== 'production'
                 ? { target: 'pino-pretty' }
                 : undefined,
             customAttributeKeys: {

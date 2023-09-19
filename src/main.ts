@@ -44,7 +44,7 @@ async function bootstrap() {
 
   mongoose.set(
     'debug',
-    configService.getOrThrow<string>('app.logLevel', { infer: true }) ===
+    configService.getOrThrow<string>('app.nodeEnv', { infer: true }) ===
       'development',
   );
 
