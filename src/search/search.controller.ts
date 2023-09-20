@@ -60,7 +60,10 @@ export class SearchController extends BaseController {
     @LoggedUser() user: User | null,
     @Query() { page, perPage }: PaginationParams,
     @Query('text') text: string,
-    @Query('categories', new ParseArrayPipe({ items: String, separator: ',' }))
+    @Query(
+      'categories',
+      new ParseArrayPipe({ items: String, separator: ',', optional: true }),
+    )
     categories: string[],
   ) {
     if (!_.isEmpty(categories)) {
